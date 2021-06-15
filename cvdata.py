@@ -33,3 +33,15 @@ class Company(object):
         self.color_main = color_main
         self.color_accent = color_accent
 
+
+class SkillItem(object):
+    def __init__(self, name, level):
+        self.name = name
+        self.level = level
+
+
+class SkillGroup(object):
+    def __init__(self, name, skill_items):
+        self.name = name
+        self.items = skill_items
+

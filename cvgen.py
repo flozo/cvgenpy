@@ -44,6 +44,23 @@ height = 29.7
 width = 21.0
 color_background = 'Blues-G'
 layout = geo.Layout(height, width, color_background, box_top=False, box_bottom=False, box_left=True, box_right=False)
+skill_decoration = True
+# Skill layout
+skill_circle = geo.SkillCircle(radius=2, fillcolor='Reds-E', linecolor='', showline=False)
+skill_layout = geo.SkillLayout(skill_circle, number=5, distance=5)
+# Skill items
+skill1 = cv.SkillItem(name='Python', level=4)
+skill2 = cv.SkillItem(name='Bash', level=3)
+skill3 = cv.SkillItem(name='LaTeX', level=5)
+skill4 = cv.SkillItem(name='Git', level=5)
+# Skill groups
+group1 = cv.SkillGroup(name='Programming', skill_items=[skill1, skill2, skill3])
+group2 = cv.SkillGroup(name='Software/Tools', skill_items=[skill4])
+skills = []
+for i in range(skill_layout.number):
+    skills.append('\\filldraw[color={}] ({}, {}) circle [radius={}mm]'.format(skill_circle.fillcolor, 2+i*skill_layout.distance/10, 5, skill_circle.radius))
+print(skills)
+
 #position = 'top'
 
 if layout.box_top is True:
@@ -86,6 +103,11 @@ with open(outfile, 'w', encoding='UTF-8') as f:
     if layout.box_right is True:
         f.write('\t\t\t' + '\\fill[{}] ({}, 0) rectangle ({}, {});\n'.format(box_right.color, layout.width-box_right.width, layout.width, layout.height))
     f.write('\t\t' + r'\end{pgfonlayer}' + '\n')
+    if skill_decoration is True:
+        f.write('\t\t' + r'\begin{pgfonlayer}{foreground}' + '\n')
+        for i in range(skill_layout.number):
+            f.write('\t\t\t'+ skills[i] + ';\n')
+        f.write('\t\t' + r'\end{pgfonlayer}' + '\n')
     f.write('\t' + r'\end{tikzpicture}' + '\n')
     f.write(r'\end{document}' + '\n')
 

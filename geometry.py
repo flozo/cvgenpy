@@ -13,3 +13,19 @@ class Layout(Box):
         self.box_right = box_right
         super().__init__(height, width, color)
 
+
+class SkillCircle(object):
+    def __init__(self, radius, fillcolor, linecolor, showline=False):
+        self.radius = radius
+        self.fillcolor = fillcolor
+        self.linecolor = linecolor
+        self.showline = showline
+
+
+class SkillLayout(object):
+    def __init__(self, SkillCircle, number=5, distance=5):
+        self.skillcircle = SkillCircle
+        self.number = number
+        self.distance = distance
+#        super().__init__(radius=2, fillcolor, linecolor, showline=False)
+
