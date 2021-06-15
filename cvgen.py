@@ -1,17 +1,18 @@
 #!/usr/bin/env python3
 #
-# cvgen v0.1 2021-05-12
+# cvgen v0.2 2021-06-15
 
 # Import modules
 
 import argparse
 import cvdata as cv
+import geometry as geo
 #import time
 #import numpy as np
 
 # Version
-version_num = '0.1'
-version_dat = '2021-05-12'
+version_num = '0.2'
+version_dat = '2021-06-15'
 version_str = '{} ({})'.format(version_num, version_dat)
 
 
@@ -42,21 +43,21 @@ print(Person1.birth_location)
 height = 29.7
 width = 21.0
 color_background = 'Blues-G'
-layout = cv.Layout(height, width, color_background, box_top=False, box_bottom=False, box_left=True, box_right=True)
+layout = geo.Layout(height, width, color_background, box_top=False, box_bottom=False, box_left=True, box_right=False)
 #position = 'top'
 
 if layout.box_top is True:
-    box_top = cv.Box(height=layout.height/6, width=layout.width, color='Greys-J')
+    box_top = geo.Box(height=layout.height/6, width=layout.width, color='Greys-J')
 if layout.box_bottom is True:
-    box_bottom = cv.Box(height=layout.height/6, width=layout.width, color='Greys-J')
+    box_bottom = geo.Box(height=layout.height/6, width=layout.width, color='Greys-J')
 if layout.box_left is True:
-    box_left = cv.Box(height=layout.height, width=layout.width/7, color='Greys-J')
+    box_left = geo.Box(height=layout.height, width=layout.width/7, color='Greys-J')
 if layout.box_right is True:
-    box_right = cv.Box(height=layout.height, width=layout.width/7, color='Greys-J')
+    box_right = geo.Box(height=layout.height, width=layout.width/7, color='Greys-J')
 
 # Check file extension
 outfile = str(args.outfile)
-if outfile[-4:0]!='.tex':
+if outfile[-4:0] != '.tex':
     outfile = outfile + '.tex'
 # Write to file
 with open(outfile, 'w', encoding='UTF-8') as f:
