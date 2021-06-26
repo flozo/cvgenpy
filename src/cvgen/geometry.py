@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 class Box(object):
     def __init__(self, height, width, color):
         self.height = height

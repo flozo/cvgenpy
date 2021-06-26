@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 class Personal(object):
     def __init__(self, first_name, second_name, hide_second_name, family_name, birth_date, birth_location, married, children):
         self.first_name = first_name
