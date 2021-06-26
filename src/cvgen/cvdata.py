@@ -103,7 +103,41 @@ def write_config(config_dir):
                     'group': 'Skill3 group',
                     },
                 },
-            }
+            'Education': {
+                'Item1': {
+                    'caption': 'School1',
+                    'location': 'City',
+                    'description': 'What I did...',
+                    'graduation': 'PhD',
+                    'grade': '1.2',
+                    'from': '01/1990',
+                    'to': '12/1998',
+                    },
+                'Item2': {
+                    'caption': 'School2',
+                    'location': 'City',
+                    'description': 'What I did...',
+                    'from': '01/1990',
+                    'to': '12/1998',
+                    },
+                },
+            'Career': {
+                    'Item1': {
+                        'caption': 'Job1',
+                        'location': 'City',
+                        'description': 'What I did...',
+                        'from': '01/1990',
+                        'to': '12/1998',
+                        },
+                    'Item1': {
+                        'caption': 'Job2',
+                        'location': 'City',
+                        'description': 'What I did...',
+                        'from': '01/1990',
+                        'to': '12/1998',
+                        },
+                    },
+            }               
     with open(config_dir, 'w') as f:
         json.dump(settings_dict, f, indent=4)
 
