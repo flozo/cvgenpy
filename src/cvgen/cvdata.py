@@ -108,15 +108,6 @@ def write_config(config_dir):
         json.dump(settings_dict, f, indent=4)
 
 
-def read_config(config_file):
-    """
-    Read JSON config file and write content into nested dictionary.
-    """
-    with open(config_file, 'r') as f:
-        config = json.load(f)
-    return config
-
-
 def split_config(config):
     """
     Split dictionary from JSON config file into sub dictionaries.

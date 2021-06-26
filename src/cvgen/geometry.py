@@ -89,14 +89,6 @@ def write_config(config_dir):
     with open(config_dir, 'w') as f:
         json.dump(settings_dict, f, indent=4)
 
-def read_config(config_file):
-    """
-    Read JSON config file and write content into nested dictionary.
-    """
-    with open(config_file, 'r') as f:
-        config = json.load(f)
-    return config
-
 
 def split_config(config):
     """
@@ -118,5 +110,4 @@ def split_config(config):
     skill_circle = SkillCircle(dict_skill_circle)
     skill_layout = SkillLayout(dict_skill_layout)
     return (layout, box_top, box_bottom, box_left, box_right, skill_circle, skill_layout)
-
 

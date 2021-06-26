@@ -7,6 +7,7 @@
 import argparse
 import cvdata as cv
 import geometry as geo
+import functions as fn
 import os
 
 # Version
@@ -72,8 +73,8 @@ def main():
         else:
             print('[config] No config file created.')
  
-    config_data = cv.read_config(config_file_data)
-    config_geo = geo.read_config(config_file_geo)
+    config_data = fn.read_config(config_file_data)
+    config_geo = fn.read_config(config_file_geo)
     person = cv.split_config(config_data)[0]
     print(person)
     print(person.birth_location_city)
@@ -136,7 +137,7 @@ def main():
         if layout.box_bottom is True:
             f.write('\t\t\t' + '\\fill[{}] (0, 0) rectangle ({}, {});\n'.format(box_bottom.color, box_bottom.width, box_bottom.height))
         if layout.box_left is True:
-            f.write('\t\t\t' + '\\fill[{}] (0, 0) rectangle ({}, {});\n'.format(box_left.color, box_left.width, layout.height))
+            f.write('\t\t\t' + '\\fill[{}] (0, 0) rectangle ({}, {});\n'.format(box_left.color, box_left.width, box_left.height))
         if layout.box_right is True:
             f.write('\t\t\t' + '\\fill[{}] ({}, 0) rectangle ({}, {});\n'.format(box_right.color, layout.width-box_right.width, layout.width, layout.height))
         f.write('\t\t' + r'\end{pgfonlayer}' + '\n')
