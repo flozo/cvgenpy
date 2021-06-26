@@ -7,8 +7,7 @@
 import argparse
 import cvdata as cv
 import geometry as geo
-#import time
-#import numpy as np
+import os
 
 # Version
 version_num = '0.3'
@@ -37,6 +36,24 @@ def main():
     if verbosity >= 1:
         print(args)
 
+
+    # Use config directory or create one
+
+    config_dir = os.path.expanduser('~/.config/cvgen')
+    if not os.path.isdir(config_dir):
+        print('[config] Config directory {} not found.'.format(config_dir))
+        create_config_dir = input('[config] Create config directory {} ? (Y/n): '.format(config_dir))
+        if create_config_dir == 'Y':
+            os.makedirs(config_dir)
+            cv.write_config(os.path.join(config_dir,'cvdata.json'))
+            if verbosity >= 1:
+                print('[config] Config directory {} created.'.format(config_dir))
+                print('[config] Generic config file cvdata.json created.')
+        else:
+            print('[config] No config directory created.')
+
+    config_file = os.path.join(config_dir, 'cvdata.json')
+    print(cv.read_config(config_file))
     Person1 = cv.Personal(first_name='John', second_name='Peter', hide_second_name=True, family_name='Doe', birth_date='01.02.1989', birth_location='City', married=False, children=0)
     print(Person1)
     print(Person1.birth_location)
