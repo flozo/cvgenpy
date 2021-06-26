@@ -45,26 +45,46 @@ def main():
         create_config_dir = input('[config] Create config directory {} ? (Y/n): '.format(config_dir))
         if create_config_dir == 'Y':
             os.makedirs(config_dir)
-            cv.write_config(os.path.join(config_dir,'cvdata.json'))
             if verbosity >= 1:
                 print('[config] Config directory {} created.'.format(config_dir))
                 print('[config] Generic config file cvdata.json created.')
+                print('[config] Generic config file cvgeometry.json created.')
         else:
             print('[config] No config directory created.')
-
-    config_file = os.path.join(config_dir, 'cvdata.json')
-    print(cv.read_config(config_file))
-    Person1 = cv.Personal(first_name='John', second_name='Peter', hide_second_name=True, family_name='Doe', birth_date='01.02.1989', birth_location='City', married=False, children=0)
-    print(Person1)
-    print(Person1.birth_location)
+    config_file_data = os.path.join(config_dir, 'cvdata.json')
+    config_file_geo = os.path.join(config_dir, 'cvgeometry.json')
+    if not os.path.isfile(config_file_data):
+        print('[config] Config file {} not found.'.format(config_file_data))
+        create_config_dir = input('[config] Create generic config file {} ? (Y/n): '.format(config_file_data))
+        if create_config_dir == 'Y':
+            cv.write_config(config_file_data)
+            if verbosity >= 1:
+                print('[config] Generic config file {} created.'.format(config_file_data))
+        else:
+            print('[config] No config file created.')
+    if not os.path.isfile(config_file_geo):
+        print('[config] Config file {} not found.'.format(config_file_geo))
+        create_config_dir = input('[config] Create generic config file {} ? (Y/n): '.format(config_file_geo))
+        if create_config_dir == 'Y':
+            ge.write_config(config_file_geo)
+            if verbosity >= 1:
+                print('[config] Generic config file {} created.'.format(config_file_geo))
+        else:
+            print('[config] No config file created.')
+ 
+    config_data = cv.read_config(config_file_data)
+    config_geo = geo.read_config(config_file_geo)
+    person = cv.split_config(config_data)[0]
+    print(person)
+    print(person.birth_location_city)
     height = 29.7
     width = 21.0
     color_background = 'Blues-G'
-    layout = geo.Layout(height, width, color_background, box_top=False, box_bottom=False, box_left=True, box_right=False)
+    layout = geo.split_config(config_geo)[0]
     skill_decoration = True
     # Skill layout
-    skill_circle = geo.SkillCircle(radius=2, fillcolor='Reds-E', linecolor='', showline=False)
-    skill_layout = geo.SkillLayout(skill_circle, number=5, distance=5)
+    skill_circle = geo.split_config(config_geo)[5]
+    skill_layout = geo.split_config(config_geo)[6]
     # Skill items
     skill1 = cv.SkillItem(name='Python', level=4)
     skill2 = cv.SkillItem(name='Bash', level=3)
@@ -81,13 +101,13 @@ def main():
     #position = 'top'
 
     if layout.box_top is True:
-        box_top = geo.Box(height=layout.height/6, width=layout.width, color='Greys-J')
+        box_top = geo.split_config(config_geo)[1]
     if layout.box_bottom is True:
-        box_bottom = geo.Box(height=layout.height/6, width=layout.width, color='Greys-J')
+        box_bottom = geo.split_config(config_geo)[2]
     if layout.box_left is True:
-        box_left = geo.Box(height=layout.height, width=layout.width/7, color='Greys-J')
+        box_left = geo.split_config(config_geo)[3]
     if layout.box_right is True:
-        box_right = geo.Box(height=layout.height, width=layout.width/7, color='Greys-J')
+        box_right = geo.split_config(config_geo)[4]
 
     # Check file extension
     outfile = str(args.outfile)
@@ -108,7 +128,7 @@ def main():
         f.write('\t' + r'\pgfsetlayers{background, forebackground, main, foreground}' + '\n')
         f.write('\t' + r'\begin{tikzpicture}' + '\n')
         f.write('\t\t' + r'\begin{pgfonlayer}{background}' + '\n')
-        f.write('\t\t\t' + '\\fill[{}] (0, 0) rectangle ({}, {});\n'.format(layout.color, layout.width, layout.height))
+        f.write('\t\t\t' + '\\fill[{}] (0, 0) rectangle ({}, {});\n'.format(layout.background_color, layout.width, layout.height))
         f.write('\t\t' + r'\end{pgfonlayer}' + '\n')
         f.write('\t\t' + r'\begin{pgfonlayer}{forebackground}' + '\n')
         if layout.box_top is True:

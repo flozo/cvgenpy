@@ -3,39 +3,39 @@
 import json
 
 class Personal(object):
-    def __init__(self, first_name, second_name, hide_second_name, family_name, birth_date, birth_location, married, children):
-        self.first_name = first_name
-        self.second_name = second_name
-        self.hide_second_name = hide_second_name
-        self.family_name = family_name
-        self.birth_date = birth_date
-        self.birth_location = birth_location
-        self.married = married
-        self.children = children
+    def __init__(self, dict_personal):
+        self.first_name = dict_personal['first_name']
+        self.second_name = dict_personal['second_name']
+        self.family_name = dict_personal['family_name']
+        self.birth_date = dict_personal['birth_date']
+        self.birth_location_city = dict_personal['birth_location_city']
+        self.birth_location_country = dict_personal['birth_location_country']
+        self.married = dict_personal['married']
+        self.children = dict_personal['children']
 
 
 class Contact(object):
-    def __init__(self, street, house, city, postal_code, country, phone, email, webpage, linkedin, xing, orcid, github):
-        self.street = street
-        self.house = house
-        self.city = city
-        self.postalcode = postal_code
-        self.country = country
-        self.phone = phone
-        self.email = email
-        self.webpage = webpage
-        self.linkedin = linkedin
-        self.xing = xing
-        self.orcid = orcid
-        self.github = github
+    def __init__(self, dict_contact):
+        self.street = dict_contact['street']
+        self.house = dict_contact['house']
+        self.city = dict_contact['city']
+        self.postalcode = dict_contact['postal_code']
+        self.country = dict_contact['country']
+        self.phone = dict_contact['phone']
+        self.email = dict_contact['email']
+        self.webpage = dict_contact['webpage']
+        self.linkedin = dict_contact['linkedin']
+        self.xing = dict_contact['xing']
+        self.orcid = dict_contact['orcid']
+        self.github = dict_contact['github']
 
 
 class Company(object):
-    def __init__(self, name, city, color_main, color_accent):
-        self.name = name
-        self.city = city
-        self.color_main = color_main
-        self.color_accent = color_accent
+    def __init__(self, dict_company):
+        self.name = dict_company['name']
+        self.city = dict_company['city']
+        self.color_main = dict_company['color_main']
+        self.color_accent = dict_company['color_accent']
 
 
 class SkillItem(object):
@@ -115,4 +115,18 @@ def read_config(config_file):
     with open(config_file, 'r') as f:
         config = json.load(f)
     return config
+
+
+def split_config(config):
+    """
+    Split dictionary from JSON config file into sub dictionaries.
+    """
+    dict_personal = config['Personal']
+    dict_contact = config['Contact']
+    dict_company = config['Company']
+    dict_skills = config['Skills']
+    person = Personal(dict_personal)
+    contact = Contact(dict_contact)
+    company = Company(dict_company)
+    return (person, contact, company)
 
