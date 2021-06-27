@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# cvgen v0.3 2021-06-26
+# cvgen v0.4 2021-06-27
 
 # Import modules
 
@@ -11,8 +11,8 @@ import functions as fn
 import os
 
 # Version
-version_num = '0.3'
-version_dat = '2021-06-26'
+version_num = '0.4'
+version_dat = '2021-06-27'
 version_str = '{} ({})'.format(version_num, version_dat)
 
 def main():
@@ -41,45 +41,15 @@ def main():
     # Use config directory or create one
 
     config_dir = os.path.expanduser('~/.config/cvgen')
-    if not os.path.isdir(config_dir):
-        print('[config] Config directory {} not found.'.format(config_dir))
-        create_config_dir = input('[config] Create config directory {} ? (Y/n): '.format(config_dir))
-        if create_config_dir == 'Y':
-            os.makedirs(config_dir)
-            if verbosity >= 1:
-                print('[config] Config directory {} created.'.format(config_dir))
-                print('[config] Generic config file cvdata.json created.')
-                print('[config] Generic config file cvgeometry.json created.')
-        else:
-            print('[config] No config directory created.')
+    fn.check_config_dir(config_dir)
     config_file_data = os.path.join(config_dir, 'cvdata.json')
     config_file_geo = os.path.join(config_dir, 'cvgeometry.json')
-    if not os.path.isfile(config_file_data):
-        print('[config] Config file {} not found.'.format(config_file_data))
-        create_config_dir = input('[config] Create generic config file {} ? (Y/n): '.format(config_file_data))
-        if create_config_dir == 'Y':
-            cv.write_config(config_file_data)
-            if verbosity >= 1:
-                print('[config] Generic config file {} created.'.format(config_file_data))
-        else:
-            print('[config] No config file created.')
-    if not os.path.isfile(config_file_geo):
-        print('[config] Config file {} not found.'.format(config_file_geo))
-        create_config_dir = input('[config] Create generic config file {} ? (Y/n): '.format(config_file_geo))
-        if create_config_dir == 'Y':
-            ge.write_config(config_file_geo)
-            if verbosity >= 1:
-                print('[config] Generic config file {} created.'.format(config_file_geo))
-        else:
-            print('[config] No config file created.')
- 
+    fn.check_config_file(config_file_data)
+    fn.check_config_file(config_file_geo)
+
     config_data = fn.read_config(config_file_data)
     config_geo = fn.read_config(config_file_geo)
     person = cv.split_config(config_data)[0]
-    print(person)
-    print(person.birth_location_city)
-    height = 29.7
-    width = 21.0
     color_background = 'Blues-G'
     layout = geo.split_config(config_geo)[0]
     skill_decoration = True
