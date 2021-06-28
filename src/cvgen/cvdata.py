@@ -12,6 +12,7 @@ class Personal(object):
         self.birth_location_country = dict_personal['birth_location_country']
         self.married = dict_personal['married']
         self.children = dict_personal['children']
+        self.photo = dict_personal['photo']
 
 
 class Contact(object):
@@ -65,6 +66,7 @@ def write_config(config_dir):
                 'birth_location_country': 'Country',
                 'married': False,
                 'children': 0,
+                'photo': '/home/user/Photo1.jpg',
                 },
             'Contact': {
                 'street': 'Street name',
@@ -135,6 +137,28 @@ def write_config(config_dir):
                         'description': 'What I did...',
                         'from': '01/1990',
                         'to': '12/1998',
+                        },
+                    },
+            'Appendix': {
+                    'Appendix1': {
+                        'name': 'School certificate',
+                        'file': '/home/user/School_certificate.pdf',
+                        },
+                    'Appendix2': {
+                        'name': 'Bachelor certificate',
+                        'file': '/home/user/Bachelor_certificate.pdf',
+                        },
+                    'Appendix3': {
+                        'name': 'Master certificate',
+                       'file': '/home/user/Master_certificate.pdf',
+                        },
+                    'Appendix4': {
+                        'name': 'PhD certificate',
+                        'file': '/home/user/PhD_certificate.pdf',
+                        },
+                    'Appendix5': {
+                        'name': 'MOOC certificate',
+                        'file': '/home/user/MOOC_certificate.pdf',
                         },
                     },
             }               

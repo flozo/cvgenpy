@@ -2,26 +2,27 @@
 
 import json
 
-class Box(object):
-#    def __init__(self, dict_box):
-    def __init__(self, height, width, color):
-        self.height = height
-        self.width = width
-        self.color = color
-#        self.size = dict_box['size']
-#        self.color = dict_box['color']
-
 
 class Layout(object):
     def __init__(self, dict_layout):
-        self.height = dict_layout['height']
         self.width = dict_layout['width']
+        self.height = dict_layout['height']
         self.background_color = dict_layout['background_color']
         self.box_top = dict_layout['box_top']
         self.box_bottom = dict_layout['box_bottom']
         self.box_left = dict_layout['box_left']
         self.box_right = dict_layout['box_right']
 #        super().__init__(size, color)
+
+
+class Box(object):
+#    def __init__(self, dict_box):
+    def __init__(self, color, width, height):
+        self.color = color
+        self.width = width
+        self.height = height
+#        self.size = dict_box['size']
+#        self.color = dict_box['color']
 
 
 class SkillCircle(object):
@@ -37,8 +38,8 @@ class SkillLayout(object):
     def __init__(self, dict_skill_layout):
 #    def __init__(self, SkillCircle, number=5, distance=5):
 #        self.skillcircle = SkillCircle
-        self.number = dict_skill_layout['number']
-        self.distance = dict_skill_layout['distance']
+        self.number = dict_skill_layout['circle_number']
+        self.distance = dict_skill_layout['circle_distance']
 #        super().__init__(radius=2, fillcolor, linecolor, showline=False)
 
 
@@ -48,42 +49,67 @@ def write_config(config_dir):
     Settings are defined as nested dictionary and parsed to a JSON file.
     """
     settings_dict = {
-            'Layout': {
-                'height': 29.7,
+            'structure': {
+                'title_page': False,
+                'letter': False,
+                'cv': True,
+                'appendices': False,
+                },
+            'title': {
                 'width': 21.0,
-                'background_color': 'white',
-                'box_top': False,
-                'box_bottom': False,
-                'box_left': True,
-                'box_right': False,
+                'height': 29.7,
+                'show_photo': False,
+                'show_name': True,
+                'show_address': True,
+                'show_phone_number': True,
+                'show_email_address': True,
                 },
-            'Boxes': {
-                'box_top': {
-                    'size': 15,
-                    'color': 'Greys-J',
-                    },
-                'box_bottom': {
-                    'size': 15,
-                    'color': 'Greys-J',
-                    },
-                'box_left': {
-                    'size': 15,
-                    'color': 'Greys-J',
-                    },
-                'box_right': {
-                    'size': 15,
-                    'color': 'Greys-J',
-                    },
+            'letter': {
+                'width': 21.0,
+                'height': 29.7,
                 },
-            'SkillCircle': {
-                'radius': 2,
-                'fillcolor': 'Reds-E',
-                'linecolor': 'black',
-                'showline': False,
-                },
-            'SkillLayout': {
-                'number': 5,
-                'distance': 5,
+            'cv': {
+                'layout': {
+                    'width': 21.0,
+                    'height': 29.7,
+                    'background_color': 'white',
+                    'box_top': False,
+                    'box_bottom': False,
+                    'box_left': True,
+                    'box_right': False,
+                    'include_photo': True,
+                    },
+                'boxes': {
+                    'box_top': {
+                        'size': 15,
+                        'color': 'Greys-J',
+                        },
+                    'box_bottom': {
+                        'size': 15,
+                        'color': 'Greys-J',
+                        },
+                    'box_left': {
+                        'size': 15,
+                        'color': 'Greys-J',
+                        },
+                    'box_right': {
+                        'size': 15,
+                        'color': 'Greys-J',
+                        },
+                    },
+                'skills': {
+                    'layout': {
+                        'show_circles': True,
+                        'circle_number': 5,
+                        'circle_distance': 5,
+                        },
+                    'circle': {
+                        'radius': 2,
+                        'fillcolor': 'Reds-E',
+                        'linecolor': 'black',
+                        'showline': False,
+                        },
+                   },
                 },
             }
     with open(config_dir, 'w') as f:
@@ -94,19 +120,20 @@ def split_config(config):
     """
     Split dictionary from JSON config file into sub dictionaries.
     """
-    dict_layout = config['Layout']
-    dict_box = config['Boxes']
+    dict_layout = config['cv']['layout']
+    dict_box = config['cv']['boxes']
     dict_box_top = dict_box['box_top']
     dict_box_bottom = dict_box['box_bottom']
     dict_box_left = dict_box['box_left']
     dict_box_right = dict_box['box_right']
-    dict_skill_circle = config['SkillCircle']
-    dict_skill_layout = config['SkillLayout']
+    dict_skill_layout = config['cv']['skills']['layout']
+    dict_skill_circle = config['cv']['skills']['circle']
     layout = Layout(dict_layout)
-    box_top = Box(height=dict_box_top['size'], width=layout.width, color=dict_box_top['color'])
-    box_bottom = Box(height=dict_box_bottom['size'], width=layout.width, color=dict_box_bottom['color'])
-    box_left = Box(height=layout.height, width=dict_box_left['size'], color=dict_box_left['color'])
-    box_right = Box(height=layout.height, width=dict_box_right['size'], color=dict_box_right['color'])
+    background_box = Box(color=dict_layout['background_color'], width=dict_layout['width'], height=dict_layout['height'])
+    box_top = Box(color=dict_box_top['color'], width=layout.width, height=dict_box_top['size'])
+    box_bottom = Box(color=dict_box_bottom['color'], width=layout.width, height=dict_box_bottom['size'])
+    box_left = Box(color=dict_box_left['color'], width=dict_box_left['size'], height=layout.height)
+    box_right = Box(color=dict_box_right['color'], width=dict_box_right['size'], height=layout.height)
     skill_circle = SkillCircle(dict_skill_circle)
     skill_layout = SkillLayout(dict_skill_layout)
     return (layout, box_top, box_bottom, box_left, box_right, skill_circle, skill_layout)
