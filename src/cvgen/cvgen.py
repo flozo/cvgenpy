@@ -35,16 +35,13 @@ def main():
     args = parser.parse_args()
 
     # Check verbosity level
-
     verbosity = args.verbose
     if args.quiet is True:
         verbosity = -1
     if verbosity >= 1:
         print(args)
 
-
     # Use config directory or create one
-
     config_dir = os.path.expanduser('~/.config/cvgen')
     fn.check_config_dir(config_dir)
     config_file_data = os.path.join(config_dir, 'cvdata.json')
@@ -52,34 +49,12 @@ def main():
     fn.check_config_file(config_file_data)
     fn.check_config_file(config_file_geo)
 
-    config_data = fn.read_config(config_file_data)
-    config_geo = fn.read_config(config_file_geo)
-    person = cv.split_config(config_data)[0]
-    color_background = 'Blues-G'
-    layout = geo.split_config(config_geo)[0]
-#    skill_decoration = True
-    # Skill layout
-#    skill_circle = geo.split_config(config_geo)[5]
-#    skill_layout = geo.split_config(config_geo)[6]
-    # Skill items
-#    skill1 = cv.SkillItem(name='Python', level=4)
-#    skill2 = cv.SkillItem(name='Bash', level=3)
-#    skill3 = cv.SkillItem(name='LaTeX', level=5)
-#    skill4 = cv.SkillItem(name='Git', level=5)
-    # Skill groups
-#    group1 = cv.SkillGroup(name='Programming', skill_items=[skill1, skill2, skill3])
-#    group2 = cv.SkillGroup(name='Software/Tools', skill_items=[skill4])
-#    skills = []
-#    for i in range(skill_layout.number):
-#        skills.append('\\filldraw[color={}] ({}, {}) circle [radius={}mm]'.format(skill_circle.fillcolor, 2+i*skill_layout.distance/10, 5, skill_circle.radius))
-#    print(skills)
-
     # Check file extension
     outfile = str(args.outfile)
     if outfile[-4:0] != '.tex':
         outfile = outfile + '.tex'
     outfile = os.path.abspath(outfile)
-    out.assemble_latex(outfile, version_str, config_geo, config_data)
+    out.assemble_latex(outfile, version_str, config_file_geo, config_file_data)
     # Messages and execution of pdfLaTeX/mupdf
     if verbosity >=1:
         print('[output] LaTeX file {} created.'.format(outfile))
