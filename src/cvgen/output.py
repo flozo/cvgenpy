@@ -115,15 +115,31 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
     box_bottom = geo.Box(color=dict_box_bottom['color'], width=layout.width, height=dict_box_bottom['size'])
     box_left = geo.Box(color=dict_box_left['color'], width=dict_box_left['size'], height=layout.height)
     box_right = geo.Box(color=dict_box_right['color'], width=dict_box_right['size'], height=layout.height)
+    # Read education items
+    dict_edu = config_data['Education']
+    edu_items = []
+    for edu_item in dict_edu.values():
+        edu_items.append(cv.EduItem(edu_item))
+    # Assemble education items
+    itemx = 10
+    itemy = 15
+    hspace1 = 0.5
+    vspace1 = 0.1
+    indent1 = 1
+    edu = ['% Education items']
+    for idx, edu_item in enumerate(edu_items):
+        print(edu_item.caption)
+        edu.append('\\node (eduitem{}) [anchor=mid] at ({}, {}) {{{}\\,--\\,{}}}'.format(idx, itemx, itemy+2*idx, edu_item.beginning, edu_item.end))
+        edu.append('\\node (subeduitem{}) [anchor=mid, right={} of eduitem{}.east] {{{}, {}}}'.format(idx, hspace1, idx, edu_item.caption, edu_item.location))
+        edu.append('\\node [below={} of subeduitem{}.south west, anchor=north west] {{{}}}'.format(vspace1, idx, edu_item.description))
+    print(edu)
+    # Read skill items
     skill_circle = geo.SkillCircle(dict_skill_circle)
     skill_layout = geo.SkillLayout(dict_skill_layout)
-
     # Assemble skills
     skills = []
     for i in range(skill_layout.number):
         skills.append('\\filldraw[color={}] ({}, {}) circle [radius={}mm]'.format(skill_circle.fillcolor, 2+i*skill_layout.distance/10, 5, skill_circle.radius))
-    #Assemble education
-#    edu = []
 
     # Write to file
     with open(outfile, 'w', encoding='UTF-8') as f:
@@ -141,12 +157,17 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
         # Write layer declaration
         for line in declare_layers():
             f.write('\t' + line + '\n')
-        f.write('\t' + r'\begin{tikzpicture}' + '\n')
+        f.write('\t' + r'\begin{tikzpicture}[' + '\n')
+        f.write('\t\t' + r'inner xsep=0pt,' + '\n')
+        f.write('\t\t' + r'inner ysep=0pt,' + '\n')
+        f.write('\t\t' + r']' + '\n')
         for line in draw_background(layout, config_geo):
             f.write(line + '\n')
         f.write('\t\t' + r'\begin{pgfonlayer}{foreground}' + '\n')
-        for i in range(skill_layout.number):
-            f.write('\t\t\t'+ skills[i] + ';\n')
+        for skill in skills:
+            f.write('\t\t\t'+ skill + ';\n')
+        for edu_item in edu:
+            f.write('\t\t\t'+ edu_item + ';\n')
         f.write('\t\t' + r'\end{pgfonlayer}' + '\n')
         f.write('\t' + r'\end{tikzpicture}' + '\n')
         f.write(r'\end{document}' + '\n')

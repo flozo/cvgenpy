@@ -52,17 +52,18 @@ class SkillGroup(object):
 
 
 class EduItem(object):
-    def __init__(self, caption, location, description, graduation, grade, beginning, end):
-        self.caption = caption
-        self.location = location
-        self.description = description
-        self.graduation = graduation
-        self.grade = grade
-        self.beginning = beginning
-        self.end = end
+    def __init__(self, dict_edu_item):
+#    def __init__(self, caption, location, description, graduation, grade, beginning, end):
+        self.caption = dict_edu_item['caption']
+        self.location = dict_edu_item['location']
+        self.description = dict_edu_item['description']
+        self.graduation = dict_edu_item['graduation']
+        self.grade = dict_edu_item['grade']
+        self.beginning = dict_edu_item['beginning']
+        self.end = dict_edu_item['end']
 
 
-class CarrerItem(object):
+class CareerItem(object):
     def __init(self, caption, company, location, description, beginning, end):
         self.caption = caption
         self.company = company
