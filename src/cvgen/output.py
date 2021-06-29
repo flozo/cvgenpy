@@ -94,6 +94,10 @@ def draw_background(layout, config_geo):
 
 
 def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
+    """
+    Read out config values, create objects, and assemble LaTeX code
+    """
+    # Read config files
     config_data = fn.read_config(config_file_data)
     config_geo = fn.read_config(config_file_geo)
     dict_layout = config_geo['cv']['layout']
@@ -104,6 +108,7 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
     dict_box_right = dict_box['box_right']
     dict_skill_layout = config_geo['cv']['skills']['layout']
     dict_skill_circle = config_geo['cv']['skills']['circle']
+    # Create objects
     layout = geo.Layout(dict_layout)
     background_box = geo.Box(color=dict_layout['background_color'], width=dict_layout['width'], height=dict_layout['height'])
     box_top = geo.Box(color=dict_box_top['color'], width=layout.width, height=dict_box_top['size'])
@@ -113,10 +118,7 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
     skill_circle = geo.SkillCircle(dict_skill_circle)
     skill_layout = geo.SkillLayout(dict_skill_layout)
 
-#    layout = geo.split_config(config_geo)[0]
     # Assemble skills
-#    skill_layout = geo.split_config(config_geo)[6]
-#    skill_circle = geo.split_config(config_geo)[5]
     skills = []
     for i in range(skill_layout.number):
         skills.append('\\filldraw[color={}] ({}, {}) circle [radius={}mm]'.format(skill_circle.fillcolor, 2+i*skill_layout.distance/10, 5, skill_circle.radius))

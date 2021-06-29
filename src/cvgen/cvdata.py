@@ -51,6 +51,27 @@ class SkillGroup(object):
         self.items = skill_items
 
 
+class EduItem(object):
+    def __init__(self, caption, location, description, graduation, grade, beginning, end):
+        self.caption = caption
+        self.location = location
+        self.description = description
+        self.graduation = graduation
+        self.grade = grade
+        self.beginning = beginning
+        self.end = end
+
+
+class CarrerItem(object):
+    def __init(self, caption, company, location, description, beginning, end):
+        self.caption = caption
+        self.company = company
+        self.location = location
+        self.description = description
+        self.beginning = beginning
+        self.end = end
+
+
 def write_config(config_dir):
     """
     Create config file with generic settings.
@@ -113,8 +134,8 @@ def write_config(config_dir):
                     'description': 'What I did...',
                     'graduation': 'High-school diploma',
                     'grade': '1.2',
-                    'from': '01/1990',
-                    'to': '12/1997',
+                    'beginning': '01/1990',
+                    'end': '12/1997',
                     },
                 'Item2': {
                     'caption': 'School2',
@@ -122,8 +143,8 @@ def write_config(config_dir):
                     'description': 'What I did...',
                     'graduation': 'Master',
                     'grade': '1.2',
-                    'from': '01/1998',
-                    'to': '12/2003',
+                    'beginning': '01/1998',
+                    'end': '12/2003',
                     },
                 'Item3': {
                     'caption': 'School3',
@@ -131,8 +152,8 @@ def write_config(config_dir):
                     'description': 'What I did...',
                     'graduation': 'PhD',
                     'grade': '1.2',
-                    'from': '01/2004',
-                    'to': '12/2009',
+                    'beginning': '01/2004',
+                    'end': '12/2009',
                     },
                 },
             'Career': {
@@ -141,24 +162,24 @@ def write_config(config_dir):
                         'company': 'Company1',
                         'location': 'City',
                         'description': 'What I did...',
-                        'from': '01/2010',
-                        'to': '12/2011',
+                        'beginning': '01/2010',
+                        'end': '12/2011',
                         },
                     'Item2': {
                         'caption': 'Job2',
                         'company': 'Company2',
                         'location': 'City',
                         'description': 'What I did...',
-                        'from': '01/2012',
-                        'to': '12/2018',
+                        'beginning': '01/2012',
+                        'end': '12/2018',
                         },
                     'Item3': {
                         'caption': 'Job3',
                         'company': 'Company3',
                         'location': 'City',
                         'description': 'What I did...',
-                        'from': '01/2019',
-                        'to': '06/2021',
+                        'beginning': '01/2019',
+                        'end': '06/2021',
                         },
                     },
             'Appendix': {
