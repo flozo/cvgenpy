@@ -75,6 +75,7 @@ def write_config(config_dir):
                 'postal_code': '12345',
                 'country': 'Country',
                 'phone': '+00(123)456789',
+                'mobile': '+00(123)456789',
                 'email': 'user@mail.net',
                 'webpage': 'https://www.webpage.net',
                 'linkedin': 'https://www.linkedin.com/in/john-smith-123456789/',
@@ -110,55 +111,88 @@ def write_config(config_dir):
                     'caption': 'School1',
                     'location': 'City',
                     'description': 'What I did...',
-                    'graduation': 'PhD',
+                    'graduation': 'High-school diploma',
                     'grade': '1.2',
                     'from': '01/1990',
-                    'to': '12/1998',
+                    'to': '12/1997',
                     },
                 'Item2': {
                     'caption': 'School2',
                     'location': 'City',
                     'description': 'What I did...',
-                    'from': '01/1990',
-                    'to': '12/1998',
+                    'graduation': 'Master',
+                    'grade': '1.2',
+                    'from': '01/1998',
+                    'to': '12/2003',
+                    },
+                'Item3': {
+                    'caption': 'School3',
+                    'location': 'City',
+                    'description': 'What I did...',
+                    'graduation': 'PhD',
+                    'grade': '1.2',
+                    'from': '01/2004',
+                    'to': '12/2009',
                     },
                 },
             'Career': {
                     'Item1': {
                         'caption': 'Job1',
+                        'company': 'Company1',
                         'location': 'City',
                         'description': 'What I did...',
-                        'from': '01/1990',
-                        'to': '12/1998',
+                        'from': '01/2010',
+                        'to': '12/2011',
                         },
-                    'Item1': {
+                    'Item2': {
                         'caption': 'Job2',
+                        'company': 'Company2',
                         'location': 'City',
                         'description': 'What I did...',
-                        'from': '01/1990',
-                        'to': '12/1998',
+                        'from': '01/2012',
+                        'to': '12/2018',
+                        },
+                    'Item3': {
+                        'caption': 'Job3',
+                        'company': 'Company3',
+                        'location': 'City',
+                        'description': 'What I did...',
+                        'from': '01/2019',
+                        'to': '06/2021',
                         },
                     },
             'Appendix': {
                     'Appendix1': {
+                        'name': 'Reference letter1',
+                        'file': '/home/user/Reference_letter1.pdf',
+                        },
+                    'Appendix2': {
+                        'name': 'Reference letter2',
+                        'file': '/home/user/Reference_letter2.pdf',
+                        },
+                    'Appendix3': {
                         'name': 'School certificate',
                         'file': '/home/user/School_certificate.pdf',
                         },
-                    'Appendix2': {
+                    'Appendix4': {
                         'name': 'Bachelor certificate',
                         'file': '/home/user/Bachelor_certificate.pdf',
                         },
-                    'Appendix3': {
+                    'Appendix5': {
                         'name': 'Master certificate',
                        'file': '/home/user/Master_certificate.pdf',
                         },
-                    'Appendix4': {
+                    'Appendix6': {
                         'name': 'PhD certificate',
                         'file': '/home/user/PhD_certificate.pdf',
                         },
-                    'Appendix5': {
-                        'name': 'MOOC certificate',
-                        'file': '/home/user/MOOC_certificate.pdf',
+                    'Appendix7': {
+                        'name': 'MOOC certificate1',
+                        'file': '/home/user/MOOC_certificate1.pdf',
+                        },
+                    'Appendix8': {
+                        'name': 'MOOC certificate2',
+                        'file': '/home/user/MOOC_certificate2.pdf',
                         },
                     },
             }               

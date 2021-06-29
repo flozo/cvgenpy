@@ -1,6 +1,4 @@
 #!/usr/bin/env python3
-#
-# cvgen v0.5 2021-06-28
 
 # Import modules
 
@@ -12,8 +10,8 @@ import output as out
 import os
 
 # Version
-version_num = '0.5'
-version_dat = '2021-06-28'
+version_num = '0.6'
+version_dat = '2021-06-29'
 version_str = '{} ({})'.format(version_num, version_dat)
 
 def main():
