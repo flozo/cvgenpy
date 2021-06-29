@@ -108,6 +108,11 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
     dict_box_right = dict_box['box_right']
     dict_skill_layout = config_geo['cv']['skills']['layout']
     dict_skill_circle = config_geo['cv']['skills']['circle']
+    dict_areas = config_geo['cv']['areas']
+    # Create area objects
+    area_personal = geo.Area(dict_areas['personal'])
+    area_contact = geo.Area(dict_areas['contact'])
+#    area_education = geo.Area(dict_areas['timeline'])
     # Create objects
     layout = geo.Layout(dict_layout)
     background_box = geo.Box(color=dict_layout['background_color'], width=dict_layout['width'], height=dict_layout['height'])
@@ -115,6 +120,8 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
     box_bottom = geo.Box(color=dict_box_bottom['color'], width=layout.width, height=dict_box_bottom['size'])
     box_left = geo.Box(color=dict_box_left['color'], width=dict_box_left['size'], height=layout.height)
     box_right = geo.Box(color=dict_box_right['color'], width=dict_box_right['size'], height=layout.height)
+    # Assemble personal area
+
     # Read education items
     dict_edu = config_data['Education']
     edu_items = []
