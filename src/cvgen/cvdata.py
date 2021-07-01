@@ -10,7 +10,7 @@ class Personal(object):
         self.birth_date = dict_personal['birth_date']
         self.birth_location_city = dict_personal['birth_location_city']
         self.birth_location_country = dict_personal['birth_location_country']
-        self.married = dict_personal['married']
+        self.marital_status = dict_personal['marital_status']
         self.children = dict_personal['children']
         self.photo = dict_personal['photo']
 
@@ -86,8 +86,8 @@ def write_config(config_dir):
                 'birth_date': '1900-01-01',
                 'birth_location_city': 'City',
                 'birth_location_country': 'Country',
-                'married': False,
-                'children': 0,
+                'marital_status': 'unmarried',
+                'children': 'no',
                 'photo': '/home/user/Photo1.jpg',
                 },
             'Contact': {
@@ -220,18 +220,4 @@ def write_config(config_dir):
             }               
     with open(config_dir, 'w') as f:
         json.dump(settings_dict, f, indent=4)
-
-
-def split_config(config):
-    """
-    Split dictionary from JSON config file into sub dictionaries.
-    """
-    dict_personal = config['Personal']
-    dict_contact = config['Contact']
-    dict_company = config['Company']
-    dict_skills = config['Skills']
-    person = Personal(dict_personal)
-    contact = Contact(dict_contact)
-    company = Company(dict_company)
-    return (person, contact, company)
 

@@ -21,10 +21,19 @@ class Area(object):
         self.title = dict_area['title']
         self.pos_x = dict_area['pos_x']
         self.pos_y = dict_area['pos_y']
+        self.head_vspace = dict_area['head_vspace']
+        self.head_sepline = dict_area['head_sepline']
+        self.head_case = dict_area['head_case']
+        self.body_vspace = dict_area['body_vspace']
         self.color = dict_area['color']
+        self.style = dict_area['style']
         self.icon = dict_area['icon']
         self.show_area = dict_area['show_area']
         self.show_icon = dict_area['show_icon']
+        if self.head_case == 'upper':
+            self.title = self.title.upper()
+        elif self.head_case == 'lower':
+            self.title = self.title.lower()
 
 
 class Box(object):
@@ -76,10 +85,12 @@ def write_config(config_dir):
                 'show_address': True,
                 'show_phone_number': True,
                 'show_email_address': True,
+                'language': 'en',
                 },
             'letter': {
                 'width': 21.0,
                 'height': 29.7,
+                'language': 'en',
                 },
             'cv': {
                 'layout': {
@@ -91,13 +102,19 @@ def write_config(config_dir):
                     'box_left': True,
                     'box_right': False,
                     'include_photo': True,
+                    'language': 'en',
                     },
                 'areas': {
                     'personal': {
                         'title': 'About me',
-                        'pos_x': 10,
+                        'pos_x': 8,
                         'pos_y': 25,
+                        'head_vspace': 0.3,
+                        'head_sepline': False,
+                        'head_case': 'upper',
+                        'body_vspace': 1,
                         'color': 'black',
+                        'style': 'oneline',
                         'icon': '/home/user/Icon1.pdf',
                         'show_area': True,
                         'show_icon': False,
@@ -106,7 +123,12 @@ def write_config(config_dir):
                         'title': 'Contact',
                         'pos_x': 2,
                         'pos_y': 25,
+                        'head_vspace': 1,
+                        'head_sepline': False,
+                        'head_case': 'upper',
+                        'body_vspace': 1,
                         'color': 'black',
+                        'style': 'table',
                         'icon': '/home/user/Icon2.pdf',
                         'show_area': True,
                         'show_icon': False,
@@ -115,7 +137,12 @@ def write_config(config_dir):
                         'title': 'Career',
                         'pos_x': 10,
                         'pos_y': 20,
+                        'head_vspace': 1,
+                        'head_sepline': False,
+                        'head_case': 'upper',
+                        'body_vspace': 1,
                         'color': 'black',
+                        'style': 'table',
                         'icon': '/home/user/Icon3.pdf',
                         'show_area': True,
                         'show_icon': False,
@@ -124,7 +151,12 @@ def write_config(config_dir):
                         'title': 'Education',
                         'pos_x': 10,
                         'pos_y': 15,
+                        'head_vspace': 1,
+                        'head_sepline': False,
+                        'head_case': 'upper',
+                        'body_vspace': 1,
                         'color': 'black',
+                        'style': 'table',
                         'icon': '/home/user/Icon4.pdf',
                         'show_area': True,
                         'show_icon': False,
@@ -133,7 +165,12 @@ def write_config(config_dir):
                         'title': 'Skill profile',
                         'pos_x': 2,
                         'pos_y': 10,
+                        'head_vspace': 1,
+                        'head_sepline': False,
+                        'head_case': 'upper',
+                        'body_vspace': 1,
                         'color': 'black',
+                        'style': 'table',
                         'icon': '/home/user/Icon5.pdf',
                         'show_area': True,
                         'show_icon': False,
@@ -142,7 +179,12 @@ def write_config(config_dir):
                         'title': 'Certificates',
                         'pos_x': 2,
                         'pos_y': 5,
+                        'head_vspace': 1,
+                        'head_sepline': False,
+                        'head_case': 'upper',
+                        'body_vspace': 1,
                         'color': 'black',
+                        'style': 'list',
                         'icon': '/home/user/Icon6.pdf',
                         'show_area': True,
                         'show_icon': False,
@@ -158,7 +200,7 @@ def write_config(config_dir):
                         'color': 'Greys-J',
                         },
                     'box_left': {
-                        'size': 15,
+                        'size': 7,
                         'color': 'Greys-J',
                         },
                     'box_right': {

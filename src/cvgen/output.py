@@ -108,6 +108,7 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
     dict_box_right = dict_box['box_right']
     dict_skill_layout = config_geo['cv']['skills']['layout']
     dict_skill_circle = config_geo['cv']['skills']['circle']
+    cv_lang = config_geo['cv']['layout']['language']
     dict_areas = config_geo['cv']['areas']
     # Create area objects
     area_personal = geo.Area(dict_areas['personal'])
@@ -121,6 +122,15 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
     box_left = geo.Box(color=dict_box_left['color'], width=dict_box_left['size'], height=layout.height)
     box_right = geo.Box(color=dict_box_right['color'], width=dict_box_right['size'], height=layout.height)
     # Assemble personal area
+    person = cv.Personal(config_data['Personal'])
+    pers = ['% Personal']
+    pers.append('\\node (pers) [anchor=north west, font=\large] at ({}, {}) {{{}}}'.format(area_personal.pos_x, area_personal.pos_y, area_personal.title))
+    if area_personal.style == 'oneline':
+        if cv_lang == 'en':
+            about_str = 'Born {} in {}, {}, {} children'.format(person.birth_date, person.birth_location_city, person.marital_status, person.children)
+        if cv_lang == 'de':
+            about_str = 'Geboren am {} in {}, {}, {} Kinder'.format(person.birth_date, person.birth_location_city, person.marital_status, person.children)
+    pers.append('\\node [below={} of pers.south west, anchor=north west, font=\small] {{{}}}'.format(area_personal.head_vspace, about_str))
 
     # Read education items
     dict_edu = config_data['Education']
@@ -172,9 +182,11 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
             f.write(line + '\n')
         f.write('\t\t' + r'\begin{pgfonlayer}{foreground}' + '\n')
         for skill in skills:
-            f.write('\t\t\t'+ skill + ';\n')
+            f.write('\t\t\t' + skill + ';\n')
+        for p in pers:
+            f.write('\t\t\t' + p + ';\n')
         for edu_item in edu:
-            f.write('\t\t\t'+ edu_item + ';\n')
+            f.write('\t\t\t' + edu_item + ';\n')
         f.write('\t\t' + r'\end{pgfonlayer}' + '\n')
         f.write('\t' + r'\end{tikzpicture}' + '\n')
         f.write(r'\end{document}' + '\n')
