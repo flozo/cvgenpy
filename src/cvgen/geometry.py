@@ -230,25 +230,25 @@ def write_config(config_dir):
         json.dump(settings_dict, f, indent=4)
 
 
-def split_config(config):
-    """
-    Split dictionary from JSON config file into sub dictionaries.
-    """
-    dict_layout = config['cv']['layout']
-    dict_box = config['cv']['boxes']
-    dict_box_top = dict_box['box_top']
-    dict_box_bottom = dict_box['box_bottom']
-    dict_box_left = dict_box['box_left']
-    dict_box_right = dict_box['box_right']
-    dict_skill_layout = config['cv']['skills']['layout']
-    dict_skill_circle = config['cv']['skills']['circle']
-    layout = Layout(dict_layout)
-    background_box = Box(color=dict_layout['background_color'], width=dict_layout['width'], height=dict_layout['height'])
-    box_top = Box(color=dict_box_top['color'], width=layout.width, height=dict_box_top['size'])
-    box_bottom = Box(color=dict_box_bottom['color'], width=layout.width, height=dict_box_bottom['size'])
-    box_left = Box(color=dict_box_left['color'], width=dict_box_left['size'], height=layout.height)
-    box_right = Box(color=dict_box_right['color'], width=dict_box_right['size'], height=layout.height)
-    skill_circle = SkillCircle(dict_skill_circle)
-    skill_layout = SkillLayout(dict_skill_layout)
-    return (layout, box_top, box_bottom, box_left, box_right, skill_circle, skill_layout)
+#def split_config(config):
+#    """
+#    Split dictionary from JSON config file into sub dictionaries.
+#    """
+#    dict_layout = config['cv']['layout']
+#    dict_box = config['cv']['boxes']
+#    dict_box_top = dict_box['box_top']
+#    dict_box_bottom = dict_box['box_bottom']
+#    dict_box_left = dict_box['box_left']
+#    dict_box_right = dict_box['box_right']
+#    dict_skill_layout = config['cv']['skills']['layout']
+#    dict_skill_circle = config['cv']['skills']['circle']
+#    layout = Layout(dict_layout)
+#    background_box = Box(color=dict_layout['background_color'], width=dict_layout['width'], height=dict_layout['height'])
+#    box_top = Box(color=dict_box_top['color'], width=layout.width, height=dict_box_top['size'])
+#    box_bottom = Box(color=dict_box_bottom['color'], width=layout.width, height=dict_box_bottom['size'])
+#    box_left = Box(color=dict_box_left['color'], width=dict_box_left['size'], height=layout.height)
+#    box_right = Box(color=dict_box_right['color'], width=dict_box_right['size'], height=layout.height)
+#    skill_circle = SkillCircle(dict_skill_circle)
+#    skill_layout = SkillLayout(dict_skill_layout)
+#    return (layout, box_top, box_bottom, box_left, box_right, skill_circle, skill_layout)
 

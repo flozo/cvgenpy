@@ -32,72 +32,52 @@ def declare_layers():
     return l
 
 
-def declare_variables(layout, config_geo):
-    """
-    Define variables for geometry data
-    """
-#    layout = geo.split_config(config_geo)[0]
-    l = [
-        r'\paperh = {}; % paper height'.format(layout.height),
-        r'\paperw = {}; % paper width'.format(layout.width),
-        ]
-    if layout.box_top is True:
-        box_top = geo.split_config(config_geo)[1]
-        l.append(r'\boxth = {}; % box top height'.format(box_top.height))
-    if layout.box_bottom is True:
-        box_bottom = geo.split_config(config_geo)[2]
-        l.append(r'\boxbh = {}; % box bottom height'.format(box_bottom.height))
-    if layout.box_left is True:
-        box_left = geo.split_config(config_geo)[3]
-        l.append(r'\boxlw = {}; % box left width'.format(box_left.width))
-    if layout.box_right is True:
-        box_right = geo.split_config(config_geo)[4]
-        l.append(r'\boxrw = {}; % box right width'.format(box_right.width))
-#    if cv.skills.layout.show_circles is True:
-#        l.append('\t\tikzset{')
-#        l.append('\t\t' + r'skillbar/.pic={')
-#        l.append('\t\t\t' + r'\path')
-#        l.append('\t\t\t' + r'(0, 0) coordinate (-A1)')
-#        l.append('\t\t\t' + r'(\x1, 0) coordinate (-A2)')
-#        for i in range(2, cv.skills.layout.circle_number + 1):
-#            l.append('\t\t\t' + '(\\x1*{}, 0) coordinate (-A{})'.format(i, i+1))
-    return l
-
-
-def draw_background(layout, config_geo):
-    """
-    Draw background and boxes
-    """
-    if layout.box_top is True:
-        box_top = geo.split_config(config_geo)[1]
-    if layout.box_bottom is True:
-        box_bottom = geo.split_config(config_geo)[2]
-    if layout.box_left is True:
-        box_left = geo.split_config(config_geo)[3]
-    if layout.box_right is True:
-        box_right = geo.split_config(config_geo)[4]
-    l = [
-        '\t\t' + r'\begin{pgfonlayer}{background}',
-        '\t\t\t' + '\\fill[{}] (0, 0) rectangle ({}, {});'.format(layout.background_color, layout.width, layout.height),
-        '\t\t' + r'\end{pgfonlayer}',
-        '\t\t' + r'\begin{pgfonlayer}{forebackground}',
-        ]
-    if layout.box_top is True:
-        l.append('\t\t\t' + '\\fill[{}] (0, {}) rectangle (\\paperw, \\paperh); % box top'.format(box_top.color, layout.height-box_top.height))
-    if layout.box_bottom is True:
-        l.append('\t\t\t' + '\\fill[{}] (0, 0) rectangle (\\paperw, \\boxbh); % box bottom'.format(box_bottom.color))
-    if layout.box_left is True:
-        l.append('\t\t\t' + '\\fill[{}] (0, 0) rectangle (\\boxlw, \\paperh); % box left'.format(box_left.color))
-    if layout.box_right is True:
-        l.append('\t\t\t' + '\\fill[{}] ({}, 0) rectangle (\\paperw, \\paperh); % box right'.format(box_right.color, layout.width-box_right.width))
-    l.append('\t\t' + r'\end{pgfonlayer}')
-    return l
-
-
 def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
     """
     Read out config values, create objects, and assemble LaTeX code
     """
+
+    def declare_variables():
+        """
+        Define variables for geometry data
+        """
+        l = [
+            r'\paperw = {}; % paper width'.format(layout.width),
+            r'\paperh = {}; % paper height'.format(layout.height),
+            ]
+        if layout.box_top is True:
+            l.append(r'\boxth = {}; % box top height'.format(box_top.height))
+        if layout.box_bottom is True:
+            l.append(r'\boxbh = {}; % box bottom height'.format(box_bottom.height))
+        if layout.box_left is True:
+            l.append(r'\boxlw = {}; % box left width'.format(box_left.width))
+        if layout.box_right is True:
+            l.append(r'\boxrw = {}; % box right width'.format(box_right.width))
+        return l
+
+
+    def draw_background():
+        """
+        Draw background and boxes
+        """
+        l = [
+            '\t\t' + r'\begin{pgfonlayer}{background}',
+            '\t\t\t' + '\\fill[{}] (0, 0) rectangle ({}, {});'.format(layout.background_color, layout.width, layout.height),
+            '\t\t' + r'\end{pgfonlayer}',
+            '\t\t' + r'\begin{pgfonlayer}{forebackground}',
+            ]
+        if layout.box_top is True:
+            l.append('\t\t\t' + '\\fill[{}] (0, {}) rectangle (\\paperw, \\paperh); % box top'.format(box_top.color, layout.height-box_top.height))
+        if layout.box_bottom is True:
+            l.append('\t\t\t' + '\\fill[{}] (0, 0) rectangle (\\paperw, \\boxbh); % box bottom'.format(box_bottom.color))
+        if layout.box_left is True:
+            l.append('\t\t\t' + '\\fill[{}] (0, 0) rectangle (\\boxlw, \\paperh); % box left'.format(box_left.color))
+        if layout.box_right is True:
+            l.append('\t\t\t' + '\\fill[{}] ({}, 0) rectangle (\\paperw, \\paperh); % box right'.format(box_right.color, layout.width-box_right.width))
+        l.append('\t\t' + r'\end{pgfonlayer}')
+        return l
+
+
     # Read config files
     config_data = fn.read_config(config_file_data)
     config_geo = fn.read_config(config_file_geo)
@@ -170,7 +150,7 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
         f.write(r'\begin{document}' + '\n')
         # Write definitions of variables
         f.write('\t' + r'\tikzmath{' + '\n')
-        for line in declare_variables(layout, config_geo):
+        for line in declare_variables():
             f.write('\t\t' + line + '\n')
         f.write('\t' + r'}' + '\n')
         # Write layer declaration
@@ -180,7 +160,7 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
         f.write('\t\t' + r'inner xsep=0pt,' + '\n')
         f.write('\t\t' + r'inner ysep=0pt,' + '\n')
         f.write('\t\t' + r']' + '\n')
-        for line in draw_background(layout, config_geo):
+        for line in draw_background():
             f.write(line + '\n')
         f.write('\t\t' + r'\begin{pgfonlayer}{foreground}' + '\n')
         for skill in skills:
