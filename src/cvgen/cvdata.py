@@ -51,16 +51,49 @@ class SkillGroup(object):
         self.items = skill_items
 
 
-class EduItem(object):
+class TimelineItem(object):
+    """
+    Generic timeline item
+    """
+    def __init__(self, date, institution_name, institution_type, location, description):
+        self.date = date
+        self.institution_name = institution_name
+        self.institution_type = institution_type
+        self.location = location
+        self.description = description
+
+
+class PeriodItem(TimelineItem):
+    """
+    Defines a timeline period by extending TimelineItem by start_date
+    """
+    def __init__(self, start_date, end_date, institution_name, institution_type, location, description):
+        self.start_date
+        super().__init__(end_date, institution_name, institution_type, location, description)
+
+
+class EduPeriodItem(PeriodItem):
     def __init__(self, dict_edu_item):
-#    def __init__(self, caption, location, description, graduation, grade, beginning, end):
-        self.caption = dict_edu_item['caption']
+        self.start_date = dict_edu_item['start_date']
+        self.end_date = dict_edu_item['end_date']
+        self.school_name = dict_edu_item['school_name']
+        self.school_type = dict_edu_item['school_type']
         self.location = dict_edu_item['location']
         self.description = dict_edu_item['description']
+        super().__init__(self.start_date, self.end_date, self.school_name, self.school_type, self.location, self.description)
+
+
+class EduEventItem(TimelineItem):
+    def __init__(self, dict_edu_item):
+        self.date = dict_edu_item['date']
+        self.school_name = dict_edu_item['school_name']
+        self.school_type = dict_edu_item['school_type']
+        self.location = dict_edu_item['location']
         self.graduation = dict_edu_item['graduation']
         self.grade = dict_edu_item['grade']
-        self.beginning = dict_edu_item['beginning']
-        self.end = dict_edu_item['end']
+        self.thesis_title = dict_edu_item['thesis_title']
+        self.description = dict_edu_item['description']
+        super().__init__(self.date, self.school_name, self.school_type, self.location, self.description)
 
 
 class CareerItem(object):
@@ -129,32 +162,59 @@ def write_config(config_dir):
                     },
                 },
             'Education': {
-                'Item1': {
-                    'caption': 'School1',
+                'period1': {
+                    'start_date': '01/1990',
+                    'end_date': '12/1997',
+                    'school_name': 'School name1',
+                    'school_type': 'High school',
                     'location': 'City',
                     'description': 'What I did...',
+                   },
+                'event1': {
+                    'date': '12/1997',
+                    'school_name': 'School name1',
+                    'school_type': 'High school',
+                    'location': 'City',
                     'graduation': 'High-school diploma',
                     'grade': '1.2',
-                    'beginning': '01/1990',
-                    'end': '12/1997',
-                    },
-                'Item2': {
-                    'caption': 'School2',
-                    'location': 'City',
+                    'thesis_title': '',
                     'description': 'What I did...',
+                   },
+                'period2': {
+                    'start_date': '01/1998',
+                    'end_date': '12/2003',
+                    'school_name': 'University of City',
+                    'school_type': 'University',
+                    'location': 'City',
+                    'description': 'Master studies',
+                    },
+                'event2': {
+                    'date': '12/2003',
+                    'school_name': 'University of City',
+                    'school_type': 'University',
+                    'location': 'City',
                     'graduation': 'Master',
                     'grade': '1.2',
-                    'beginning': '01/1998',
-                    'end': '12/2003',
+                    'thesis_title': 'Investigation of things by means of methods',
+                    'description': '',
                     },
-                'Item3': {
-                    'caption': 'School3',
+                'period3': {
+                    'start_date': '01/2004',
+                    'end_date': '12/2009',
+                    'school_name': 'University of City',
+                    'school_type': 'University',
                     'location': 'City',
-                    'description': 'What I did...',
+                    'description': 'PhD studies',
+                    },
+                'event3': {
+                    'date': '12/2009',
+                    'school_name': 'University of City',
+                    'school_type': 'University',
+                    'location': 'City',
                     'graduation': 'PhD',
                     'grade': '1.2',
-                    'beginning': '01/2004',
-                    'end': '12/2009',
+                    'thesis_title': 'Investigation of things by means of advanced methods',
+                    'description': '',
                     },
                 },
             'Career': {
@@ -163,24 +223,24 @@ def write_config(config_dir):
                         'company': 'Company1',
                         'location': 'City',
                         'description': 'What I did...',
-                        'beginning': '01/2010',
-                        'end': '12/2011',
+                        'start_date': '01/2010',
+                        'end_date': '12/2011',
                         },
                     'Item2': {
                         'caption': 'Job2',
                         'company': 'Company2',
                         'location': 'City',
                         'description': 'What I did...',
-                        'beginning': '01/2012',
-                        'end': '12/2018',
+                        'start_date': '01/2012',
+                        'end_date': '12/2018',
                         },
                     'Item3': {
                         'caption': 'Job3',
                         'company': 'Company3',
                         'location': 'City',
                         'description': 'What I did...',
-                        'beginning': '01/2019',
-                        'end': '06/2021',
+                        'start_date': '01/2019',
+                        'end_date': '06/2021',
                         },
                     },
             'Appendix': {

@@ -26,6 +26,7 @@ class Area(object):
         self.head_sepline = dict_area['head_sepline']
         self.head_case = dict_area['head_case']
         self.body_vspace = dict_area['body_vspace']
+        self.body_indent = dict_area['body_indent']
         self.color = dict_area['color']
         self.style = dict_area['style']
         self.icon = dict_area['icon']
@@ -115,6 +116,7 @@ def write_config(config_dir):
                         'head_sepline': False,
                         'head_case': 'upper',
                         'body_vspace': 1,
+                        'body_indent': 2,
                         'color': 'black',
                         'style': 'oneline',
                         'icon': '/home/user/Icon1.pdf',
@@ -129,13 +131,14 @@ def write_config(config_dir):
                         'head_sepline': False,
                         'head_case': 'upper',
                         'body_vspace': 1,
+                        'body_indent': 2,
                         'color': 'black',
                         'style': 'table',
                         'icon': '/home/user/Icon2.pdf',
                         'show_area': True,
                         'show_icon': False,
                         },
-                    'timeline': {
+                    'career': {
                         'title': 'Career',
                         'pos_x': 10,
                         'pos_y': 20,
@@ -143,20 +146,22 @@ def write_config(config_dir):
                         'head_sepline': False,
                         'head_case': 'upper',
                         'body_vspace': 1,
+                        'body_indent': 2,
                         'color': 'black',
                         'style': 'table',
                         'icon': '/home/user/Icon3.pdf',
                         'show_area': True,
                         'show_icon': False,
                         },
-                    'timeline': {
+                    'education': {
                         'title': 'Education',
                         'pos_x': 10,
-                        'pos_y': 15,
+                        'pos_y': 10,
                         'head_vspace': 1,
                         'head_sepline': False,
                         'head_case': 'upper',
                         'body_vspace': 1,
+                        'body_indent': 2,
                         'color': 'black',
                         'style': 'table',
                         'icon': '/home/user/Icon4.pdf',
@@ -171,6 +176,7 @@ def write_config(config_dir):
                         'head_sepline': False,
                         'head_case': 'upper',
                         'body_vspace': 1,
+                        'body_indent': 2,
                         'color': 'black',
                         'style': 'table',
                         'icon': '/home/user/Icon5.pdf',
@@ -185,6 +191,7 @@ def write_config(config_dir):
                         'head_sepline': False,
                         'head_case': 'upper',
                         'body_vspace': 1,
+                        'body_indent': 2,
                         'color': 'black',
                         'style': 'list',
                         'icon': '/home/user/Icon6.pdf',

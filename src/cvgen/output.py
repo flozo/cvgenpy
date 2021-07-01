@@ -62,7 +62,7 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
         """
         l = [
             '\t\t' + r'\begin{pgfonlayer}{background}',
-            '\t\t\t' + '\\fill[{}] (0, 0) rectangle ({}, {});'.format(layout.background_color, layout.width, layout.height),
+            '\t\t\t' + '\\fill[{}] (0, 0) rectangle (\\paperw, \paperh);'.format(layout.background_color),
             '\t\t' + r'\end{pgfonlayer}',
             '\t\t' + r'\begin{pgfonlayer}{forebackground}',
             ]
@@ -116,21 +116,31 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
 
     # Read education items
     dict_edu = config_data['Education']
+    print(dict_edu)
     edu_items = []
     for edu_item in dict_edu.values():
-        edu_items.append(cv.EduItem(edu_item))
+        print(edu_item)
+        if 'start_date' in edu_item:
+            edu_items.append(cv.EduPeriodItem(edu_item))
+        else:
+            edu_items.append(cv.EduEventItem(edu_item))
     # Assemble education items
-    itemx = 10
-    itemy = 15
-    hspace1 = 0.5
-    vspace1 = 0.1
-    indent1 = 1
+    area_edu = geo.Area(dict_areas['education'])
+    itemx = area_edu.pos_x
+    itemy = area_edu.pos_y
+    hspace1 = area_edu.body_indent
+    vspace1 = area_edu.body_vspace
     edu = ['% Education items']
     for idx, edu_item in enumerate(edu_items):
-        print(edu_item.caption)
-        edu.append('\\node (eduitem{}) [anchor=mid] at ({}, {}) {{{}\\,--\\,{}}}'.format(idx, itemx, itemy+2*idx, edu_item.beginning, edu_item.end))
-        edu.append('\\node (subeduitem{}) [anchor=mid, right={} of eduitem{}.east] {{{}, {}}}'.format(idx, hspace1, idx, edu_item.caption, edu_item.location))
-        edu.append('\\node [below={} of subeduitem{}.south west, anchor=north west] {{{}}}'.format(vspace1, idx, edu_item.description))
+        if isinstance(edu_item, cv.EduPeriodItem):
+            edu.append('\\node (eduitem{}) [anchor=mid] at ({}, {}) {{{}\\,--\\,{}}}'.format(idx, itemx, itemy+2*idx, edu_item.start_date, edu_item.end_date))
+            edu.append('\\node (subeduitem{}) [anchor=mid, right={} of eduitem{}.east] {{{}, {}}}'.format(idx, hspace1, idx, edu_item.school_name, edu_item.location))
+            edu.append('\\node [below={} of subeduitem{}.south west, anchor=north west] {{{}}}'.format(vspace1, idx, edu_item.description))
+        else:
+            edu.append('\\node (eduitem{}) [anchor=mid] at ({}, {}) {{{}}}'.format(idx, itemx, itemy+2*idx, edu_item.date))
+            edu.append('\\node (subeduitem{}) [anchor=mid, right={} of eduitem{}.east] {{{}, {}}}'.format(idx, hspace1, idx, edu_item.school_name, edu_item.location))
+            edu.append('\\node [below={} of subeduitem{}.south west, anchor=north west] {{{}}}'.format(vspace1, idx, edu_item.description))
+
     print(edu)
     # Read skill items
     skill_circle = geo.SkillCircle(dict_skill_circle)
