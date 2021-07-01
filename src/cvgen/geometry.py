@@ -7,6 +7,7 @@ class Layout(object):
     def __init__(self, dict_layout):
         self.width = dict_layout['width']
         self.height = dict_layout['height']
+        self.pages = dict_layout['pages']
         self.background_color = dict_layout['background_color']
         self.box_top = dict_layout['box_top']
         self.box_bottom = dict_layout['box_bottom']
@@ -96,6 +97,7 @@ def write_config(config_dir):
                 'layout': {
                     'width': 21.0,
                     'height': 29.7,
+                    'pages': 2,
                     'background_color': 'white',
                     'box_top': False,
                     'box_bottom': False,

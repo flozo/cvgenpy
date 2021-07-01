@@ -9,11 +9,12 @@ def preamble():
     Define LaTeX preamble with required packages included
     """
     l = [
-        r'\documentclass[12pt, tikz]{standalone}',
+        r'\documentclass[12pt, tikz, multi, crop]{standalone}',
         r'\usepackage[sfdefault, scaled=1.0098]{FiraSans}',
         r'\usepackage{newtxsf}',
         r'\usepackage{tikz}',
         r'\usetikzlibrary{positioning, math, colorbrewer, backgrounds}',
+        r'\standaloneenv{tikzpicture}',
         ]
     return l
 
@@ -109,6 +110,7 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
     dict_skill_layout = config_geo['cv']['skills']['layout']
     dict_skill_circle = config_geo['cv']['skills']['circle']
     cv_lang = config_geo['cv']['layout']['language']
+    cv_pages = config_geo['cv']['layout']['pages']
     dict_areas = config_geo['cv']['areas']
     # Create area objects
     area_personal = geo.Area(dict_areas['personal'])
@@ -189,5 +191,12 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
             f.write('\t\t\t' + edu_item + ';\n')
         f.write('\t\t' + r'\end{pgfonlayer}' + '\n')
         f.write('\t' + r'\end{tikzpicture}' + '\n')
+        if cv_pages > 1:
+            f.write('\t' + r'\begin{tikzpicture}[' + '\n')
+            f.write('\t\t' + r'inner xsep=0pt,' + '\n')
+            f.write('\t\t' + r'inner ysep=0pt,' + '\n')
+            f.write('\t\t' + r']' + '\n')
+            f.write('\t\t' + '\\fill[fill=none] (0, 0) rectangle ({}, {});\n'.format(layout.width, layout.height))
+            f.write('\t' + r'\end{tikzpicture}' + '\n')
         f.write(r'\end{document}' + '\n')
 
