@@ -55,11 +55,12 @@ class TimelineItem(object):
     """
     Generic timeline item
     """
-    def __init__(self, date, institution_name, institution_type, location, description):
+    def __init__(self, date, institution_name, institution_type, location, role, description):
         self.date = date
         self.institution_name = institution_name
         self.institution_type = institution_type
         self.location = location
+        self.role = role
         self.description = description
 
 
@@ -67,43 +68,47 @@ class PeriodItem(TimelineItem):
     """
     Defines a timeline period by extending TimelineItem by start_date
     """
-    def __init__(self, start_date, end_date, institution_name, institution_type, location, description):
+    def __init__(self, start_date, end_date, institution_name, institution_type, location, role, description):
         self.start_date
-        super().__init__(end_date, institution_name, institution_type, location, description)
+        super().__init__(end_date, institution_name, institution_type, location, role, description)
 
 
 class EduPeriodItem(PeriodItem):
-    def __init__(self, dict_edu_item):
-        self.start_date = dict_edu_item['start_date']
-        self.end_date = dict_edu_item['end_date']
-        self.school_name = dict_edu_item['school_name']
-        self.school_type = dict_edu_item['school_type']
-        self.location = dict_edu_item['location']
-        self.description = dict_edu_item['description']
-        super().__init__(self.start_date, self.end_date, self.school_name, self.school_type, self.location, self.description)
+    def __init__(self, dict_edu):
+        self.start_date = dict_edu['start_date']
+        self.end_date = dict_edu['end_date']
+        self.school_name = dict_edu['school_name']
+        self.school_type = dict_edu['school_type']
+        self.location = dict_edu['location']
+        self.role = dict_edu['role']
+        self.description = dict_edu['description']
+        super().__init__(self.start_date, self.end_date, self.school_name, self.school_type, self.location, self.role, self.description)
 
 
 class EduEventItem(TimelineItem):
-    def __init__(self, dict_edu_item):
-        self.date = dict_edu_item['date']
-        self.school_name = dict_edu_item['school_name']
-        self.school_type = dict_edu_item['school_type']
-        self.location = dict_edu_item['location']
-        self.graduation = dict_edu_item['graduation']
-        self.grade = dict_edu_item['grade']
-        self.thesis_title = dict_edu_item['thesis_title']
-        self.description = dict_edu_item['description']
-        super().__init__(self.date, self.school_name, self.school_type, self.location, self.description)
+    def __init__(self, dict_edu):
+        self.date = dict_edu['date']
+        self.school_name = dict_edu['school_name']
+        self.school_type = dict_edu['school_type']
+        self.location = dict_edu['location']
+        self.graduation = dict_edu['graduation']
+        self.grade = dict_edu['grade']
+        self.thesis_title = dict_edu['thesis_title']
+        self.role = None
+        self.description = dict_edu['description']
+        super().__init__(self.date, self.school_name, self.school_type, self.location, self.role, self.description)
 
 
-class CareerItem(object):
-    def __init(self, caption, company, location, description, beginning, end):
-        self.caption = caption
-        self.company = company
-        self.location = location
-        self.description = description
-        self.beginning = beginning
-        self.end = end
+class CareerItem(PeriodItem):
+    def __init__(self, dict_career):
+        self.start_date = dict_career['start_date']
+        self.end_date = dict_career['end_date']
+        self.company_name = dict_career['company_name']
+        self.company_type = dict_career['company_type']
+        self.location = dict_career['location']
+        self.role = dict_career['role']
+        self.description = dict_career['description']
+        super().__init__(self.start_date, self.end_date, self.company_name, self.company_type, self.location, self.role, self.description)
 
 
 def write_config(config_dir):
@@ -168,6 +173,7 @@ def write_config(config_dir):
                     'school_name': 'School name1',
                     'school_type': 'High school',
                     'location': 'City',
+                    'role': 'Student',
                     'description': 'What I did...',
                    },
                 'event1': {
@@ -178,6 +184,7 @@ def write_config(config_dir):
                     'graduation': 'High-school diploma',
                     'grade': '1.2',
                     'thesis_title': '',
+                    'role': 'Student',
                     'description': 'What I did...',
                    },
                 'period2': {
@@ -186,6 +193,7 @@ def write_config(config_dir):
                     'school_name': 'University of City',
                     'school_type': 'University',
                     'location': 'City',
+                    'role': 'Master student',
                     'description': 'Master studies',
                     },
                 'event2': {
@@ -196,6 +204,7 @@ def write_config(config_dir):
                     'graduation': 'Master',
                     'grade': '1.2',
                     'thesis_title': 'Investigation of things by means of methods',
+                    'role': 'Master student',
                     'description': '',
                     },
                 'period3': {
@@ -204,7 +213,8 @@ def write_config(config_dir):
                     'school_name': 'University of City',
                     'school_type': 'University',
                     'location': 'City',
-                    'description': 'PhD studies',
+                    'role': 'PhD student',
+                    'description': 'Research, lab work, facility maintenance, teaching, student supervision',
                     },
                 'event3': {
                     'date': '12/2009',
@@ -214,34 +224,38 @@ def write_config(config_dir):
                     'graduation': 'PhD',
                     'grade': '1.2',
                     'thesis_title': 'Investigation of things by means of advanced methods',
+                    'role': 'PhD student',
                     'description': '',
                     },
                 },
             'Career': {
                     'Item1': {
-                        'caption': 'Job1',
-                        'company': 'Company1',
-                        'location': 'City',
-                        'description': 'What I did...',
                         'start_date': '01/2010',
-                        'end_date': '12/2011',
+                        'end_date': '12/2012',
+                        'company_name': 'Company1',
+                        'company_type': 'Biotech',
+                        'location': 'City',
+                        'role': 'Programmer',
+                        'description': 'Backend development',
                         },
                     'Item2': {
-                        'caption': 'Job2',
-                        'company': 'Company2',
-                        'location': 'City',
-                        'description': 'What I did...',
-                        'start_date': '01/2012',
+                        'start_date': '01/2013',
                         'end_date': '12/2018',
-                        },
-                    'Item3': {
-                        'caption': 'Job3',
-                        'company': 'Company3',
+                        'company_name': 'Company2',
+                        'company_type': 'Finance',
                         'location': 'City',
-                        'description': 'What I did...',
+                        'role': 'Data scientist',
+                        'description': 'Dashboard design and data visualization',
+                       },
+                    'Item3': {
                         'start_date': '01/2019',
-                        'end_date': '06/2021',
-                        },
+                        'end_date': '07/2021',
+                        'company_name': 'Company3',
+                        'company_type': 'Government agency',
+                        'location': 'City',
+                        'role': 'Data scientist',
+                        'description': 'Public health data analysis',
+                       },
                     },
             'Appendix': {
                     'Appendix1': {

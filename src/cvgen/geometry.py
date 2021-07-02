@@ -110,7 +110,7 @@ def write_config(config_dir):
                 'areas': {
                     'personal': {
                         'title': 'About me',
-                        'pos_x': 8,
+                        'pos_x': 7.7,
                         'pos_y': 25,
                         'head_vspace': 0.3,
                         'head_sepline': False,
@@ -140,8 +140,8 @@ def write_config(config_dir):
                         },
                     'career': {
                         'title': 'Career',
-                        'pos_x': 10,
-                        'pos_y': 20,
+                        'pos_x': 7.7,
+                        'pos_y': 22,
                         'head_vspace': 1,
                         'head_sepline': False,
                         'head_case': 'upper',
@@ -155,8 +155,8 @@ def write_config(config_dir):
                         },
                     'education': {
                         'title': 'Education',
-                        'pos_x': 8,
-                        'pos_y': 22,
+                        'pos_x': 7.7,
+                        'pos_y': 15,
                         'head_vspace': 1,
                         'head_sepline': False,
                         'head_case': 'upper',
