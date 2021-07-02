@@ -155,8 +155,8 @@ def write_config(config_dir):
                         },
                     'education': {
                         'title': 'Education',
-                        'pos_x': 10,
-                        'pos_y': 10,
+                        'pos_x': 8,
+                        'pos_y': 22,
                         'head_vspace': 1,
                         'head_sepline': False,
                         'head_case': 'upper',

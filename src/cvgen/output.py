@@ -4,6 +4,7 @@ import cvdata as cv
 import geometry as geo
 import functions as fn
 
+
 def preamble():
     """
     Define LaTeX preamble with required packages included
@@ -13,7 +14,7 @@ def preamble():
         r'\usepackage[sfdefault, scaled=1.0098]{FiraSans}',
         r'\usepackage{newtxsf}',
         r'\usepackage{tikz}',
-        r'\usetikzlibrary{positioning, math, colorbrewer, backgrounds}',
+        r'\usetikzlibrary{positioning, math, colorbrewer, backgrounds, matrix}',
         r'\standaloneenv{tikzpicture}',
         ]
     return l
@@ -105,14 +106,18 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
     box_right = geo.Box(color=dict_box_right['color'], width=dict_box_right['size'], height=layout.height)
     # Assemble personal area
     person = cv.Personal(config_data['Personal'])
-    pers = ['% Personal']
-    pers.append('\\node (pers) [anchor=north west, font=\large] at ({}, {}) {{{}}}'.format(area_personal.pos_x, area_personal.pos_y, area_personal.title))
+    pers = [
+            '% PERSONAL AREA',
+            '% |- Title:',
+            ]
+    pers.append('\\node (pers) [anchor=north west, font=\large] at ({}, {}) {{{}}};'.format(area_personal.pos_x, area_personal.pos_y, area_personal.title))
+    pers.append('% |- Items:')
     if area_personal.style == 'oneline':
         if cv_lang == 'en':
             about_str = 'Born {} in {}, {}, {} children'.format(person.birth_date, person.birth_location_city, person.marital_status, person.children)
         if cv_lang == 'de':
             about_str = 'Geboren am {} in {}, {}, {} Kinder'.format(person.birth_date, person.birth_location_city, person.marital_status, person.children)
-    pers.append('\\node [below={} of pers.south west, anchor=north west, font=\small] {{{}}}'.format(area_personal.head_vspace, about_str))
+    pers.append('\\node [below={} of pers.south west, anchor=north west, font=\small] {{{}}};'.format(area_personal.head_vspace, about_str))
 
     # Read education items
     dict_edu = config_data['Education']
@@ -130,16 +135,36 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
     itemy = area_edu.pos_y
     hspace1 = area_edu.body_indent
     vspace1 = area_edu.body_vspace
-    edu = ['% Education items']
-    for idx, edu_item in enumerate(edu_items):
+    edu = [
+            '% EDUCATION AREA',
+            '% |- Title:',
+            r'\node [anchor=north west, font=\large] at ({}, {}) {{{}}};'.format(itemx, itemy, area_edu.title),
+            '% |- Items:',
+            r'\begin{scope}[row sep=-\pgflinewidth, column sep=-\pgflinewidth, text depth=0.0cm, minimum height=0.5cm]',
+            '\t\\matrix (edu) at ({}, {}) ['.format(itemx, itemy-area_edu.head_vspace),
+            '\t\t' + r'anchor=north west,',
+            '\t\t' + r'matrix of nodes,',
+            '\t\t' + r'column 1/.style={nodes={cell, minimum width=3.5cm, text width=3.5cm, align=right}},',
+            '\t\t' + r'column 2/.style={nodes={cell, minimum width=1.5cm, text width=7.0cm, align=left}},',
+            '\t\t' + r']{',
+            ]
+
+    for edu_item in reversed(edu_items):
         if isinstance(edu_item, cv.EduPeriodItem):
-            edu.append('\\node (eduitem{}) [anchor=mid] at ({}, {}) {{{}\\,--\\,{}}}'.format(idx, itemx, itemy+2*idx, edu_item.start_date, edu_item.end_date))
-            edu.append('\\node (subeduitem{}) [anchor=mid, right={} of eduitem{}.east] {{{}, {}}}'.format(idx, hspace1, idx, edu_item.school_name, edu_item.location))
-            edu.append('\\node [below={} of subeduitem{}.south west, anchor=north west] {{{}}}'.format(vspace1, idx, edu_item.description))
+            edu.append('\t\t\\node {{{}\\,--\\,{}}}; & \\node {{{}}};\\\\'.format(edu_item.start_date, edu_item.end_date, edu_item.school_name))
+            edu.append('\t\t & \\node [text depth=0.5cm] {{{}}};\\\\'.format(edu_item.description))
+#            edu.append('\\node (eduitem{}) [anchor=mid] at ({}, {}) {{{}\\,--\\,{}}}'.format(idx, itemx, itemy+2*idx, edu_item.start_date, edu_item.end_date))
+#            edu.append('\\node (subeduitem{}) [anchor=mid, right={} of eduitem{}.east] {{{}, {}}}'.format(idx, hspace1, idx, edu_item.school_name, edu_item.location))
+#            edu.append('\\node [below={} of subeduitem{}.south west, anchor=north west] {{{}}}'.format(vspace1, idx, edu_item.description))
         else:
-            edu.append('\\node (eduitem{}) [anchor=mid] at ({}, {}) {{{}}}'.format(idx, itemx, itemy+2*idx, edu_item.date))
-            edu.append('\\node (subeduitem{}) [anchor=mid, right={} of eduitem{}.east] {{{}, {}}}'.format(idx, hspace1, idx, edu_item.school_name, edu_item.location))
-            edu.append('\\node [below={} of subeduitem{}.south west, anchor=north west] {{{}}}'.format(vspace1, idx, edu_item.description))
+            edu.append('\t\t\\node {{{}}}; & \\node {{{}}};\\\\'.format(edu_item.date, edu_item.school_name))
+            edu.append('\t\t & \\node [text depth=0.5cm] {{{}}};\\\\'.format(edu_item.description))
+#            edu.append('\\node (eduitem{}) [anchor=mid] at ({}, {}) {{{}}}'.format(idx, itemx, itemy+2*idx, edu_item.date))
+#            edu.append('\\node (subeduitem{}) [anchor=mid, right={} of eduitem{}.east] {{{}, {}}}'.format(idx, hspace1, idx, edu_item.school_name, edu_item.location))
+#            edu.append('\\node [below={} of subeduitem{}.south west, anchor=north west] {{{}}}'.format(vspace1, idx, edu_item.description))
+#    edu[11:] = edu[11:][::-1]   # reverse order of items
+    edu.append('\t\t' + r'};')
+    edu.append(r'\end{scope}')
 
     print(edu)
     # Read skill items
@@ -169,6 +194,7 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
         f.write('\t' + r'\begin{tikzpicture}[' + '\n')
         f.write('\t\t' + r'inner xsep=0pt,' + '\n')
         f.write('\t\t' + r'inner ysep=0pt,' + '\n')
+        f.write('\t\t' + r'cell/.style={rectangle, draw=black, inner xsep=6pt, inner ysep=4pt},' + '\n')
         f.write('\t\t' + r']' + '\n')
         for line in draw_background():
             f.write(line + '\n')
@@ -176,9 +202,9 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
         for skill in skills:
             f.write('\t\t\t' + skill + ';\n')
         for p in pers:
-            f.write('\t\t\t' + p + ';\n')
+            f.write('\t\t\t' + p + '\n')
         for edu_item in edu:
-            f.write('\t\t\t' + edu_item + ';\n')
+            f.write('\t\t\t' + edu_item + '\n')
         f.write('\t\t' + r'\end{pgfonlayer}' + '\n')
         f.write('\t' + r'\end{tikzpicture}' + '\n')
         if cv_pages > 1:
