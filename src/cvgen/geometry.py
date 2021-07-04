@@ -13,7 +13,6 @@ class Layout(object):
         self.box_bottom = dict_layout['box_bottom']
         self.box_left = dict_layout['box_left']
         self.box_right = dict_layout['box_right']
-#        super().__init__(size, color)
 
 
 class Area(object):
@@ -32,6 +31,8 @@ class Area(object):
         self.icon = dict_area['icon']
         self.show_area = dict_area['show_area']
         self.show_icon = dict_area['show_icon']
+        self.hyperlinks = dict_area['hyperlinks']
+        self.hide_items = dict_area['hide_items']
         if self.head_case == 'upper':
             self.title = self.title.upper()
         elif self.head_case == 'lower':
@@ -105,6 +106,8 @@ def write_config(config_dir):
                     'box_left': True,
                     'box_right': False,
                     'include_photo': True,
+                    'title': 'Curriculum vitae',
+                    'title_on_every_page': False,
                     'language': 'en',
                     },
                 'areas': {
@@ -122,10 +125,12 @@ def write_config(config_dir):
                         'icon': '/home/user/Icon1.pdf',
                         'show_area': True,
                         'show_icon': False,
+                        'hyperlinks': False,
+                        'hide_items': [],
                         },
                     'contact': {
                         'title': 'Contact',
-                        'pos_x': 2,
+                        'pos_x': 1,
                         'pos_y': 25,
                         'head_vspace': 1,
                         'head_sepline': False,
@@ -137,6 +142,8 @@ def write_config(config_dir):
                         'icon': '/home/user/Icon2.pdf',
                         'show_area': True,
                         'show_icon': False,
+                        'hyperlinks': True,
+                        'hide_items': ['webpage', 'xing', 'phone', 'country'],
                         },
                     'career': {
                         'title': 'Career',
@@ -152,6 +159,8 @@ def write_config(config_dir):
                         'icon': '/home/user/Icon3.pdf',
                         'show_area': True,
                         'show_icon': False,
+                        'hyperlinks': False,
+                        'hide_items': [],
                         },
                     'education': {
                         'title': 'Education',
@@ -167,6 +176,8 @@ def write_config(config_dir):
                         'icon': '/home/user/Icon4.pdf',
                         'show_area': True,
                         'show_icon': False,
+                        'hyperlinks': False,
+                        'hide_items': [],
                         },
                     'skills': {
                         'title': 'Skill profile',
@@ -182,6 +193,8 @@ def write_config(config_dir):
                         'icon': '/home/user/Icon5.pdf',
                         'show_area': True,
                         'show_icon': False,
+                        'hyperlinks': False,
+                        'hide_items': [],
                         },
                     'knowledge': {
                         'title': 'Certificates',
@@ -197,6 +210,8 @@ def write_config(config_dir):
                         'icon': '/home/user/Icon6.pdf',
                         'show_area': True,
                         'show_icon': False,
+                        'hyperlinks': False,
+                        'hide_items': [],
                         },
                     },
                 'boxes': {
@@ -210,7 +225,7 @@ def write_config(config_dir):
                         },
                     'box_left': {
                         'size': 7,
-                        'color': 'Greys-J',
+                        'color': 'Greys-C',
                         },
                     'box_right': {
                         'size': 15,
@@ -221,12 +236,12 @@ def write_config(config_dir):
                     'layout': {
                         'show_circles': True,
                         'circle_number': 5,
-                        'circle_distance': 5,
+                        'circle_distance': 3.6,
                         },
                     'circle': {
-                        'radius': 2,
-                        'fillcolor': 'Reds-E',
-                        'opencolor': 'Reds-D',
+                        'radius': 1.5,
+                        'fillcolor': 'Blues-K',
+                        'opencolor': 'Blues-D',
                         'linecolor': 'black',
                         'showline': False,
                         },

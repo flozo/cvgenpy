@@ -14,8 +14,13 @@ def preamble():
         r'\usepackage[sfdefault, scaled=1.0098]{FiraSans}',
         r'\usepackage{newtxsf}',
         r'\usepackage{tikz}',
+        r'\usepackage{hyperref}',
         r'\usetikzlibrary{positioning, math, colorbrewer, backgrounds, matrix}',
         r'\standaloneenv{tikzpicture}',
+        r'\hypersetup{',
+        '\t' + r'colorlinks=true,',
+        '\t' + r'urlcolor=Blues-J,',
+        r'}',
         ]
     return l
 
@@ -95,7 +100,6 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
     dict_areas = config_geo['cv']['areas']
     # Create area objects
     area_personal = geo.Area(dict_areas['personal'])
-    area_contact = geo.Area(dict_areas['contact'])
 #    area_education = geo.Area(dict_areas['timeline'])
     # Create objects
     layout = geo.Layout(dict_layout)
@@ -104,6 +108,10 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
     box_bottom = geo.Box(color=dict_box_bottom['color'], width=layout.width, height=dict_box_bottom['size'])
     box_left = geo.Box(color=dict_box_left['color'], width=dict_box_left['size'], height=layout.height)
     box_right = geo.Box(color=dict_box_right['color'], width=dict_box_right['size'], height=layout.height)
+
+
+
+
     # Assemble personal area
     person = cv.Personal(config_data['Personal'])
     pers = [
@@ -118,6 +126,38 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
         if cv_lang == 'de':
             about_str = 'Geboren am {} in {}, {}, {} Kinder'.format(person.birth_date, person.birth_location_city, person.marital_status, person.children)
     pers.append('\\node [below={} of pers.south west, anchor=north west, font=\small] {{{}}};'.format(area_personal.head_vspace, about_str))
+
+    # Assemble contact area
+    area_contact = geo.Area(dict_areas['contact'])
+    itemx = area_contact.pos_x
+    itemy = area_contact.pos_y
+    hspace1 = area_contact.body_indent
+    vspace1 = area_contact.body_vspace
+    cont = [
+            '% CONTACT AREA',
+            '% |- Title:',
+            '\\node (cont) [anchor=north west, font=\large] at ({}, {}) {{{}}};'.format(area_contact.pos_x, area_contact.pos_y, area_contact.title),
+            '% |- Items:',
+            r'\begin{scope}[row sep=-\pgflinewidth, column sep=-\pgflinewidth, text depth=0.0cm, minimum height=0.5cm]',
+            '\t\\matrix (con) at ({}, {}) ['.format(itemx, itemy-area_contact.head_vspace),
+            '\t\t' + r'anchor=north west,',
+            '\t\t' + r'matrix of nodes,',
+            '\t\t' + r'column 1/.style={nodes={cell1}},',
+            '\t\t' + r'column 2/.style={nodes={cell2}},',
+            '\t\t' + r']{',
+            ]
+    contact = cv.Contact(config_data['Contact'])
+    print(config_data['Contact'])
+    for key, value in config_data['Contact'].items():
+        if key not in area_contact.hide_items:
+            key = key.replace('_', r'\_')
+            value = value.replace('_', r'\_')
+            if (area_contact.hyperlinks is True) and (key in ('email', 'webpage', 'linkedin', 'xing', 'orcid', 'github')) and (value != ''):
+                value = r'\href{' + value + r'}{' + key + '}'
+            cont.append('\t\t\\node {{{}}}; & \\node {{{}}};\\\\'.format(key, value))
+    cont.append('\t\t'+ r'};')
+    cont.append(r'\end{scope}')
+    
     # Read career items
     dict_career = config_data['Career']
     print(dict_career)
@@ -231,6 +271,8 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
             f.write('\t\t\t' + car_item + '\n')
         for edu_item in edu:
             f.write('\t\t\t' + edu_item + '\n')
+        for c in cont:
+            f.write('\t\t\t' + c + '\n')
         f.write('\t\t' + r'\end{pgfonlayer}' + '\n')
         f.write('\t' + r'\end{tikzpicture}' + '\n')
         if cv_pages > 1:

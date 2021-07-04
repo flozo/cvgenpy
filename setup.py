@@ -13,7 +13,7 @@ long_description = (here/'README.md').read_text(encoding='utf-8')
 
 setup(
         name = 'crypto',
-        version = '0.7',
+        version = '0.9',
         description = 'A program for generating a curriculum vitae.',
         long_description = long_description,
         long_description_content_type = 'text/markdown',
