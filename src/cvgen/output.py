@@ -110,8 +110,6 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
     box_left = geo.Box(color=dict_box_left['color'], width=dict_box_left['size'], height=layout.height)
     box_right = geo.Box(color=dict_box_right['color'], width=dict_box_right['size'], height=layout.height)
 
-
-
     # Icons
     icons = config_geo['icons']
 
@@ -124,10 +122,7 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
     pers.append('\\node (pers) [anchor=north west, font=\large] at ({}, {}) {{{}}};'.format(area_personal.pos_x, area_personal.pos_y, area_personal.title))
     pers.append('% |- Items:')
     if area_personal.style == 'oneline':
-        if cv_lang == 'en':
-            about_str = 'Born {} in {}, {}, {} children'.format(person.birth_date, person.birth_location_city, person.marital_status, person.children)
-        if cv_lang == 'de':
-            about_str = 'Geboren am {} in {}, {}, {} Kinder'.format(person.birth_date, person.birth_location_city, person.marital_status, person.children)
+        about_str = geo.Personal(config_data['Personal']).oneline(cv_lang)
     pers.append('\\node [below={} of pers.south west, anchor=north west, font=\small] {{{}}};'.format(area_personal.head_vspace, about_str))
 
     # Assemble contact area
@@ -145,9 +140,8 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
             '\t\\matrix (con) at ({}, {}) ['.format(itemx, itemy-area_contact.head_vspace),
             '\t\t' + r'anchor=north west,',
             '\t\t' + r'matrix of nodes,',
-            '\t\t' + r'column 1/.style={nodes={cell1}},',
-            '\t\t' + r'column 2/.style={nodes={cell1}},',
-            '\t\t' + r'column 3/.style={nodes={cell2}},',
+            '\t\t' + r'column 1/.style={nodes={cell3}},',
+            '\t\t' + r'column 2/.style={nodes={cell4}},',
             '\t\t' + r']{',
             ]
     contact = cv.Contact(config_data['Contact'])
@@ -267,6 +261,8 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
         f.write('\t\t' + r'inner ysep=0pt,' + '\n')
         f.write('\t\t' + r'cell1/.style={rectangle, draw=black, inner xsep=0pt, inner ysep=4pt, text height=0.3cm, align=right, minimum width=2.0cm, text width=3.5cm},' + '\n')
         f.write('\t\t' + r'cell2/.style={rectangle, draw=black, inner xsep=6pt, inner ysep=4pt, text height=0.3cm, align=left, minimum width=1.5cm, text width=8.0cm},' + '\n')
+        f.write('\t\t' + r'cell3/.style={rectangle, draw=black, inner xsep=0pt, inner ysep=4pt, text height=0.3cm, align=right, minimum width=0.6cm, text width=0.4cm},' + '\n')
+        f.write('\t\t' + r'cell4/.style={rectangle, draw=black, inner xsep=3pt, inner ysep=4pt, text height=0.3cm, align=left, minimum width=1.0cm, text width=5.5cm},' + '\n')
         f.write('\t\t' + r']' + '\n')
         for line in draw_background():
             f.write(line + '\n')

@@ -23,9 +23,23 @@ class Address(object):
         self.city = dict_address['city']
         self.country = dict_address['country']
 
-#        def oneline(self, street, house, postal_code, city):
     def oneline(self):
         return '{} {}, {} {}'.format(self.street, self.house, self.postal_code, self.city)
+
+
+class Personal(object):
+    def __init__(self, dict_pers):
+        self.birth_date = dict_pers['birth_date']
+        self.birth_location_city = dict_pers['birth_location_city']
+        self.marital_status = dict_pers['marital_status']
+        self.children = dict_pers['children']
+
+    def oneline(self, lang):
+        if lang == 'en':
+            about_str = 'Born {} in {}, {}, {} children'.format(self.birth_date, self.birth_location_city, self.marital_status, self.children)
+        if lang == 'de':
+            about_str = 'Geboren am {} in {}, {}, {} Kinder'.format(self.birth_date, self.birth_location_city, self.marital_status, self.children)
+        return about_str
 
 
 class Area(object):
@@ -135,8 +149,8 @@ def write_config(config_dir):
                 'areas': {
                     'personal': {
                         'title': 'About me',
-                        'pos_x': 7.7,
-                        'pos_y': 25,
+                        'pos_x': 8.0,
+                        'pos_y': 26,
                         'head_vspace': 0.3,
                         'head_sepline': False,
                         'head_case': 'upper',
@@ -152,8 +166,8 @@ def write_config(config_dir):
                         },
                     'contact': {
                         'title': 'Contact',
-                        'pos_x': 1,
-                        'pos_y': 25,
+                        'pos_x': 0.8,
+                        'pos_y': 26,
                         'head_vspace': 1,
                         'head_sepline': False,
                         'head_case': 'upper',
@@ -169,8 +183,8 @@ def write_config(config_dir):
                         },
                     'career': {
                         'title': 'Career',
-                        'pos_x': 7.7,
-                        'pos_y': 22,
+                        'pos_x': 8.0,
+                        'pos_y': 23,
                         'head_vspace': 1,
                         'head_sepline': False,
                         'head_case': 'upper',
@@ -186,8 +200,8 @@ def write_config(config_dir):
                         },
                     'education': {
                         'title': 'Education',
-                        'pos_x': 7.7,
-                        'pos_y': 15,
+                        'pos_x': 8.0,
+                        'pos_y': 16,
                         'head_vspace': 1,
                         'head_sepline': False,
                         'head_case': 'upper',
@@ -204,7 +218,7 @@ def write_config(config_dir):
                     'skills': {
                         'title': 'Skill profile',
                         'pos_x': 2,
-                        'pos_y': 10,
+                        'pos_y': 12,
                         'head_vspace': 1,
                         'head_sepline': False,
                         'head_case': 'upper',
@@ -246,7 +260,7 @@ def write_config(config_dir):
                         'color': 'Greys-J',
                         },
                     'box_left': {
-                        'size': 7,
+                        'size': 7.5,
                         'color': 'Greys-C',
                         },
                     'box_right': {
@@ -272,27 +286,4 @@ def write_config(config_dir):
             }
     with open(config_dir, 'w') as f:
         json.dump(settings_dict, f, indent=4)
-
-
-#def split_config(config):
-#    """
-#    Split dictionary from JSON config file into sub dictionaries.
-#    """
-#    dict_layout = config['cv']['layout']
-#    dict_box = config['cv']['boxes']
-#    dict_box_top = dict_box['box_top']
-#    dict_box_bottom = dict_box['box_bottom']
-#    dict_box_left = dict_box['box_left']
-#    dict_box_right = dict_box['box_right']
-#    dict_skill_layout = config['cv']['skills']['layout']
-#    dict_skill_circle = config['cv']['skills']['circle']
-#    layout = Layout(dict_layout)
-#    background_box = Box(color=dict_layout['background_color'], width=dict_layout['width'], height=dict_layout['height'])
-#    box_top = Box(color=dict_box_top['color'], width=layout.width, height=dict_box_top['size'])
-#    box_bottom = Box(color=dict_box_bottom['color'], width=layout.width, height=dict_box_bottom['size'])
-#    box_left = Box(color=dict_box_left['color'], width=dict_box_left['size'], height=layout.height)
-#    box_right = Box(color=dict_box_right['color'], width=dict_box_right['size'], height=layout.height)
-#    skill_circle = SkillCircle(dict_skill_circle)
-#    skill_layout = SkillLayout(dict_skill_layout)
-#    return (layout, box_top, box_bottom, box_left, box_right, skill_circle, skill_layout)
 
