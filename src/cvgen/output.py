@@ -13,6 +13,7 @@ def preamble():
         r'\documentclass[12pt, tikz, multi, crop]{standalone}',
         r'\usepackage[sfdefault, scaled=1.0098]{FiraSans}',
         r'\usepackage{newtxsf}',
+        r'\usepackage{fontawesome5}',
         r'\usepackage{tikz}',
         r'\usepackage{hyperref}',
         r'\usetikzlibrary{positioning, math, colorbrewer, backgrounds, matrix}',
@@ -111,6 +112,8 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
 
 
 
+    # Icons
+    icons = config_geo['icons']
 
     # Assemble personal area
     person = cv.Personal(config_data['Personal'])
@@ -143,16 +146,21 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
             '\t\t' + r'anchor=north west,',
             '\t\t' + r'matrix of nodes,',
             '\t\t' + r'column 1/.style={nodes={cell1}},',
-            '\t\t' + r'column 2/.style={nodes={cell2}},',
+            '\t\t' + r'column 2/.style={nodes={cell1}},',
+            '\t\t' + r'column 3/.style={nodes={cell2}},',
             '\t\t' + r']{',
             ]
     contact = cv.Contact(config_data['Contact'])
-    print(config_data['Contact'])
-    for key, value in config_data['Contact'].items():
+    address_data = geo.Address(config_data['Contact'])
+    address = address_data.oneline()
+    cont.append('\t\t\\node {{{}}}; & \\node {{{}}};\\\\'.format(icons['mail'], config_data['Contact']['email']))
+    cont.append('\t\t\\node {{{}}}; & \\node {{{}}};\\\\'.format(icons['phone'], config_data['Contact']['phone']))
+    cont.append('\t\t\\node {{{}}}; & \\node {{{}}};\\\\'.format(icons['address'], address))
+    for key, value in config_data['Contact']['weblinks'].items():
         if key not in area_contact.hide_items:
             key = key.replace('_', r'\_')
             value = value.replace('_', r'\_')
-            if (area_contact.hyperlinks is True) and (key in ('email', 'webpage', 'linkedin', 'xing', 'orcid', 'github')) and (value != ''):
+            if (area_contact.hyperlinks is True) and (value != ''):
                 value = r'\href{' + value + r'}{' + key + '}'
             cont.append('\t\t\\node {{{}}}; & \\node {{{}}};\\\\'.format(key, value))
     cont.append('\t\t'+ r'};')

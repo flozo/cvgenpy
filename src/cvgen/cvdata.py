@@ -24,11 +24,8 @@ class Contact(object):
         self.country = dict_contact['country']
         self.phone = dict_contact['phone']
         self.email = dict_contact['email']
-        self.webpage = dict_contact['webpage']
-        self.linkedin = dict_contact['linkedin']
-        self.xing = dict_contact['xing']
-        self.orcid = dict_contact['orcid']
-        self.github = dict_contact['github']
+        self.weblinks = dict_contact['weblinks']
+        self.icons = dict_contact['icons']
 
 
 class Company(object):
@@ -137,12 +134,22 @@ def write_config(config_dir):
                 'phone': '+00(123)456789',
                 'mobile': '+00(123)456789',
                 'email': 'user@mail.net',
-                'webpage': 'https://www.webpage.net',
-                'linkedin': 'https://www.linkedin.com/in/john-smith-123456789/',
-                'xing': 'https://www.xing.com/profile/john_smith123/',
-                'orcid': 'https://orcid.org/0000-0000-1234-5678',
-                'github': 'https://github.com/user',
-                },
+                'weblinks': {
+                    'Webpage': 'https://www.webpage.net',
+                    'LinkedIn': 'https://www.linkedin.com/in/john-smith-123456789/',
+                    'Xing': 'https://www.xing.com/profile/john_smith123/',
+                    'ORCID': 'https://orcid.org/0000-0000-1234-5678',
+                    'GitHub': 'https://github.com/user',
+                     },
+                'icons': {
+                    'address': 'address',
+                    'phone': 'phone',
+                    'email': 'mail',
+                    'GitHub': 'github',
+                    'LinkedIn': 'linkedin',
+                    'ORCID': 'orcid',
+                    },
+               },
             'Company': {
                 'name': 'Company',
                 'city': 'City',

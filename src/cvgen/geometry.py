@@ -15,6 +15,19 @@ class Layout(object):
         self.box_right = dict_layout['box_right']
 
 
+class Address(object):
+    def __init__(self, dict_address):
+        self.street = dict_address['street']
+        self.house = dict_address['house']
+        self.postal_code = dict_address['postal_code']
+        self.city = dict_address['city']
+        self.country = dict_address['country']
+
+#        def oneline(self, street, house, postal_code, city):
+    def oneline(self):
+        return '{} {}, {} {}'.format(self.street, self.house, self.postal_code, self.city)
+
+
 class Area(object):
     def __init__(self, dict_area):
 #    def __init__(self, title, pos_x, pos_y, color, icon, show_area, show_icon):
@@ -94,6 +107,15 @@ def write_config(config_dir):
                 'width': 21.0,
                 'height': 29.7,
                 'language': 'en',
+                },
+            'icons': {
+                'address': r'\faIcon{map-marker-alt}',
+                'phone': r'\faIcon{phone-alt}',
+                'mail': r'\faIcon{envelope}',
+                'github': r'\faIcon{github}',
+                'xing': r'\faIcon{xing-square}',
+                'linkedin': r'\faIcon{linkedin}',
+                'orcid': r'\faIcon{orcid}',
                 },
             'cv': {
                 'layout': {
