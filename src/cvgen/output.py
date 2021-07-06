@@ -3,6 +3,15 @@
 import cvdata as cv
 import geometry as geo
 import functions as fn
+from PyPDF2 import PdfFileMerger
+
+
+def mergepdfs(pdflist, target):
+    merger = PdfFileMerger()
+    for pdf in pdflist:
+        merger.append(partfile)
+    merger.write(target)
+    merger.close()
 
 
 def preamble():
