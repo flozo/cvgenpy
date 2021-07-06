@@ -42,6 +42,17 @@ class Personal(object):
         return about_str
 
 
+class PhotoArea(object):
+    def __init__(self, dict_photo):
+        self.pos_x = dict_photo['pos_x']
+        self.pos_y = dict_photo['pos_y']
+        self.width = dict_photo['width']
+        self.height = dict_photo['height']
+        self.border = dict_photo['border']
+        self.border_width = dict_photo['border_width']
+        self.border_color = dict_photo['border_color']
+
+
 class Area(object):
     def __init__(self, dict_area):
 #    def __init__(self, title, pos_x, pos_y, color, icon, show_area, show_icon):
@@ -163,6 +174,15 @@ def write_config(config_dir):
                         'show_icon': False,
                         'hyperlinks': False,
                         'hide_items': [],
+                        },
+                    'photo': {
+                        'pos_x': 16.8,
+                        'pos_y': 29,
+                        'width': 3.2,
+                        'height': 4.5,
+                        'border': True,
+                        'border_width': 0.1,
+                        'border_color': 'Greys-L',
                         },
                     'contact': {
                         'title': 'Contact',

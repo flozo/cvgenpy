@@ -125,6 +125,27 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
         about_str = geo.Personal(config_data['Personal']).oneline(cv_lang)
     pers.append('\\node [below={} of pers.south west, anchor=north west, font=\small] {{{}}};'.format(area_personal.head_vspace, about_str))
 
+    # Assemble photo
+    dict_photo = config_geo['cv']['areas']['photo']
+    photo_file = config_data['Personal']['photo']
+    area_photo = geo.PhotoArea(dict_photo)
+    x = area_photo.pos_x
+    y = area_photo.pos_y
+    width = area_photo.width
+    height = area_photo.height
+    if area_photo.border is True:
+        border_color = area_photo.border_color
+    else:
+        border_color = 'none'
+    photo = [
+            '% PHOTO AREA',
+            r'\begin{scope}',
+            '\t' + '\\clip  ({}, {}) rectangle ({}, {});'.format(x, y, x+width, y-height),
+            '\t\\node[anchor=north west, inner sep=0] (image) at ({}, {}) {{\\includegraphics[width={}cm]{{{}}}}};'.format(x, y, width, photo_file),
+            '\t' + '\\draw [draw={}, line width={}] ({}, {}) rectangle ({}, {});'.format(border_color, area_photo.border_width, x, y, x+width, y-height),
+            r'\end{scope}',
+            ]
+
     # Assemble contact area
     area_contact = geo.Area(dict_areas['contact'])
     itemx = area_contact.pos_x
@@ -136,7 +157,7 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
             '% |- Title:',
             '\\node (cont) [anchor=north west, font=\large] at ({}, {}) {{{}}};'.format(area_contact.pos_x, area_contact.pos_y, area_contact.title),
             '% |- Items:',
-            r'\begin{scope}[row sep=-\pgflinewidth, column sep=-\pgflinewidth, text depth=0.0cm, minimum height=0.5cm]',
+            r'\begin{scope}[row sep=-\pgflinewidth, column sep=-\pgflinewidth, text depth=0.0cm, minimum height=0.5cm, font=\small]',
             '\t\\matrix (con) at ({}, {}) ['.format(itemx, itemy-area_contact.head_vspace),
             '\t\t' + r'anchor=north west,',
             '\t\t' + r'matrix of nodes,',
@@ -175,7 +196,7 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
             '% |- Title:',
             r'\node [anchor=north west, font=\large] at ({}, {}) {{{}}};'.format(itemx, itemy, area_career.title),
             '% |- Items:',
-            r'\begin{scope}[row sep=-\pgflinewidth, column sep=-\pgflinewidth, text depth=0.0cm, minimum height=0.5cm]',
+            r'\begin{scope}[row sep=-\pgflinewidth, column sep=-\pgflinewidth, text depth=0.0cm, minimum height=0.5cm, font=\small]',
             '\t\\matrix (edu) at ({}, {}) ['.format(itemx, itemy-area_career.head_vspace),
             '\t\t' + r'anchor=north west,',
             '\t\t' + r'matrix of nodes,',
@@ -213,7 +234,7 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
             '% |- Title:',
             r'\node [anchor=north west, font=\large] at ({}, {}) {{{}}};'.format(itemx, itemy, area_edu.title),
             '% |- Items:',
-            r'\begin{scope}[row sep=-\pgflinewidth, column sep=-\pgflinewidth, text depth=0.0cm, minimum height=0.5cm]',
+            r'\begin{scope}[row sep=-\pgflinewidth, column sep=-\pgflinewidth, text depth=0.0cm, minimum height=0.5cm, font=\small]',
             '\t\\matrix (edu) at ({}, {}) ['.format(itemx, itemy-area_edu.head_vspace),
             '\t\t' + r'anchor=north west,',
             '\t\t' + r'matrix of nodes,',
@@ -271,6 +292,8 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
             f.write('\t\t\t' + skill + ';\n')
         for p in pers:
             f.write('\t\t\t' + p + '\n')
+        for i in photo:
+            f.write('\t\t\t' + i + '\n')
         for car_item in car:
             f.write('\t\t\t' + car_item + '\n')
         for edu_item in edu:
