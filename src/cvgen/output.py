@@ -120,9 +120,7 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
 
     # Icons
     icons = config_geo['icons']
-
-
-
+    icon_names = config_data['Contact']['icons']
 
     # Assemble personal area
     person = cv.Personal(config_data['Personal'])
@@ -221,8 +219,13 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
             key = key.replace('_', r'\_')
             value = value.replace('_', r'\_')
             if (area_contact.hyperlinks is True) and (value != ''):
-                value = r'\href{' + value + r'}{' + key + '}'
-            cont.append('\t\t\\node {{{}}}; & \\node {{{}}};\\\\'.format(key, value))
+                value = r'\href{' + value + r'}{' + value.replace('https://', '').replace('www.', '') + '}'
+                if 'linkedin' in value:
+                    depth = '0.5cm'
+                else:
+                    depth = '0.0cm'
+#                value = r'\href{' + value + r'}{' + key + '}'
+            cont.append('\t\t\\node [text depth={}] {{{}}}; & \\node [text depth={}] {{{}}};\\\\'.format(depth, icons[icon_names[key]], depth, value))
     cont.append('\t\t'+ r'};')
     cont.append(r'\end{scope}')
     
@@ -334,7 +337,7 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
         f.write('\t\t' + r'cell1/.style={rectangle, draw=black, inner xsep=0pt, inner ysep=4pt, text height=0.3cm, align=right, minimum width=2.0cm, text width=3.5cm},' + '\n')
         f.write('\t\t' + r'cell2/.style={rectangle, draw=black, inner xsep=6pt, inner ysep=4pt, text height=0.3cm, align=left, minimum width=1.5cm, text width=8.0cm},' + '\n')
         f.write('\t\t' + r'cell3/.style={rectangle, draw=black, inner xsep=0pt, inner ysep=4pt, text height=0.3cm, align=center, minimum width=0.6cm, text width=0.4cm},' + '\n')
-        f.write('\t\t' + r'cell4/.style={rectangle, draw=black, inner xsep=3pt, inner ysep=4pt, text height=0.3cm, align=left, minimum width=1.0cm, text width=5.5cm},' + '\n')
+        f.write('\t\t' + r'cell4/.style={rectangle, draw=black, inner xsep=3pt, inner ysep=4pt, text height=0.3cm, align=left, minimum width=1.0cm, text width=5.8cm},' + '\n')
         f.write('\t\t' + r']' + '\n')
         for line in draw_background():
             f.write(line + '\n')
