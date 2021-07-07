@@ -130,28 +130,36 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
     x = area_personal.pos_x
     y = area_personal.pos_y
     anchor = area_personal.anchor
+    hsize = area_personal.head_font_size
+    bsize = area_personal.body_font_size
     pers = [
             '% PERSONAL AREA',
             '% |- Title:',
             ]
-    pers.append('\\node (pers) [anchor={}, font=\large] at ({}, {}) {{{}}};'.format(anchor, x, y, area_personal.title))
+    pers.append('\\node (pers) [anchor={}, font=\\{}] at ({}, {}) {{{}}};'.format(anchor, hsize, x, y, area_personal.title))
     pers.append('% |- Items:')
     if area_personal.style == 'oneline':
         about_str = geo.Personal(config_data['Personal']).oneline(cv_lang)
     elif area_personal.style == 'twoline':
         about_str = geo.Personal(config_data['Personal']).twoline(cv_lang)
-    pers.append('\\node [below={} of pers.south west, anchor=north west, font=\small, align=left] {{{}}};'.format(area_personal.head_vspace, about_str))
+    pers.append('\\node [below={} of pers.south west, anchor=north west, font=\\{}, align=left] {{{}}};'.format(area_personal.head_vspace, bsize, about_str))
 
     # Assemble title
     area_title = geo.Area(dict_areas['title'])
     x = area_title.pos_x
     y = area_title.pos_y
+    l = area_title.length
     anchor = area_title.anchor
+    hsize = area_title.head_font_size
+    bsize = area_title.body_font_size
     title = [
             '% TITLE',
-            '\\node [anchor={}, font=\Large] at ({}, {}) {{{} {}}};'.format(anchor, x, y, person.first_name, person.family_name),
+            '\\node [anchor={}, font=\\{}] at ({}, {}) {{{} {}}};'.format(anchor, hsize, x, y+0.8, person.first_name, person.family_name),
             ]
-
+    if area_title.head_sepline is True:
+        title.append('\\draw [draw={}, line width=1pt] ({}, {}) -- ({}, {});'.format(area_title.color, x, y, l, y))
+    title.append('\\node [anchor={}, font=\\{}, text height=0.6cm] at ({}, {}) {{{}}};'.format(anchor, bsize, x, y, area_title.title))
+ 
 
     # Assemble photo
     dict_photo = config_geo['cv']['areas']['photo']
@@ -180,14 +188,16 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
     x = area_contact.pos_x
     y = area_contact.pos_y
     anchor = area_contact.anchor
+    hsize = area_contact.head_font_size
+    bsize = area_contact.body_font_size
     hspace1 = area_contact.body_indent
     vspace1 = area_contact.body_vspace
     cont = [
             '% CONTACT AREA',
             '% |- Title:',
-            '\\node (cont) [anchor={}, font=\large] at ({}, {}) {{{}}};'.format(anchor, x, y, area_contact.title),
+            '\\node (cont) [anchor={}, font=\\{}] at ({}, {}) {{{}}};'.format(anchor, hsize, x, y, area_contact.title),
             '% |- Items:',
-            r'\begin{scope}[row sep=-\pgflinewidth, column sep=-\pgflinewidth, text depth=0.0cm, minimum height=0.5cm, font=\small]',
+            '\\begin{{scope}}[row sep=-\\pgflinewidth, column sep=-\\pgflinewidth, text depth=0.0cm, minimum height=0.5cm, font=\\{}]'.format(bsize),
             '\t\\matrix (con) at ({}, {}) ['.format(x, y-area_contact.head_vspace),
             '\t\t' + 'anchor=north west,'.format(anchor),
             '\t\t' + r'matrix of nodes,',
@@ -225,14 +235,16 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
     x = area_career.pos_x
     y = area_career.pos_y
     anchor = area_career.anchor
+    hsize = area_career.head_font_size
+    bsize = area_career.body_font_size
     hspace1 = area_career.body_indent
     vspace1 = area_career.body_vspace
     car = [
             '% CAREER AREA',
             '% |- Title:',
-            r'\node [anchor={}, font=\large] at ({}, {}) {{{}}};'.format(anchor, x, y, area_career.title),
+            r'\node [anchor={}, font=\{}] at ({}, {}) {{{}}};'.format(anchor, hsize, x, y, area_career.title),
             '% |- Items:',
-            r'\begin{scope}[row sep=-\pgflinewidth, column sep=-\pgflinewidth, text depth=0.0cm, minimum height=0.5cm, font=\small]',
+            '\\begin{{scope}}[row sep=-\\pgflinewidth, column sep=-\\pgflinewidth, text depth=0.0cm, minimum height=0.5cm, font=\\{}]'.format(bsize),
             '\t\\matrix (edu) at ({}, {}) ['.format(x, y-area_career.head_vspace),
             '\t\t' + 'anchor={},'.format(anchor),
             '\t\t' + r'matrix of nodes,',
@@ -264,14 +276,16 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
     x = area_edu.pos_x
     y = area_edu.pos_y
     anchor = area_edu.anchor
+    hsize = area_edu.head_font_size
+    bsize = area_edu.body_font_size
     hspace1 = area_edu.body_indent
     vspace1 = area_edu.body_vspace
     edu = [
             '% EDUCATION AREA',
             '% |- Title:',
-            r'\node [anchor={}, font=\large] at ({}, {}) {{{}}};'.format(anchor, x, y, area_edu.title),
+            r'\node [anchor={}, font=\{}] at ({}, {}) {{{}}};'.format(anchor, hsize, x, y, area_edu.title),
             '% |- Items:',
-            r'\begin{scope}[row sep=-\pgflinewidth, column sep=-\pgflinewidth, text depth=0.0cm, minimum height=0.5cm, font=\small]',
+            '\\begin{{scope}}[row sep=-\\pgflinewidth, column sep=-\\pgflinewidth, text depth=0.0cm, minimum height=0.5cm, font=\{}]'.format(bsize),
             '\t\\matrix (edu) at ({}, {}) ['.format(x, y-area_edu.head_vspace),
             '\t\t' + 'anchor={},'.format(anchor),
             '\t\t' + r'matrix of nodes,',
