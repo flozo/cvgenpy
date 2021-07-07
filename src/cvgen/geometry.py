@@ -13,6 +13,8 @@ class Layout(object):
         self.box_bottom = dict_layout['box_bottom']
         self.box_left = dict_layout['box_left']
         self.box_right = dict_layout['box_right']
+        self.include_photo = dict_layout['include_photo']
+        self.title_on_every_page = dict_layout['title_on_every_page']
 
 
 class Address(object):
@@ -25,6 +27,11 @@ class Address(object):
 
     def oneline(self):
         return '{} {}, {} {}'.format(self.street, self.house, self.postal_code, self.city)
+
+    def twoline(self):
+        return '{} {}\\\\{} {}'.format(self.street, self.house, self.postal_code, self.city)
+#        return ['{} {},'.format(self.street, self.house), '{} {}'.format(self.postal_code, self.city)]
+
 
 
 class Personal(object):
@@ -41,11 +48,19 @@ class Personal(object):
             about_str = 'Geboren am {} in {}, {}, {} Kinder'.format(self.birth_date, self.birth_location_city, self.marital_status, self.children)
         return about_str
 
+    def twoline(self, lang):
+        if lang == 'en':
+            about_str = 'Born {} in {}\\\\{}, {} children'.format(self.birth_date, self.birth_location_city, self.marital_status, self.children)
+        if lang == 'de':
+            about_str = 'Geboren am {} in {}\\\\{}, {} Kinder'.format(self.birth_date, self.birth_location_city, self.marital_status, self.children)
+        return about_str
+
 
 class PhotoArea(object):
     def __init__(self, dict_photo):
         self.pos_x = dict_photo['pos_x']
         self.pos_y = dict_photo['pos_y']
+        self.anchor = dict_photo['anchor']
         self.width = dict_photo['width']
         self.height = dict_photo['height']
         self.border = dict_photo['border']
@@ -59,6 +74,7 @@ class Area(object):
         self.title = dict_area['title']
         self.pos_x = dict_area['pos_x']
         self.pos_y = dict_area['pos_y']
+        self.anchor = dict_area['anchor']
         self.head_vspace = dict_area['head_vspace']
         self.head_sepline = dict_area['head_sepline']
         self.head_case = dict_area['head_case']
@@ -153,15 +169,33 @@ def write_config(config_dir):
                     'box_left': True,
                     'box_right': False,
                     'include_photo': True,
-                    'title': 'Curriculum vitae',
                     'title_on_every_page': False,
                     'language': 'en',
                     },
                 'areas': {
+                    'title': {
+                        'title': 'Curriculum vitae',
+                        'pos_x': 8.0,
+                        'pos_y': 29,
+                        'anchor': 'north west',
+                        'head_vspace': 0.3,
+                        'head_sepline': False,
+                        'head_case': 'mixed',
+                        'body_vspace': 1,
+                        'body_indent': 2,
+                        'color': 'black',
+                        'style': 'oneline',
+                        'icon': '/home/user/Icon1.pdf',
+                        'show_area': True,
+                        'show_icon': False,
+                        'hyperlinks': False,
+                        'hide_items': [],
+                        },
                     'personal': {
                         'title': 'About me',
                         'pos_x': 8.0,
                         'pos_y': 26,
+                        'anchor': 'north west',
                         'head_vspace': 0.3,
                         'head_sepline': False,
                         'head_case': 'upper',
@@ -178,6 +212,7 @@ def write_config(config_dir):
                     'photo': {
                         'pos_x': 16.8,
                         'pos_y': 29,
+                        'anchor': 'north west',
                         'width': 3.2,
                         'height': 4.5,
                         'border': True,
@@ -188,6 +223,7 @@ def write_config(config_dir):
                         'title': 'Contact',
                         'pos_x': 0.8,
                         'pos_y': 26,
+                        'anchor': 'north west',
                         'head_vspace': 1,
                         'head_sepline': False,
                         'head_case': 'upper',
@@ -199,12 +235,13 @@ def write_config(config_dir):
                         'show_area': True,
                         'show_icon': False,
                         'hyperlinks': True,
-                        'hide_items': ['webpage', 'xing', 'phone', 'country'],
+                        'hide_items': ['Webpage', 'Xing', 'phone', 'country'],
                         },
                     'career': {
                         'title': 'Career',
                         'pos_x': 8.0,
                         'pos_y': 23,
+                        'anchor': 'north west',
                         'head_vspace': 1,
                         'head_sepline': False,
                         'head_case': 'upper',
@@ -222,6 +259,7 @@ def write_config(config_dir):
                         'title': 'Education',
                         'pos_x': 8.0,
                         'pos_y': 16,
+                        'anchor': 'north west',
                         'head_vspace': 1,
                         'head_sepline': False,
                         'head_case': 'upper',
@@ -239,6 +277,7 @@ def write_config(config_dir):
                         'title': 'Skill profile',
                         'pos_x': 2,
                         'pos_y': 12,
+                        'anchor': 'north west',
                         'head_vspace': 1,
                         'head_sepline': False,
                         'head_case': 'upper',
@@ -256,6 +295,7 @@ def write_config(config_dir):
                         'title': 'Certificates',
                         'pos_x': 2,
                         'pos_y': 5,
+                        'anchor': 'north west',
                         'head_vspace': 1,
                         'head_sepline': False,
                         'head_case': 'upper',

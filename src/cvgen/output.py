@@ -61,14 +61,14 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
             r'\paperw = {}; % paper width'.format(layout.width),
             r'\paperh = {}; % paper height'.format(layout.height),
             ]
-        if layout.box_top is True:
-            l.append(r'\boxth = {}; % box top height'.format(box_top.height))
-        if layout.box_bottom is True:
-            l.append(r'\boxbh = {}; % box bottom height'.format(box_bottom.height))
         if layout.box_left is True:
             l.append(r'\boxlw = {}; % box left width'.format(box_left.width))
         if layout.box_right is True:
             l.append(r'\boxrw = {}; % box right width'.format(box_right.width))
+        if layout.box_top is True:
+            l.append(r'\boxth = {}; % box top height'.format(box_top.height))
+        if layout.box_bottom is True:
+            l.append(r'\boxbh = {}; % box bottom height'.format(box_bottom.height))
         return l
 
 
@@ -82,14 +82,14 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
             '\t\t' + r'\end{pgfonlayer}',
             '\t\t' + r'\begin{pgfonlayer}{forebackground}',
             ]
-        if layout.box_top is True:
-            l.append('\t\t\t' + '\\fill[{}] (0, {}) rectangle (\\paperw, \\paperh); % box top'.format(box_top.color, layout.height-box_top.height))
-        if layout.box_bottom is True:
-            l.append('\t\t\t' + '\\fill[{}] (0, 0) rectangle (\\paperw, \\boxbh); % box bottom'.format(box_bottom.color))
         if layout.box_left is True:
             l.append('\t\t\t' + '\\fill[{}] (0, 0) rectangle (\\boxlw, \\paperh); % box left'.format(box_left.color))
         if layout.box_right is True:
             l.append('\t\t\t' + '\\fill[{}] ({}, 0) rectangle (\\paperw, \\paperh); % box right'.format(box_right.color, layout.width-box_right.width))
+        if layout.box_top is True:
+            l.append('\t\t\t' + '\\fill[{}] (0, {}) rectangle (\\paperw, \\paperh); % box top'.format(box_top.color, layout.height-box_top.height))
+        if layout.box_bottom is True:
+            l.append('\t\t\t' + '\\fill[{}] (0, 0) rectangle (\\paperw, \\boxbh); % box bottom'.format(box_bottom.color))
         l.append('\t\t' + r'\end{pgfonlayer}')
         return l
 
@@ -109,7 +109,6 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
     cv_pages = config_geo['cv']['layout']['pages']
     dict_areas = config_geo['cv']['areas']
     # Create area objects
-    area_personal = geo.Area(dict_areas['personal'])
 #    area_education = geo.Area(dict_areas['timeline'])
     # Create objects
     layout = geo.Layout(dict_layout)
@@ -122,17 +121,37 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
     # Icons
     icons = config_geo['icons']
 
+
+
+
     # Assemble personal area
     person = cv.Personal(config_data['Personal'])
+    area_personal = geo.Area(dict_areas['personal'])
+    x = area_personal.pos_x
+    y = area_personal.pos_y
+    anchor = area_personal.anchor
     pers = [
             '% PERSONAL AREA',
             '% |- Title:',
             ]
-    pers.append('\\node (pers) [anchor=north west, font=\large] at ({}, {}) {{{}}};'.format(area_personal.pos_x, area_personal.pos_y, area_personal.title))
+    pers.append('\\node (pers) [anchor={}, font=\large] at ({}, {}) {{{}}};'.format(anchor, x, y, area_personal.title))
     pers.append('% |- Items:')
     if area_personal.style == 'oneline':
         about_str = geo.Personal(config_data['Personal']).oneline(cv_lang)
-    pers.append('\\node [below={} of pers.south west, anchor=north west, font=\small] {{{}}};'.format(area_personal.head_vspace, about_str))
+    elif area_personal.style == 'twoline':
+        about_str = geo.Personal(config_data['Personal']).twoline(cv_lang)
+    pers.append('\\node [below={} of pers.south west, anchor=north west, font=\small, align=left] {{{}}};'.format(area_personal.head_vspace, about_str))
+
+    # Assemble title
+    area_title = geo.Area(dict_areas['title'])
+    x = area_title.pos_x
+    y = area_title.pos_y
+    anchor = area_title.anchor
+    title = [
+            '% TITLE',
+            '\\node [anchor={}, font=\Large] at ({}, {}) {{{} {}}};'.format(anchor, x, y, person.first_name, person.family_name),
+            ]
+
 
     # Assemble photo
     dict_photo = config_geo['cv']['areas']['photo']
@@ -140,6 +159,7 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
     area_photo = geo.PhotoArea(dict_photo)
     x = area_photo.pos_x
     y = area_photo.pos_y
+    anchor = area_photo.anchor
     width = area_photo.width
     height = area_photo.height
     if area_photo.border is True:
@@ -150,25 +170,26 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
             '% PHOTO AREA',
             r'\begin{scope}',
             '\t' + '\\clip  ({}, {}) rectangle ({}, {});'.format(x, y, x+width, y-height),
-            '\t\\node[anchor=north west, inner sep=0] (image) at ({}, {}) {{\\includegraphics[width={}cm]{{{}}}}};'.format(x, y, width, photo_file),
+            '\t\\node[anchor={}, inner sep=0] (image) at ({}, {}) {{\\includegraphics[width={}cm]{{{}}}}};'.format(anchor, x, y, width, photo_file),
             '\t' + '\\draw [draw={}, line width={}] ({}, {}) rectangle ({}, {});'.format(border_color, area_photo.border_width, x, y, x+width, y-height),
             r'\end{scope}',
             ]
 
     # Assemble contact area
     area_contact = geo.Area(dict_areas['contact'])
-    itemx = area_contact.pos_x
-    itemy = area_contact.pos_y
+    x = area_contact.pos_x
+    y = area_contact.pos_y
+    anchor = area_contact.anchor
     hspace1 = area_contact.body_indent
     vspace1 = area_contact.body_vspace
     cont = [
             '% CONTACT AREA',
             '% |- Title:',
-            '\\node (cont) [anchor=north west, font=\large] at ({}, {}) {{{}}};'.format(area_contact.pos_x, area_contact.pos_y, area_contact.title),
+            '\\node (cont) [anchor={}, font=\large] at ({}, {}) {{{}}};'.format(anchor, x, y, area_contact.title),
             '% |- Items:',
             r'\begin{scope}[row sep=-\pgflinewidth, column sep=-\pgflinewidth, text depth=0.0cm, minimum height=0.5cm, font=\small]',
-            '\t\\matrix (con) at ({}, {}) ['.format(itemx, itemy-area_contact.head_vspace),
-            '\t\t' + r'anchor=north west,',
+            '\t\\matrix (con) at ({}, {}) ['.format(x, y-area_contact.head_vspace),
+            '\t\t' + 'anchor=north west,'.format(anchor),
             '\t\t' + r'matrix of nodes,',
             '\t\t' + r'column 1/.style={nodes={cell3}},',
             '\t\t' + r'column 2/.style={nodes={cell4}},',
@@ -176,12 +197,17 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
             ]
     contact = cv.Contact(config_data['Contact'])
     address_data = geo.Address(config_data['Contact'])
-    address = address_data.oneline()
-    cont.append('\t\t\\node {{{}}}; & \\node {{{}}};\\\\'.format(icons['mail'], config_data['Contact']['email']))
+    address = address_data.twoline()
+#    address = address_data.oneline()
+    vspace2 = 0.5
+    cont.append('\t\t\\node [text depth={}cm] {{{}}}; & \\node [text depth={}cm] {{{}}};\\\\'.format(vspace2, icons['address'], vspace2, address))
     cont.append('\t\t\\node {{{}}}; & \\node {{{}}};\\\\'.format(icons['phone'], config_data['Contact']['phone']))
-    cont.append('\t\t\\node {{{}}}; & \\node {{{}}};\\\\'.format(icons['address'], address))
+    cont.append('\t\t\\node {{{}}}; & \\node {{{}}};\\\\'.format(icons['mail'], config_data['Contact']['email']))
+    cont.append('\t\t\\vspace{1cm} & \\vspace{1cm}\\\\')
+    print(area_contact.hide_items)
     for key, value in config_data['Contact']['weblinks'].items():
         if key not in area_contact.hide_items:
+            print(key)
             key = key.replace('_', r'\_')
             value = value.replace('_', r'\_')
             if (area_contact.hyperlinks is True) and (value != ''):
@@ -196,18 +222,19 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
 
     # Assemble career items
     area_career = geo.Area(dict_areas['career'])
-    itemx = area_career.pos_x
-    itemy = area_career.pos_y
+    x = area_career.pos_x
+    y = area_career.pos_y
+    anchor = area_career.anchor
     hspace1 = area_career.body_indent
     vspace1 = area_career.body_vspace
     car = [
             '% CAREER AREA',
             '% |- Title:',
-            r'\node [anchor=north west, font=\large] at ({}, {}) {{{}}};'.format(itemx, itemy, area_career.title),
+            r'\node [anchor={}, font=\large] at ({}, {}) {{{}}};'.format(anchor, x, y, area_career.title),
             '% |- Items:',
             r'\begin{scope}[row sep=-\pgflinewidth, column sep=-\pgflinewidth, text depth=0.0cm, minimum height=0.5cm, font=\small]',
-            '\t\\matrix (edu) at ({}, {}) ['.format(itemx, itemy-area_career.head_vspace),
-            '\t\t' + r'anchor=north west,',
+            '\t\\matrix (edu) at ({}, {}) ['.format(x, y-area_career.head_vspace),
+            '\t\t' + 'anchor={},'.format(anchor),
             '\t\t' + r'matrix of nodes,',
             '\t\t' + r'column 1/.style={nodes={cell1}},',
             '\t\t' + r'column 2/.style={nodes={cell2}},',
@@ -234,18 +261,19 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
             edu_items.append(cv.EduEventItem(edu_item))
     # Assemble education items
     area_edu = geo.Area(dict_areas['education'])
-    itemx = area_edu.pos_x
-    itemy = area_edu.pos_y
+    x = area_edu.pos_x
+    y = area_edu.pos_y
+    anchor = area_edu.anchor
     hspace1 = area_edu.body_indent
     vspace1 = area_edu.body_vspace
     edu = [
             '% EDUCATION AREA',
             '% |- Title:',
-            r'\node [anchor=north west, font=\large] at ({}, {}) {{{}}};'.format(itemx, itemy, area_edu.title),
+            r'\node [anchor={}, font=\large] at ({}, {}) {{{}}};'.format(anchor, x, y, area_edu.title),
             '% |- Items:',
             r'\begin{scope}[row sep=-\pgflinewidth, column sep=-\pgflinewidth, text depth=0.0cm, minimum height=0.5cm, font=\small]',
-            '\t\\matrix (edu) at ({}, {}) ['.format(itemx, itemy-area_edu.head_vspace),
-            '\t\t' + r'anchor=north west,',
+            '\t\\matrix (edu) at ({}, {}) ['.format(x, y-area_edu.head_vspace),
+            '\t\t' + 'anchor={},'.format(anchor),
             '\t\t' + r'matrix of nodes,',
             '\t\t' + r'column 1/.style={nodes={cell1}},',
             '\t\t' + r'column 2/.style={nodes={cell2}},',
@@ -291,7 +319,7 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
         f.write('\t\t' + r'inner ysep=0pt,' + '\n')
         f.write('\t\t' + r'cell1/.style={rectangle, draw=black, inner xsep=0pt, inner ysep=4pt, text height=0.3cm, align=right, minimum width=2.0cm, text width=3.5cm},' + '\n')
         f.write('\t\t' + r'cell2/.style={rectangle, draw=black, inner xsep=6pt, inner ysep=4pt, text height=0.3cm, align=left, minimum width=1.5cm, text width=8.0cm},' + '\n')
-        f.write('\t\t' + r'cell3/.style={rectangle, draw=black, inner xsep=0pt, inner ysep=4pt, text height=0.3cm, align=right, minimum width=0.6cm, text width=0.4cm},' + '\n')
+        f.write('\t\t' + r'cell3/.style={rectangle, draw=black, inner xsep=0pt, inner ysep=4pt, text height=0.3cm, align=center, minimum width=0.6cm, text width=0.4cm},' + '\n')
         f.write('\t\t' + r'cell4/.style={rectangle, draw=black, inner xsep=3pt, inner ysep=4pt, text height=0.3cm, align=left, minimum width=1.0cm, text width=5.5cm},' + '\n')
         f.write('\t\t' + r']' + '\n')
         for line in draw_background():
@@ -303,6 +331,8 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
             f.write('\t\t\t' + p + '\n')
         for i in photo:
             f.write('\t\t\t' + i + '\n')
+        for t in title:
+            f.write('\t\t\t' + t + '\n')
         for car_item in car:
             f.write('\t\t\t' + car_item + '\n')
         for edu_item in edu:
