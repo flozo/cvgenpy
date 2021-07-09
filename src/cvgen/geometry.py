@@ -30,8 +30,6 @@ class Address(object):
 
     def twoline(self):
         return '{} {}\\\\{} {}'.format(self.street, self.house, self.postal_code, self.city)
-#        return ['{} {},'.format(self.street, self.house), '{} {}'.format(self.postal_code, self.city)]
-
 
 
 class Personal(object):
@@ -70,7 +68,6 @@ class PhotoArea(object):
 
 class Area(object):
     def __init__(self, dict_area):
-#    def __init__(self, title, pos_x, pos_y, color, icon, show_area, show_icon):
         self.title = dict_area['title']
         self.pos_x = dict_area['pos_x']
         self.pos_y = dict_area['pos_y']
@@ -97,18 +94,14 @@ class Area(object):
 
 
 class Box(object):
-#    def __init__(self, dict_box):
     def __init__(self, color, width, height):
         self.color = color
         self.width = width
         self.height = height
-#        self.size = dict_box['size']
-#        self.color = dict_box['color']
 
 
 class SkillCircle(object):
     def __init__(self, dict_skill_circle):
-#    def __init__(self, radius, fillcolor, linecolor, showline=False):
         self.radius = dict_skill_circle['radius']
         self.fillcolor = dict_skill_circle['fillcolor']
         self.opencolor = dict_skill_circle['opencolor']
@@ -118,11 +111,8 @@ class SkillCircle(object):
 
 class SkillLayout(object):
     def __init__(self, dict_skill_layout):
-#    def __init__(self, SkillCircle, number=5, distance=5):
-#        self.skillcircle = SkillCircle
         self.number = dict_skill_layout['circle_number']
         self.distance = dict_skill_layout['circle_distance']
-#        super().__init__(radius=2, fillcolor, linecolor, showline=False)
 
 
 def write_config(config_dir):
@@ -189,6 +179,7 @@ def write_config(config_dir):
                         'body_indent': 2,
                         'body_font_size': 'large',
                         'color': 'black',
+                        'icon_color': 'black',
                         'length': 20,
                         'style': 'oneline',
                         'icon': '/home/user/Icon1.pdf',
@@ -210,6 +201,7 @@ def write_config(config_dir):
                         'body_indent': 2,
                         'body_font_size': 'small',
                         'color': 'black',
+                        'icon_color': 'black',
                         'length': 9.5,
                         'style': 'oneline',
                         'icon': '/home/user/Icon1.pdf',
@@ -242,6 +234,7 @@ def write_config(config_dir):
                         'body_indent': 2,
                         'body_font_size': 'small',
                         'color': 'black',
+                        'icon_color': 'Blues-K',
                         'length': 10,
                         'style': 'table',
                         'icon': '/home/user/Icon2.pdf',
@@ -264,7 +257,7 @@ def write_config(config_dir):
                         'body_indent': 2,
                         'body_font_size': 'small',
                         'color': 'black',
-                        'length': 10,
+                        'icon_color': 'black',
                         'length': 10,
                         'style': 'table',
                         'icon': '/home/user/Icon3.pdf',
@@ -287,7 +280,7 @@ def write_config(config_dir):
                         'body_indent': 2,
                         'body_font_size': 'small',
                         'color': 'black',
-                        'length': 10,
+                        'icon_color': 'black',
                         'length': 10,
                         'style': 'table',
                         'icon': '/home/user/Icon4.pdf',
@@ -298,8 +291,8 @@ def write_config(config_dir):
                         },
                     'skills': {
                         'title': 'Skill profile',
-                        'pos_x': 2,
-                        'pos_y': 12,
+                        'pos_x': 0.6,
+                        'pos_y': 18,
                         'anchor': 'north west',
                         'head_vspace': 1,
                         'head_sepline': False,
@@ -310,7 +303,7 @@ def write_config(config_dir):
                         'body_indent': 2,
                         'body_font_size': 'small',
                         'color': 'black',
-                        'length': 10,
+                        'icon_color': 'black',
                         'length': 10,
                         'style': 'table',
                         'icon': '/home/user/Icon5.pdf',
@@ -333,7 +326,7 @@ def write_config(config_dir):
                         'body_indent': 2,
                         'body_font_size': 'small',
                         'color': 'black',
-                        'length': 10,
+                        'icon_color': 'black',
                         'length': 10,
                         'style': 'list',
                         'icon': '/home/user/Icon6.pdf',
@@ -365,12 +358,13 @@ def write_config(config_dir):
                     'layout': {
                         'show_circles': True,
                         'circle_number': 5,
-                        'circle_distance': 3.6,
+                        'circle_distance': 0.35,
+                        'group_color': 'Blues-K',
                         },
                     'circle': {
-                        'radius': 1.5,
+                        'radius': 1.6,
                         'fillcolor': 'Blues-K',
-                        'opencolor': 'Blues-D',
+                        'opencolor': 'Greys-G',
                         'linecolor': 'black',
                         'showline': False,
                         },

@@ -35,6 +35,31 @@ def preamble():
     return l
 
 
+def tikzset():
+    """
+    Define styles
+    """
+    l = [
+        r'\tikzset{',
+        '\t' + r'cell1/.style={rectangle, draw=black, inner xsep=0pt, inner ysep=4pt, text height=0.3cm, align=right, minimum width=2.0cm, text width=3.5cm},',
+        '\t' + r'cell2/.style={rectangle, draw=black, inner xsep=6pt, inner ysep=4pt, text height=0.3cm, align=left, minimum width=1.5cm, text width=8.0cm},',
+        '\t' + r'cell3/.style={rectangle, draw=black, inner xsep=0pt, inner ysep=4pt, text height=0.3cm, align=center, minimum width=0.6cm, text width=0.4cm},',
+        '\t' + r'cell4/.style={rectangle, draw=black, inner xsep=3pt, inner ysep=4pt, text height=0.3cm, align=left, minimum width=1.0cm, text width=5.8cm},',
+        '\t' + r'cell5/.style={rectangle, draw=black, inner xsep=0pt, inner ysep=4pt, text height=0.3cm, align=left, minimum width=0.6cm, text width=4.5cm},',
+        '\t' + r'cell6/.style={rectangle, draw=black, inner xsep=0pt, inner ysep=4pt, text height=0.3cm, align=right, minimum width=1.0cm, text width=2.0cm},',
+        '\t' + r'cell7/.style={rectangle, draw=black, inner xsep=0pt, inner ysep=4pt, text height=0.3cm, align=left, minimum width=1.0cm, text width=6.5cm},',
+        '\t' + r'circfull/.style={draw=none, fill=Blues-K},',
+        '\t' + r'circopen/.style={draw=none, fill=Greys-G},',
+        '\t' + r'pics/skill/.style n args={5}{code={',
+        '\t\t' + r'\foreach \x in {1, ..., #1} {\filldraw[circfull] (#4*\x, 0) circle [radius=#5 mm];};',
+        '\t\t' + r'\foreach \x in {#2, ..., #3} {\filldraw[circopen] (#4*\x, 0) circle [radius=#5 mm];};',
+        '\t\t' + r'}',
+        '\t' + r'},',
+        r'}',
+        ]
+    return l
+
+
 def declare_layers():
     """
     Define pgf layers
@@ -212,10 +237,8 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
     cont.append('\t\t\\node {{{}}}; & \\node {{{}}};\\\\'.format(icons['phone'], config_data['Contact']['phone']))
     cont.append('\t\t\\node {{{}}}; & \\node {{{}}};\\\\'.format(icons['mail'], config_data['Contact']['email']))
     cont.append('\t\t\\vspace{1cm} & \\vspace{1cm}\\\\')
-    print(area_contact.hide_items)
     for key, value in config_data['Contact']['weblinks'].items():
         if key not in area_contact.hide_items:
-            print(key)
             key = key.replace('_', r'\_')
             value = value.replace('_', r'\_')
             if (area_contact.hyperlinks is True) and (value != ''):
@@ -231,7 +254,6 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
     
     # Read career items
     dict_career = config_data['Career']
-    print(dict_career)
 
     # Assemble career items
     area_career = geo.Area(dict_areas['career'])
@@ -269,7 +291,6 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
     dict_edu = config_data['Education']
     edu_items = []
     for edu_item in dict_edu.values():
-        print(edu_item)
         if 'start_date' in edu_item:
             edu_items.append(cv.EduPeriodItem(edu_item))
         else:
@@ -308,12 +329,68 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
     edu.append(r'\end{scope}')
 
     # Read skill items
+    dict_skills = config_data['skills']
+    print(dict_skills)
+    skill_objects = []
+    for item in dict_skills.values():
+        skill_objects.append(cv.SkillItem(item))
+    print(skill_objects[0].group)
+
+    skill_groups = []
+    for item in skill_objects:
+        skill_groups.append(item.group)  # get all skill groups
+    skill_groups = list(set(skill_groups))  # get unique skill groups
+
+    
+#   skill_groups['group']
+    print(skill_groups)
     skill_circle = geo.SkillCircle(dict_skill_circle)
     skill_layout = geo.SkillLayout(dict_skill_layout)
+    num = skill_layout.number
+    dist = skill_layout.distance
+    rad = skill_circle.radius
+    area_skills = geo.Area(dict_areas['skills'])
+    x = area_skills.pos_x
+    y = area_skills.pos_y
+    anchor = area_skills.anchor
+    hsize = area_skills.head_font_size
+    bsize = area_skills.body_font_size
+
     # Assemble skills
-    skills = []
-    for i in range(skill_layout.number):
-        skills.append('\\filldraw[color={}] ({}, {}) circle [radius={}mm]'.format(skill_circle.fillcolor, 2+i*skill_layout.distance/10, 5, skill_circle.radius))
+    skills = [
+            '% SKILL AREA',
+            '% |- Title:',
+            r'\node [anchor={}, font=\{}] at ({}, {}) {{{}}};'.format(anchor, hsize, x, y, area_skills.title),
+            '% |- Items:',
+            '\\begin{{scope}}[row sep=-\\pgflinewidth, column sep=-\\pgflinewidth, text depth=0.0cm, minimum height=0.5cm, font=\{}]'.format(bsize),
+            '\t\\matrix (skills) at ({}, {}) ['.format(x, y-area_skills.head_vspace),
+            '\t\t' + 'anchor={},'.format(anchor),
+            '\t\t' + r'matrix of nodes,',
+            '\t\t' + r'column 1/.style={nodes={cell5}},',
+            '\t\t' + r'column 2/.style={nodes={cell6}},',
+            '\t\t' + r']{',
+            ]
+    desc = 0
+    descr = []
+    for group in skill_groups:
+        skills.append('\t\t\\node {{{}}};\\\\'.format(group.replace('&', '\&')))
+        for item in skill_objects:
+            if item.level >= num:
+                lev = item.level
+            else:
+                lev = item.level + 1
+            if item.group == group:
+                skills.append('\t\t\\node {{{}}}; & \\node {{\\tikz{{\\pic {{skill={{{}}}{{{}}}{{{}}}{{{}}}{{{}}}}};}}}};\\\\'.format(item.name, item.level, lev, num, dist, rad))
+                if item.description != '':
+                    print(item.description)
+                    skills.append('\t\t\\node (d{}) {{}}; & \\node {{}};\\\\'.format(desc))
+                    descr.append('\\node [cell7, anchor=north west, font=\{}] at (d{}.north west) {{{}}};'.format(bsize, desc, item.description))
+                    desc += 1
+        skills.append('\t\t\\node {{{}}};\\\\')
+    skills.append('\t\t' + r'};')
+    skills.append(r'\end{scope}')
+    skills = skills + descr
+
 
     # Write to file
     with open(outfile, 'w', encoding='UTF-8') as f:
@@ -328,22 +405,21 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
         for line in declare_variables():
             f.write('\t\t' + line + '\n')
         f.write('\t' + r'}' + '\n')
+        # Write style definitions
+        for line in tikzset():
+            f.write('\t' + line + '\n')
         # Write layer declaration
         for line in declare_layers():
             f.write('\t' + line + '\n')
         f.write('\t' + r'\begin{tikzpicture}[' + '\n')
         f.write('\t\t' + r'inner xsep=0pt,' + '\n')
         f.write('\t\t' + r'inner ysep=0pt,' + '\n')
-        f.write('\t\t' + r'cell1/.style={rectangle, draw=black, inner xsep=0pt, inner ysep=4pt, text height=0.3cm, align=right, minimum width=2.0cm, text width=3.5cm},' + '\n')
-        f.write('\t\t' + r'cell2/.style={rectangle, draw=black, inner xsep=6pt, inner ysep=4pt, text height=0.3cm, align=left, minimum width=1.5cm, text width=8.0cm},' + '\n')
-        f.write('\t\t' + r'cell3/.style={rectangle, draw=black, inner xsep=0pt, inner ysep=4pt, text height=0.3cm, align=center, minimum width=0.6cm, text width=0.4cm},' + '\n')
-        f.write('\t\t' + r'cell4/.style={rectangle, draw=black, inner xsep=3pt, inner ysep=4pt, text height=0.3cm, align=left, minimum width=1.0cm, text width=5.8cm},' + '\n')
         f.write('\t\t' + r']' + '\n')
         for line in draw_background():
             f.write(line + '\n')
         f.write('\t\t' + r'\begin{pgfonlayer}{foreground}' + '\n')
         for skill in skills:
-            f.write('\t\t\t' + skill + ';\n')
+            f.write('\t\t\t' + skill + '\n')
         for p in pers:
             f.write('\t\t\t' + p + '\n')
         for i in photo:

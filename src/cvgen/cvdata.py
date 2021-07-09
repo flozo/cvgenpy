@@ -37,9 +37,11 @@ class Company(object):
 
 
 class SkillItem(object):
-    def __init__(self, name, level):
-        self.name = name
-        self.level = level
+    def __init__(self, dict_skill):
+        self.name = dict_skill['name']
+        self.description = dict_skill['description']
+        self.level = dict_skill['level']
+        self.group = dict_skill['group']
 
 
 class SkillGroup(object):
@@ -156,21 +158,60 @@ def write_config(config_dir):
                 'color_main': 'blue',
                 'color_accent': 'yellow',
                 },
-            'Skills': {
-                'Skill1': {
-                    'name': 'Skill1 name',
-                    'level': 'Skill1 level',
-                    'group': 'Skill1 group',
+            'skills': {
+                'skill1': {
+                    'name': 'Python',
+                    'description': '',
+                    'level': 4,
+                    'group': 'Programming',
                     },
-                'Skill2': {
-                    'name': 'Skill2 name',
-                    'level': 'Skill2 level',
-                    'group': 'Skill2 group',
+                'skill2': {
+                    'name': 'LaTeX',
+                    'description': '',
+                    'level': 5,
+                    'group': 'Programming',
                     },
-                'Skill3': {
-                    'name': 'Skill3 name',
-                    'level': 'Skill3 level',
-                    'group': 'Skill3 group',
+                'skill3': {
+                    'name': 'Bash',
+                    'description': '',
+                    'level': 3,
+                    'group': 'Programming',
+                    },
+                'skill4': {
+                    'name': 'GNU/Linux',
+                    'description': '',
+                    'level': 4,
+                    'group': 'Operating systems',
+                    },
+                'skill5': {
+                    'name': 'Windows',
+                    'description': '',
+                    'level': 3,
+                    'group': 'Operating systems',
+                    },
+                'skill6': {
+                    'name': 'Data analysis',
+                    'description': 'numpy, scipy, pandas',
+                    'level': 4,
+                    'group': 'Software & Tools',
+                    },
+                'skill7': {
+                    'name': 'Data visualization',
+                    'description': 'matplotlib, gnuplot, pgfplots, Origin',
+                    'level': 4,
+                    'group': 'Software & Tools',
+                    },
+                'skill8': {
+                    'name': 'Git',
+                    'description': '',
+                    'level': 5,
+                    'group': 'Software & Tools',
+                    },
+                'skill9': {
+                    'name': 'MS Office/LibreOffice',
+                    'description': '',
+                    'level': 4,
+                    'group': 'Software & Tools',
                     },
                 },
             'Education': {
