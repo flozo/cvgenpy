@@ -50,6 +50,20 @@ class SkillGroup(object):
         self.items = skill_items
 
 
+class KnowledgeItem(object):
+    def __init__(self, dict_know):
+        self.name = dict_know['name']
+        self.description = dict_know['description']
+        self.group = dict_know['group']
+
+
+class CertificateItem(object):
+    def __init__(self, dict_cert):
+        self.name = dict_know['name']
+        self.description = dict_know['url']
+        self.group = dict_know['group']
+
+
 class TimelineItem(object):
     """
     Generic timeline item
@@ -214,6 +228,50 @@ def write_config(config_dir):
                     'group': 'Software & Tools',
                     },
                 },
+            'knowledge': {
+                    'item1': {
+                        'name': 'English',
+                        'description': 'native speaker',
+                        'group': 'Languages',
+                        },
+                    'item2': {
+                        'name': 'German',
+                        'description': 'fluent',
+                        'group': 'Languages',
+                        },
+                    'item3': {
+                        'name': 'Latin',
+                        'description': 'basic',
+                        'group': 'Languages',
+                        },
+                    'item4': {
+                        'name': 'Driving license',
+                        'description': '',
+                        'group': 'Licenses',
+                        },
+                    'item5': {
+                        'name': 'Boating license',
+                        'description': '',
+                        'group': 'Licenses',
+                        },
+                    },
+            'certificates': {
+                    'item1': {
+                        'name': 'MOOC certificate1',
+                        'url': 'https://link_to_certificate1.net',
+                        'group': 'MOOC courses',
+                        },
+                    'item2': {
+                        'name': 'MOOC certificate2',
+                        'url': 'https://link_to_certificate2.net',
+                        'group': 'MOOC courses',
+                        },
+                    'item3': {
+                        'name': 'MOOC certificate3',
+                        'url': 'https://link_to_certificate3.net',
+                        'group': 'MOOC courses',
+                        },
+                    },
             'Education': {
                 'period1': {
                     'start_date': '01/1990',

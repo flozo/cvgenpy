@@ -378,7 +378,6 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
     for group in skill_groups:
         skills.append('\t\t\\node {{{}}};\\\\'.format(group.replace('&', '\&')))
         for item in skill_objects:
-            print('level: '+ str(item.level))
             if item.group == group:
                 if item.level == num:
                     skills.append('\t\t\\node {{{}}}; & \\node {{\\tikz{{\\pic {{skillmax={{{}}}{{{}}}{{{}}}}};}}}};\\\\'.format(item.name, num, dist, rad))
@@ -388,12 +387,54 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
                     skills.append('\t\t\\node {{{}}}; & \\node {{\\tikz{{\\pic {{skill={{{}}}{{{}}}{{{}}}{{{}}}{{{}}}}};}}}};\\\\'.format(item.name, item.level, item.level+1, num, dist, rad))
                 if item.description != '':
                     skills.append('\t\t\\node (d{}) {{}}; & \\node {{}};\\\\'.format(desc))
-                    descr.append('\\node [cell7, anchor=north west, font=\{}] at (d{}.north west) {{{}}};'.format(bsize, desc, item.description))
+                    descr.append('\\node [cell7, anchor=north west, font=\{}] at (d{}.north west) {{({})}};'.format(bsize, desc, item.description))
                     desc += 1
         skills.append('\t\t\\node {{{}}};\\\\')
     skills.append('\t\t' + r'};')
     skills.append(r'\end{scope}')
     skills = skills + descr
+
+
+    # Read knowledge items
+    dict_know = config_data['knowledge']
+    know_objects = []
+    for item in dict_know.values():
+        know_objects.append(cv.KnowledgeItem(item))
+
+    know_groups = []
+    for item in know_objects:
+        know_groups.append(item.group)  # get all groups
+    know_groups = list(set(know_groups))  # get unique groups
+    
+    area_know = geo.Area(dict_areas['knowledge'])
+    x = area_know.pos_x
+    y = area_know.pos_y
+    anchor = area_know.anchor
+    hsize = area_know.head_font_size
+    bsize = area_know.body_font_size
+
+    # Assemble skills
+    know = [
+            '% KNOWLEDGE AREA',
+            '% |- Title:',
+            r'\node [anchor={}, font=\{}] at ({}, {}) {{{}}};'.format(anchor, hsize, x, y, area_know.title),
+            '% |- Items:',
+            '\\begin{{scope}}[row sep=-\\pgflinewidth, column sep=-\\pgflinewidth, text depth=0.0cm, minimum height=0.5cm, font=\{}]'.format(bsize),
+            '\t\\matrix (skills) at ({}, {}) ['.format(x, y-area_know.head_vspace),
+            '\t\t' + 'anchor={},'.format(anchor),
+            '\t\t' + r'matrix of nodes,',
+            '\t\t' + r'column 1/.style={nodes={cell5}},',
+            '\t\t' + r'column 2/.style={nodes={cell6}},',
+            '\t\t' + r']{',
+            ]
+    for group in know_groups:
+        know.append('\t\t\\node {{{}}};\\\\'.format(group.replace('&', '\&')))
+        for item in know_objects:
+            if item.group == group:
+                    know.append('\t\t\\node {{{}}}; & \\node {{{}}};\\\\'.format(item.name, item.description))
+        know.append('\t\t\\node {{{}}};\\\\')
+    know.append('\t\t' + r'};')
+    know.append(r'\end{scope}')
 
 
     # Write to file
@@ -422,8 +463,12 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
         for line in draw_background():
             f.write(line + '\n')
         f.write('\t\t' + r'\begin{pgfonlayer}{foreground}' + '\n')
+        for c in cont:
+            f.write('\t\t\t' + c + '\n')
         for skill in skills:
             f.write('\t\t\t' + skill + '\n')
+        for k in know:
+            f.write('\t\t\t' + k + '\n')
         for p in pers:
             f.write('\t\t\t' + p + '\n')
         for i in photo:
@@ -434,8 +479,6 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
             f.write('\t\t\t' + car_item + '\n')
         for edu_item in edu:
             f.write('\t\t\t' + edu_item + '\n')
-        for c in cont:
-            f.write('\t\t\t' + c + '\n')
         f.write('\t\t' + r'\end{pgfonlayer}' + '\n')
         f.write('\t' + r'\end{tikzpicture}' + '\n')
         if cv_pages > 1:
