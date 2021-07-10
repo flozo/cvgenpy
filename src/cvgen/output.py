@@ -394,7 +394,6 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
     skills.append(r'\end{scope}')
     skills = skills + descr
 
-
     # Read knowledge items
     dict_know = config_data['knowledge']
     know_objects = []
@@ -413,7 +412,7 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
     hsize = area_know.head_font_size
     bsize = area_know.body_font_size
 
-    # Assemble skills
+    # Assemble knowledge
     know = [
             '% KNOWLEDGE AREA',
             '% |- Title:',
@@ -436,6 +435,50 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
     know.append('\t\t' + r'};')
     know.append(r'\end{scope}')
 
+    # Read certificate items
+    dict_cert = config_data['certificates']
+    cert_objects = []
+    for item in dict_cert.values():
+        cert_objects.append(cv.CertificateItem(item))
+
+    cert_groups = []
+    for item in cert_objects:
+        cert_groups.append(item.group)  # get all groups
+    cert_groups = list(set(cert_groups))  # get unique groups
+    
+    area_cert = geo.Area(dict_areas['certificates'])
+    x = area_cert.pos_x
+    y = area_cert.pos_y
+    anchor = area_cert.anchor
+    hsize = area_cert.head_font_size
+    bsize = area_cert.body_font_size
+
+    # Assemble certificates
+    cert = [
+            '% CERTIFICATES AREA',
+            '% |- Title:',
+            r'\node [anchor={}, font=\{}] at ({}, {}) {{{}}};'.format(anchor, hsize, x, y, area_cert.title),
+            '% |- Items:',
+            '\\begin{{scope}}[row sep=-\\pgflinewidth, column sep=-\\pgflinewidth, text depth=0.0cm, minimum height=0.5cm, font=\{}]'.format(bsize),
+            '\t\\matrix (skills) at ({}, {}) ['.format(x, y-area_cert.head_vspace),
+            '\t\t' + 'anchor={},'.format(anchor),
+            '\t\t' + r'matrix of nodes,',
+            '\t\t' + r'column 1/.style={nodes={cell5}},',
+            '\t\t' + r'column 2/.style={nodes={cell6}},',
+            '\t\t' + r']{',
+            ]
+    for group in cert_groups:
+        cert.append('\t\t\\node {{{}}};\\\\'.format(group.replace('&', '\&')))
+        for item in cert_objects:
+            if item.group == group:
+                if area_cert.hyperlinks is True:
+                    value = '\\href{{{}}{{{}}}'.format(item.name, item.url)
+                else:
+                    value = item.name
+                cert.append('\t\t\\node {{{}}};\\\\'.format(value))
+#        cert.append('\t\t\\node {{{}}};\\\\')
+    cert.append('\t\t' + r'};')
+    cert.append(r'\end{scope}')
 
     # Write to file
     with open(outfile, 'w', encoding='UTF-8') as f:
@@ -469,12 +512,14 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
             f.write('\t\t\t' + skill + '\n')
         for k in know:
             f.write('\t\t\t' + k + '\n')
-        for p in pers:
-            f.write('\t\t\t' + p + '\n')
+        for c in cert:
+            f.write('\t\t\t' + c + '\n')
         for i in photo:
             f.write('\t\t\t' + i + '\n')
         for t in title:
             f.write('\t\t\t' + t + '\n')
+        for p in pers:
+            f.write('\t\t\t' + p + '\n')
         for car_item in car:
             f.write('\t\t\t' + car_item + '\n')
         for edu_item in edu:

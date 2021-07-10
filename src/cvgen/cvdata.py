@@ -59,9 +59,9 @@ class KnowledgeItem(object):
 
 class CertificateItem(object):
     def __init__(self, dict_cert):
-        self.name = dict_know['name']
-        self.description = dict_know['url']
-        self.group = dict_know['group']
+        self.name = dict_cert['name']
+        self.description = dict_cert['url']
+        self.group = dict_cert['group']
 
 
 class TimelineItem(object):
@@ -258,17 +258,17 @@ def write_config(config_dir):
             'certificates': {
                     'item1': {
                         'name': 'MOOC certificate1',
-                        'url': 'https://link_to_certificate1.net',
+                        'url': 'https://www.link_to_certificate1.net',
                         'group': 'MOOC courses',
                         },
                     'item2': {
                         'name': 'MOOC certificate2',
-                        'url': 'https://link_to_certificate2.net',
+                        'url': 'https://www.link_to_certificate2.net',
                         'group': 'MOOC courses',
                         },
                     'item3': {
                         'name': 'MOOC certificate3',
-                        'url': 'https://link_to_certificate3.net',
+                        'url': 'https://www.link_to_certificate3.net',
                         'group': 'MOOC courses',
                         },
                     },
