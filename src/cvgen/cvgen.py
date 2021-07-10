@@ -63,6 +63,8 @@ def main():
         cmd = 'pdflatex -synctex=1 -interaction=nonstopmode -output-directory {} {}'.format(output_dir, outfile)
         if verbosity >= 1:
             print('[output] Executing pdfLaTeX: {} ...'.format(cmd))
+        if verbosity == -1:
+            cmd = cmd + '> ~/.config/cvgen/pdfLaTeX_last_output.log'
         os.system(cmd)
         if verbosity >= 1:
             print('[output] ... done!')

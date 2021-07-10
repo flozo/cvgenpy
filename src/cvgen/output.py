@@ -330,20 +330,15 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
 
     # Read skill items
     dict_skills = config_data['skills']
-    print(dict_skills)
     skill_objects = []
     for item in dict_skills.values():
         skill_objects.append(cv.SkillItem(item))
-    print(skill_objects[0].group)
 
     skill_groups = []
     for item in skill_objects:
         skill_groups.append(item.group)  # get all skill groups
     skill_groups = list(set(skill_groups))  # get unique skill groups
-
     
-#   skill_groups['group']
-    print(skill_groups)
     skill_circle = geo.SkillCircle(dict_skill_circle)
     skill_layout = geo.SkillLayout(dict_skill_layout)
     num = skill_layout.number
@@ -382,7 +377,6 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
             if item.group == group:
                 skills.append('\t\t\\node {{{}}}; & \\node {{\\tikz{{\\pic {{skill={{{}}}{{{}}}{{{}}}{{{}}}{{{}}}}};}}}};\\\\'.format(item.name, item.level, lev, num, dist, rad))
                 if item.description != '':
-                    print(item.description)
                     skills.append('\t\t\\node (d{}) {{}}; & \\node {{}};\\\\'.format(desc))
                     descr.append('\\node [cell7, anchor=north west, font=\{}] at (d{}.north west) {{{}}};'.format(bsize, desc, item.description))
                     desc += 1
