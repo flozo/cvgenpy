@@ -12,8 +12,8 @@ here = pathlib.Path(__file__).parent.resolve()
 long_description = (here/'README.md').read_text(encoding='utf-8')
 
 setup(
-        name = 'crypto',
-        version = '0.13',
+        name = 'cvgen',
+        version = '0.14',
         description = 'A program for generating a curriculum vitae.',
         long_description = long_description,
         long_description_content_type = 'text/markdown',
@@ -28,6 +28,8 @@ setup(
             'License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)',
             'Natural Language :: English',
             'Natural Language :: German',
+            'Operating System :: POSIX',
+            'Operating System :: POSIX :: Linux',
             'Programming Language :: Python :: 3',
             'Programming Language :: Python :: 3.6',
             'Topic :: Office/Business',
