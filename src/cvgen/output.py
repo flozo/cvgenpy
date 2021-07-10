@@ -50,6 +50,14 @@ def tikzset():
         '\t' + r'cell7/.style={rectangle, draw=black, inner xsep=0pt, inner ysep=4pt, text height=0.3cm, align=left, minimum width=1.0cm, text width=6.5cm},',
         '\t' + r'circfull/.style={draw=none, fill=Blues-K},',
         '\t' + r'circopen/.style={draw=none, fill=Greys-G},',
+        '\t' + r'pics/skillmax/.style n args={3}{code={',
+        '\t\t' + r'\foreach \x in {1, ..., #1} {\filldraw[circfull] (#2*\x, 0) circle [radius=#3 mm];};',
+        '\t\t' + r'}',
+        '\t' + r'},',
+        '\t' + r'pics/skillmin/.style n args={3}{code={',
+        '\t\t' + r'\foreach \x in {1, ..., #1} {\filldraw[circopen] (#2*\x, 0) circle [radius=#3 mm];};',
+        '\t\t' + r'}',
+        '\t' + r'},',
         '\t' + r'pics/skill/.style n args={5}{code={',
         '\t\t' + r'\foreach \x in {1, ..., #1} {\filldraw[circfull] (#4*\x, 0) circle [radius=#5 mm];};',
         '\t\t' + r'\foreach \x in {#2, ..., #3} {\filldraw[circopen] (#4*\x, 0) circle [radius=#5 mm];};',
@@ -370,12 +378,14 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
     for group in skill_groups:
         skills.append('\t\t\\node {{{}}};\\\\'.format(group.replace('&', '\&')))
         for item in skill_objects:
-            if item.level >= num:
-                lev = item.level
-            else:
-                lev = item.level + 1
+            print('level: '+ str(item.level))
             if item.group == group:
-                skills.append('\t\t\\node {{{}}}; & \\node {{\\tikz{{\\pic {{skill={{{}}}{{{}}}{{{}}}{{{}}}{{{}}}}};}}}};\\\\'.format(item.name, item.level, lev, num, dist, rad))
+                if item.level == num:
+                    skills.append('\t\t\\node {{{}}}; & \\node {{\\tikz{{\\pic {{skillmax={{{}}}{{{}}}{{{}}}}};}}}};\\\\'.format(item.name, num, dist, rad))
+                elif item.level == 0:
+                    skills.append('\t\t\\node {{{}}}; & \\node {{\\tikz{{\\pic {{skillmin={{{}}}{{{}}}{{{}}}}};}}}};\\\\'.format(item.name, num, dist, rad))
+                else:
+                    skills.append('\t\t\\node {{{}}}; & \\node {{\\tikz{{\\pic {{skill={{{}}}{{{}}}{{{}}}{{{}}}{{{}}}}};}}}};\\\\'.format(item.name, item.level, item.level+1, num, dist, rad))
                 if item.description != '':
                     skills.append('\t\t\\node (d{}) {{}}; & \\node {{}};\\\\'.format(desc))
                     descr.append('\\node [cell7, anchor=north west, font=\{}] at (d{}.north west) {{{}}};'.format(bsize, desc, item.description))
