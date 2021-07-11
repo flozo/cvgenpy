@@ -10,8 +10,8 @@ import output as out
 import os
 
 # Version
-version_num = '0.14'
-version_dat = '2021-07-10'
+version_num = '0.15'
+version_dat = '2021-07-11'
 version_str = '{} ({})'.format(version_num, version_dat)
 
 def main():
@@ -46,8 +46,10 @@ def main():
     fn.check_config_dir(config_dir)
     config_file_data = os.path.join(config_dir, 'cvdata.json')
     config_file_geo = os.path.join(config_dir, 'cvgeometry.json')
+    config_file_letter = os.path.join(config_dir, 'letter.txt')
     fn.check_config_file(config_file_data)
     fn.check_config_file(config_file_geo)
+    fn.check_config_file(config_file_letter)
 
     # Check file extension
     outfile = str(args.outfile)
@@ -63,6 +65,7 @@ def main():
         cmd = 'pdflatex -synctex=1 -interaction=nonstopmode -output-directory {} {}'.format(output_dir, outfile)
         if verbosity >= 1:
             print('[output] Executing pdfLaTeX: {} ...'.format(cmd))
+        # redirect pdfLaTeX output to log file to enable true quiet mode
         if verbosity == -1:
             cmd = cmd + '> ~/.config/cvgen/pdfLaTeX_last_output.log'
         os.system(cmd)

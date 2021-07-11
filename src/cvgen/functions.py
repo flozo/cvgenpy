@@ -36,6 +36,8 @@ def check_config_file(config_file):
                 cv.write_config(config_file)
             elif 'geo' in config_file:
                 geo.write_config(config_file)
+            elif 'letter' in config_file:
+                cv.write_letter(config_file)
             else:
                 print('[config] Config file name undefined.')
             print('[config] Generic config file {} created.'.format(config_file))
