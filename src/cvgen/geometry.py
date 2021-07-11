@@ -17,6 +17,44 @@ class Layout(object):
         self.title_on_every_page = dict_layout['title_on_every_page']
 
 
+class Letter(object):
+    def __init__(self, dict_letter):
+        self.width = dict_letter['width']
+        self.height = dict_letter['height']
+        self.border_top = dict_letter['border_top']
+        self.border_bottom = dict_letter['border_bottom']
+        self.border_left = dict_letter['border_left']
+        self.border_right = dict_letter['border_right']
+        self.address_x = dict_letter['address_x']
+        self.address_y = dict_letter['address_y']
+        self.address_width = dict_letter['address_width']
+        self.address_height = dict_letter['address_height']
+        self.backaddress_y = dict_letter['backaddress_y']
+        self.backaddress_sepline_thickness = dict_letter['backaddress_sepline_thickness']
+        self.backaddress_sepchar = dict_letter['backaddress_sepchar']
+        self.backaddress_fontsize = dict_letter['backaddress_fontsize']
+        self.sender_x = dict_letter['sender_x']
+        self.sender_y = dict_letter['sender_y']
+        self.sender_width = dict_letter['sender_width']
+        self.sender_height = dict_letter['sender_height']
+        self.subject_y = dict_letter['subject_y']
+        self.text_y = dict_letter['text_y']
+        self.perforation_mark_x = dict_letter['perforation_mark_x']
+        self.perforation_mark_y = dict_letter['perforation_mark_y']
+        self.perforation_mark_width = dict_letter['perforation_mark_width']
+        self.perforation_mark_thickness = dict_letter['perforation_mark_thickness']
+        self.folding_mark_1_x = dict_letter['folding_mark_1_x']
+        self.folding_mark_1_y = dict_letter['folding_mark_1_y']
+        self.folding_mark_1_width = dict_letter['folding_mark_1_width']
+        self.folding_mark_1_thickness = dict_letter['folding_mark_1_thickness']
+        self.folding_mark_2_x = dict_letter['folding_mark_2_x']
+        self.folding_mark_2_y = dict_letter['folding_mark_2_y']
+        self.folding_mark_2_width = dict_letter['folding_mark_2_width']
+        self.folding_mark_2_thickness = dict_letter['folding_mark_2_thickness']
+        self.highlight = dict_letter['highlight']
+        self.highlight_color = dict_letter['highlight_color']
+        
+
 class Address(object):
     def __init__(self, dict_address):
         self.street = dict_address['street']
@@ -140,7 +178,39 @@ def write_config(config_dir):
             'letter': {
                 'width': 21.0,
                 'height': 29.7,
+                'border_top': 2.0,
+                'border_bottom': 2.0,
+                'border_left': 2.5,
+                'border_right': 2.0,
                 'language': 'en',
+                'address_x': 2.0,
+                'address_y': 20.7,
+                'address_width': 9.0,
+                'address_height': 4.5,
+                'backaddress_y': 23.43,
+                'backaddress_sepline_thickness': 0.1,
+                'backaddress_sepchar': 'bullet',
+                'backaddress_fontsize': 'scriptsize',
+                'sender_x': 11.0,
+                'sender_y': 20.7,
+                'sender_width': 20.7,
+                'sender_height': 20.7,
+                'subject_y': 20.7,
+                'text_y': 20.7,
+                'perforation_mark_x': 0.1,
+                'perforation_mark_y': 14.85,
+                'perforation_mark_width': 0.5,
+                'perforation_mark_thickness': 0.1,
+                'folding_mark_1_x': 0.1,
+                'folding_mark_1_y': 19.2,
+                'folding_mark_1_width': 0.25,
+                'folding_mark_1_thickness': 0.1,
+                'folding_mark_2_x': 0.1,
+                'folding_mark_2_y': 8.7,
+                'folding_mark_2_width': 0.25,
+                'folding_mark_2_thickness': 0.1,
+                'highlight': True,
+                'highlight_color': 'Greys-D',
                 },
             'icons': {
                 'address': r'\faIcon{map-marker-alt}',

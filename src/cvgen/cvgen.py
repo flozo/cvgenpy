@@ -50,13 +50,16 @@ def main():
     fn.check_config_file(config_file_data)
     fn.check_config_file(config_file_geo)
     fn.check_config_file(config_file_letter)
+    text = fn.read_text(os.path.join(config_dir, 'letter.txt'))  
+    text = fn.format_text(text)
+
 
     # Check file extension
     outfile = str(args.outfile)
     if outfile[-4:0] != '.tex':
         outfile = outfile + '.tex'
     outfile = os.path.abspath(outfile)
-    out.assemble_latex(outfile, version_str, config_file_geo, config_file_data)
+    out.assemble_latex(outfile, version_str, config_file_geo, config_file_data, text)
     # Messages and execution of pdfLaTeX/mupdf
     if verbosity >= 1:
         print('[output] LaTeX file {} created.'.format(outfile))

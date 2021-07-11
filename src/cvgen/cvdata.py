@@ -60,7 +60,7 @@ class KnowledgeItem(object):
 class CertificateItem(object):
     def __init__(self, dict_cert):
         self.name = dict_cert['name']
-        self.description = dict_cert['url']
+        self.url = dict_cert['url']
         self.group = dict_cert['group']
 
 
@@ -258,17 +258,17 @@ def write_config(config_dir):
             'certificates': {
                     'item1': {
                         'name': 'MOOC certificate1',
-                        'url': 'https://www.link_to_certificate1.net',
+                        'url': 'https://www.linktocertificate1.net',
                         'group': 'MOOC courses',
                         },
                     'item2': {
                         'name': 'MOOC certificate2',
-                        'url': 'https://www.link_to_certificate2.net',
+                        'url': 'https://www.linktocertificate2.net',
                         'group': 'MOOC courses',
                         },
                     'item3': {
                         'name': 'MOOC certificate3',
-                        'url': 'https://www.link_to_certificate3.net',
+                        'url': 'https://www.linktocertificate3.net',
                         'group': 'MOOC courses',
                         },
                     },

@@ -7,6 +7,27 @@ import geometry as geo
 from PyPDF2 import PdfFileMerger
 
 
+def read_text(textfile):
+    """
+    Read text file and write content into variable.
+    """
+    with open(textfile, 'r', encoding='utf-8') as f:
+        text = f.readlines()
+    print(text)
+    return text
+
+
+def format_text(text):
+    for count, line in enumerate(text):
+        if line[0] == '#':
+            text[count] = ''
+        if line == '\n':
+            print('JA!')
+            text[count-1] = text[count-1].replace('\n', r'\\')
+    print(text)
+    return text
+
+
 def read_config(config_file):
     """
     Read JSON config file and write content into nested dictionary.

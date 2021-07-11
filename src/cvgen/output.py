@@ -81,7 +81,65 @@ def declare_layers():
     return l
 
 
-def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
+def assemble_letter(dict_letter, config_file_data, letter_text):
+    """
+    Assemble LaTeX code for letter
+    """
+#    config_data = fn.read_config(config_file_data)
+#    config_geo = fn.read_config(config_file_geo)
+    letter = geo.Letter(dict_letter)
+    l = [
+        r'% === LETTER ===',
+        r'\begin{tikzpicture}[',
+        '\t' + r'inner xsep=0pt,',
+        '\t' + r'inner ysep=0pt,',
+        '\t' + r']',
+        '\t' + r'\begin{pgfonlayer}{background}',
+        '\t\t\\fill [fill=none] (0, 0) rectangle ({}, {});'.format(letter.width, letter.height),
+        '\t' + r'\end{pgfonlayer}',
+        ]
+    if letter.highlight is True:
+        l2 = [
+             '\t' + r'% AREA HIGHLIGHTING',
+             '\t' + r'\begin{pgfonlayer}{forebackground}',
+             '\t\t' + r'\begin{scope}[',
+             '\t\t\t' + 'fill={}, draw={},'.format(letter.highlight_color, 'black'),
+             '\t\t\t' + ']',
+             '\t\t\t' + r'% |- Border',
+             '\t\t\t\\filldraw ({}, {}) rectangle ({}, {});'.format(letter.border_left, letter.border_bottom, letter.width-letter.border_right, letter.height-letter.border_top),
+             '\t\t\t' + r'% |- Address field, total window',
+             '\t\t\t' + '\\filldraw ({}, {}) rectangle +({}, {});'.format(letter.address_x, letter.address_y, letter.address_width, letter.address_height),
+             '\t\t\t' + r'% |- Address field, recipient area',
+             '\t\t\t' + '\\filldraw ({}, {}) rectangle +({}, {});'.format(letter.border_left, letter.address_y, letter.address_width-0.5, 2.73),
+             '\t\t\t' + r'% |- Text area',
+             '\t\t\t\\filldraw ({}, {}) rectangle ({}, {});'.format(letter.border_left, letter.border_bottom, letter.width-letter.border_right, letter.height-12.5),
+             '\t\t' + r'\end{scope}',
+             '\t' + r'\end{pgfonlayer}',
+             ]
+        l = l + l2
+    l2 = [
+         '\t' + r'% MARKS',
+         '\t' + r'\begin{pgfonlayer}{foreground}',
+         '\t\t' + r'% |- Backaddress separator',
+         '\t\t' + '\\draw [line width={}] ({}, {}) -- +({}, 0);'.format(letter.backaddress_sepline_thickness, letter.address_x, letter.backaddress_y, letter.address_width),
+         '\t\t' + r'% |- Perforation mark',
+         '\t\t' + '\\draw [line width={}] ({}, {}) -- +({}, 0);'.format(letter.perforation_mark_thickness, letter.perforation_mark_x, letter.perforation_mark_y, letter.perforation_mark_width),
+         '\t\t' + r'% |- Folding mark 1',
+         '\t\t' + '\\draw [line width={}] ({}, {}) -- +({}, 0);'.format(letter.folding_mark_1_thickness, letter.folding_mark_1_x, letter.folding_mark_1_y, letter.folding_mark_1_width),
+         '\t\t' + r'% |- Folding mark 2',
+         '\t\t' + '\\draw [line width={}] ({}, {}) -- +({}, 0);'.format(letter.folding_mark_2_thickness, letter.folding_mark_2_x, letter.folding_mark_2_y, letter.folding_mark_2_width),
+         '\t' + r'\end{pgfonlayer}',
+         '\t\\node [anchor=north west, text width={}cm, align=justify] at ({}, {}) {{'.format(letter.width-letter.border_left-letter.border_right, letter.border_left, letter.height-12.5),
+         ]
+    for line in letter_text:
+        l2.append(line)
+    l2.append(r'};')
+    l2.append(r'\end{tikzpicture}')
+    l = l + l2
+    return l
+ 
+
+def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text):
     """
     Read out config values, create objects, and assemble LaTeX code
     """
@@ -131,6 +189,7 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
     config_data = fn.read_config(config_file_data)
     config_geo = fn.read_config(config_file_geo)
     dict_layout = config_geo['cv']['layout']
+    dict_letter = config_geo['letter']
     dict_box = config_geo['cv']['boxes']
     dict_box_top = dict_box['box_top']
     dict_box_bottom = dict_box['box_bottom']
@@ -472,7 +531,7 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
         for item in cert_objects:
             if item.group == group:
                 if area_cert.hyperlinks is True:
-                    value = '\\href{{{}}{{{}}}'.format(item.name, item.url)
+                    value = '\\href{{{}}}{{{}}}'.format(item.name, item.url)
                 else:
                     value = item.name
                 cert.append('\t\t\\node {{{}}};\\\\'.format(value))
@@ -499,6 +558,11 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data):
         # Write layer declaration
         for line in declare_layers():
             f.write('\t' + line + '\n')
+        # Write letter
+        for line in assemble_letter(dict_letter, config_data, text):
+            f.write('\t' + line + '\n')
+        # Write CV
+        f.write('\t' + r'% === CURRICULUM VITAE ===' + '\n')
         f.write('\t' + r'\begin{tikzpicture}[' + '\n')
         f.write('\t\t' + r'inner xsep=0pt,' + '\n')
         f.write('\t\t' + r'inner ysep=0pt,' + '\n')
