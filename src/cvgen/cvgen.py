@@ -10,8 +10,8 @@ import output as out
 import os
 
 # Version
-version_num = '0.15'
-version_dat = '2021-07-11'
+version_num = '0.16'
+version_dat = '2021-07-12'
 version_str = '{} ({})'.format(version_num, version_dat)
 
 def main():
@@ -26,6 +26,8 @@ def main():
                         help=('disable terminal output (terminates all verbosity)'))
     parser.add_argument('-l', '--latex', action='store_true',
                         help='execute pdflatex after creating *.tex file')
+    parser.add_argument('-m', '--microtype', action='store_true',
+                        help='use microtype package for fine tuning of type set')
     parser.add_argument('-s', '--show', action='store_true',
                         help='show pdf after executing pdflatex (implies -l)')
     parser.add_argument('-a', '--appendix', action='store_true',
@@ -59,7 +61,7 @@ def main():
     if outfile[-4:0] != '.tex':
         outfile = outfile + '.tex'
     outfile = os.path.abspath(outfile)
-    out.assemble_latex(outfile, version_str, config_file_geo, config_file_data, text)
+    out.assemble_latex(outfile, version_str, config_file_geo, config_file_data, text, args.microtype)
     # Messages and execution of pdfLaTeX/mupdf
     if verbosity >= 1:
         print('[output] LaTeX file {} created.'.format(outfile))
