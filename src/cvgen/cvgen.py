@@ -26,8 +26,10 @@ def main():
                         help=('disable terminal output (terminates all verbosity)'))
     parser.add_argument('-l', '--latex', action='store_true',
                         help='execute pdflatex after creating *.tex file')
-    parser.add_argument('-m', '--microtype', action='store_true',
+    parser.add_argument('-M', '--microtype', action='store_true',
                         help='use microtype package for fine tuning of type set')
+    parser.add_argument('-m', '--metadata', action='store_true',
+                        help='add PDF metadata')
     parser.add_argument('-s', '--show', action='store_true',
                         help='show pdf after executing pdflatex (implies -l)')
     parser.add_argument('-a', '--appendix', action='store_true',
@@ -61,7 +63,7 @@ def main():
     if outfile[-4:0] != '.tex':
         outfile = outfile + '.tex'
     outfile = os.path.abspath(outfile)
-    out.assemble_latex(outfile, version_str, config_file_geo, config_file_data, text, args.microtype)
+    out.assemble_latex(outfile, version_str, config_file_geo, config_file_data, text, args.microtype, args.metadata)
     # Messages and execution of pdfLaTeX/mupdf
     if verbosity >= 1:
         print('[output] LaTeX file {} created.'.format(outfile))

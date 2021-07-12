@@ -7,6 +7,7 @@ class Personal(object):
         self.first_name = dict_personal['first_name']
         self.second_name = dict_personal['second_name']
         self.family_name = dict_personal['family_name']
+        self.title = dict_personal['title']
         self.birth_date = dict_personal['birth_date']
         self.birth_location_city = dict_personal['birth_location_city']
         self.birth_location_country = dict_personal['birth_location_country']
@@ -32,8 +33,21 @@ class Company(object):
     def __init__(self, dict_company):
         self.name = dict_company['name']
         self.city = dict_company['city']
+        self.position = dict_company['position']
         self.color_main = dict_company['color_main']
         self.color_accent = dict_company['color_accent']
+
+
+class Metadata(object):
+    def __init__(self, first_name, family_name, title, city, country, email, company, position):
+        self.first_name = first_name
+        self.family_name = family_name
+        self.title = title
+        self.city = city
+        self.country = country
+        self.email = email
+        self.company = company
+        self.position = position
 
 
 class SkillItem(object):
@@ -134,6 +148,7 @@ def write_config(config_dir):
                 'first_name': 'John',
                 'second_name': 'Peter',
                 'family_name': 'Smith',
+                'title': 'Ph.D.',
                 'birth_date': '1900-01-01',
                 'birth_location_city': 'City',
                 'birth_location_country': 'Country',
@@ -166,9 +181,10 @@ def write_config(config_dir):
                     'ORCID': 'orcid',
                     },
                },
-            'Company': {
+            'company': {
                 'name': 'Company',
                 'city': 'City',
+                'position': 'Position',
                 'color_main': 'blue',
                 'color_accent': 'yellow',
                 },
