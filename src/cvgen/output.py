@@ -43,6 +43,7 @@ def preamble(microtype, meta, include_meta):
                 '\t' + 'pdfauthor={{{} {}}},'.format(meta.first_name, meta.family_name),
                 '\t' + 'pdfauthortitle={{{}}},'.format(meta.title),
                 '\t' + 'pdfcaptionwriter={{{} {}}},'.format(meta.first_name, meta.family_name),
+                '\t' + 'pdfproducer={{cvgen {}}},'.format(meta.version),
                 '\t' + 'pdfcontactcity={{{}}},'.format(meta.city),
                 '\t' + 'pdfcontactcountry={{{}}},'.format(meta.country),
                 '\t' + 'pdfcontactemail={{{}}},'.format(meta.email),
@@ -558,7 +559,11 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
 
     # Metadata
     company = cv.Company(config_data['company'])
-    meta = cv.Metadata(person.first_name, person.family_name, person.title, contact.city, contact.country, contact.email, company.name, company.position)
+    meta = cv.Metadata(person.first_name, person.family_name, person.title, contact.city, contact.country, contact.email, company.name, company.position, version_str)
+
+    # Insert variables into letter text
+    for count, line in enumerate(text):
+        text[count] = line.replace('{Company}', company.name).replace('{Position}', company.position)
 
     # Write to file
     with open(outfile, 'w', encoding='UTF-8') as f:

@@ -32,14 +32,18 @@ class Contact(object):
 class Company(object):
     def __init__(self, dict_company):
         self.name = dict_company['name']
+        self.attention = dict_company['attention']
+        self.street = dict_company['street']
+        self.house = dict_company['house']
         self.city = dict_company['city']
+        self.postalcode = dict_company['postalcode']
         self.position = dict_company['position']
         self.color_main = dict_company['color_main']
         self.color_accent = dict_company['color_accent']
 
 
 class Metadata(object):
-    def __init__(self, first_name, family_name, title, city, country, email, company, position):
+    def __init__(self, first_name, family_name, title, city, country, email, company, position, version):
         self.first_name = first_name
         self.family_name = family_name
         self.title = title
@@ -48,6 +52,7 @@ class Metadata(object):
         self.email = email
         self.company = company
         self.position = position
+        self.version = version
 
 
 class SkillItem(object):
@@ -183,7 +188,11 @@ def write_config(config_dir):
                },
             'company': {
                 'name': 'Company',
+                'attention': 'James Jones',
+                'street': 'Street name',
+                'house': '987b',
                 'city': 'City',
+                'postalcode': '67890',
                 'position': 'Position',
                 'color_main': 'blue',
                 'color_accent': 'yellow',

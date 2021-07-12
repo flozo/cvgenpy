@@ -22,9 +22,7 @@ def format_text(text):
         if line[0] == '#':
             text[count] = ''
         if line == '\n':
-            print('JA!')
             text[count-1] = text[count-1].replace('\n', r'\\')
-    print(text)
     return text
 
 
