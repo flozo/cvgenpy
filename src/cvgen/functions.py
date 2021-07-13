@@ -12,17 +12,19 @@ def read_text(textfile):
     Read text file and write content into variable.
     """
     with open(textfile, 'r', encoding='utf-8') as f:
-        text = f.readlines()
-    print(text)
-    return text
+        rawtext = f.read()
+#        text = f.readlines()
+    return rawtext
 
 
-def format_text(text):
+def format_text(rawtext):
+    text = rawtext.split('\n')
+    # Remove comment lines
+    text = [line for line in text if not '#' in line[:1]]
+    # Add LaTeX linebreak \\ before empty line
     for count, line in enumerate(text):
-        if line[0] == '#':
-            text[count] = ''
-        if line == '\n':
-            text[count-1] = text[count-1].replace('\n', r'\\')
+        if line == '':
+            text[count-1] = text[count-1] + r'\\'
     return text
 
 
