@@ -41,6 +41,12 @@ class Company(object):
         self.color_main = dict_company['color_main']
         self.color_accent = dict_company['color_accent']
 
+    def address(self):
+        if self.attention == '':
+            return '{}\\\\{} {}\\\\{} {}'.format(self.name, self.street, self.house, self.postalcode, self.city)
+        else:
+            return '{}\\\\{}\\\\{} {}\\\\{} {}'.format(self.name, self.attention, self.street, self.house, self.postalcode, self.city)
+
 
 class Metadata(object):
     def __init__(self, first_name, family_name, title, city, country, email, company, position, version):

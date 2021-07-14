@@ -99,7 +99,7 @@ def declare_layers():
     return l
 
 
-def assemble_letter(dict_letter, letter_text, dict_pers, dict_cont):
+def assemble_letter(dict_letter, letter_text, dict_pers, dict_cont, dict_comp):
     """
     Assemble LaTeX code for letter
     """
@@ -160,6 +160,9 @@ def assemble_letter(dict_letter, letter_text, dict_pers, dict_cont):
             '\t' + '\\node [anchor=south west, text width=9cm, align=center, font=\\scriptsize] at ({}, {}) {{{}}};'.format(letter.address_x, letter.backaddress_y, backaddress.oneline('0.6cm', '$\\bullet$'))
             ]
         l = l + l3
+    recipient = cv.Company(dict_comp).address()
+    l.append('\t' + r'% RECIPIENT ADDRESS')
+    l.append('\t\\node [anchor=north west, minimum width={0}cm, minimum height=2.73cm, text width={0}cm, align=left] at ({1}, {2}) {{{3}}};'.format(letter.address_width, letter.border_left, letter.backaddress_y, recipient))
     l.append('\t' + r'% |- Letter text')
     l.append('\t\\node [anchor=north west, text width={}cm, align=justify] at ({}, {}) {{'.format(letter.width-letter.border_left-letter.border_right, letter.border_left, letter.height-12.5))
     for line in letter_text:
@@ -570,7 +573,8 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
     cert.append(r'\end{scope}')
 
     # Metadata
-    company = cv.Company(config_data['company'])
+    dict_comp = config_data['company']
+    company = cv.Company(dict_comp)
     meta = cv.Metadata(person.first_name, person.family_name, person.title, contact.city, contact.country, contact.email, company.name, company.position, version_str)
 
     # Insert variables into letter text
@@ -597,7 +601,7 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
         for line in declare_layers():
             f.write('\t' + line + '\n')
         # Write letter
-        for line in assemble_letter(dict_letter, text, dict_pers, dict_cont):
+        for line in assemble_letter(dict_letter, text, dict_pers, dict_cont, dict_comp):
             f.write('\t' + line + '\n')
         # Write CV
         f.write('\t' + r'% === CURRICULUM VITAE ===' + '\n')
