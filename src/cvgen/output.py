@@ -164,7 +164,14 @@ def assemble_letter(dict_letter, letter_text, dict_pers, dict_cont, dict_comp, i
     # Recipient address
     l.append('\t' + r'% |- Recipient address')
     l.append('\t\\node [anchor=north west, minimum width={0}cm, minimum height=2.73cm, text width={0}cm, align=left] at ({1}, {2}) {{{3}}};'.format(letter.address_width, letter.border_left, letter.backaddress_y, recipient))
-   # Sender address
+    # Headline
+    x = letter.width-letter.border_right
+    y = letter.height-letter.border_top
+    anchor = 'south east'
+    size = 'Large'
+    headline = '{}~{}~{}'.format(dict_pers['title'], dict_pers['first_name'], dict_pers['family_name'])
+    l.append('\t\\node [anchor={}, align=right, font=\\{}] at ({}, {}) {{{}}};'.format(anchor, size, x, y, headline))
+    # Sender address
     l.append('\t' + r'% |- Sender address')
     x = letter.width-letter.border_right
     y = letter.height-letter.border_top
