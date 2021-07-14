@@ -70,6 +70,20 @@ class Address(object):
         return '{} {}\\\\{} {}'.format(self.street, self.house, self.postal_code, self.city)
 
 
+class Backaddress(object):
+    def __init__(self, dict_pers, dict_address):
+        self.first_name = dict_pers['first_name']
+        self.family_name = dict_pers['family_name']
+        self.street = dict_address['street']
+        self.house = dict_address['house']
+        self.postal_code = dict_address['postal_code']
+        self.city = dict_address['city']
+        self.country = dict_address['country']
+
+    def oneline(self, space='1.5cm', separator='$\\bullet$'):
+        return '{0} {1}\\hspace{{{6}}}{7}\\hspace{{{6}}}{2} {3}\\hspace{{{6}}}{7}\\hspace{{{6}}}{4} {5}'.format(self.first_name, self.family_name, self.street, self.house, self.postal_code, self.city, space, separator)
+
+
 class Personal(object):
     def __init__(self, dict_pers):
         self.birth_date = dict_pers['birth_date']

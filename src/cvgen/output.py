@@ -99,13 +99,12 @@ def declare_layers():
     return l
 
 
-def assemble_letter(dict_letter, config_file_data, letter_text):
+def assemble_letter(dict_letter, letter_text, dict_pers, dict_cont):
     """
     Assemble LaTeX code for letter
     """
-#    config_data = fn.read_config(config_file_data)
-#    config_geo = fn.read_config(config_file_geo)
     letter = geo.Letter(dict_letter)
+    # Layout
     l = [
         r'% === LETTER ===',
         r'\begin{tikzpicture}[',
@@ -116,6 +115,7 @@ def assemble_letter(dict_letter, config_file_data, letter_text):
         '\t\t\\fill [fill=none] (0, 0) rectangle ({}, {});'.format(letter.width, letter.height),
         '\t' + r'\end{pgfonlayer}',
         ]
+    # Area highlighting
     if letter.highlight is True:
         l2 = [
              '\t' + r'% AREA HIGHLIGHTING',
@@ -135,6 +135,7 @@ def assemble_letter(dict_letter, config_file_data, letter_text):
              '\t' + r'\end{pgfonlayer}',
              ]
         l = l + l2
+    # Marks
     l2 = [
          '\t' + r'% MARKS',
          '\t' + r'\begin{pgfonlayer}{foreground}',
@@ -147,13 +148,24 @@ def assemble_letter(dict_letter, config_file_data, letter_text):
          '\t\t' + r'% |- Folding mark 2',
          '\t\t' + '\\draw [line width={}] ({}, {}) -- +({}, 0);'.format(letter.folding_mark_2_thickness, letter.folding_mark_2_x, letter.folding_mark_2_y, letter.folding_mark_2_width),
          '\t' + r'\end{pgfonlayer}',
-         '\t\\node [anchor=north west, text width={}cm, align=justify] at ({}, {}) {{'.format(letter.width-letter.border_left-letter.border_right, letter.border_left, letter.height-12.5),
          ]
-    for line in letter_text:
-        l2.append(line)
-    l2.append(r'};')
-    l2.append(r'\end{tikzpicture}')
     l = l + l2
+    # Content
+    include_backaddress = True
+    if include_backaddress is True:
+        backaddress = geo.Backaddress(dict_pers, dict_cont)
+        l3 = [
+            '\t' + r'% CONTENT',
+            '\t' + r'% |- Backaddress',
+            '\t' + '\\node [anchor=south west, text width=9cm, align=center, font=\\scriptsize] at ({}, {}) {{{}}};'.format(letter.address_x, letter.backaddress_y, backaddress.oneline('0.6cm', '$\\bullet$'))
+            ]
+        l = l + l3
+    l.append('\t' + r'% |- Letter text')
+    l.append('\t\\node [anchor=north west, text width={}cm, align=justify] at ({}, {}) {{'.format(letter.width-letter.border_left-letter.border_right, letter.border_left, letter.height-12.5))
+    for line in letter_text:
+        l.append('\t\t' + line)
+    l.append('\t' + r'};')
+    l.append(r'\end{tikzpicture}')
     return l
  
 
@@ -233,7 +245,8 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
     icon_names = config_data['Contact']['icons']
 
     # Assemble personal area
-    person = cv.Personal(config_data['Personal'])
+    dict_pers = config_data['Personal']
+    person = cv.Personal(dict_pers)
     area_personal = geo.Area(dict_areas['personal'])
     x = area_personal.pos_x
     y = area_personal.pos_y
@@ -247,9 +260,9 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
     pers.append('\\node (pers) [anchor={}, font=\\{}] at ({}, {}) {{{}}};'.format(anchor, hsize, x, y, area_personal.title))
     pers.append('% |- Items:')
     if area_personal.style == 'oneline':
-        about_str = geo.Personal(config_data['Personal']).oneline(cv_lang)
+        about_str = geo.Personal(dict_pers).oneline(cv_lang)
     elif area_personal.style == 'twoline':
-        about_str = geo.Personal(config_data['Personal']).twoline(cv_lang)
+        about_str = geo.Personal(dict_pers).twoline(cv_lang)
     pers.append('\\node [below={} of pers.south west, anchor=north west, font=\\{}, align=left] {{{}}};'.format(area_personal.head_vspace, bsize, about_str))
 
     # Assemble title
@@ -313,16 +326,16 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
             '\t\t' + r'column 2/.style={nodes={cell4}},',
             '\t\t' + r']{',
             ]
-    contact = cv.Contact(config_data['Contact'])
-    address_data = geo.Address(config_data['Contact'])
+    dict_cont = config_data['Contact']
+    contact = cv.Contact(dict_cont)
+    address_data = geo.Address(dict_cont)
     address = address_data.twoline()
-#    address = address_data.oneline()
     vspace2 = 0.5
     cont.append('\t\t\\node [text depth={}cm] {{{}}}; & \\node [text depth={}cm] {{{}}};\\\\'.format(vspace2, icons['address'], vspace2, address))
-    cont.append('\t\t\\node {{{}}}; & \\node {{{}}};\\\\'.format(icons['phone'], config_data['Contact']['phone']))
-    cont.append('\t\t\\node {{{}}}; & \\node {{{}}};\\\\'.format(icons['mail'], config_data['Contact']['email']))
+    cont.append('\t\t\\node {{{}}}; & \\node {{{}}};\\\\'.format(icons['phone'], contact.phone))
+    cont.append('\t\t\\node {{{}}}; & \\node {{{}}};\\\\'.format(icons['mail'], contact.email))
     cont.append('\t\t\\vspace{1cm} & \\vspace{1cm}\\\\')
-    for key, value in config_data['Contact']['weblinks'].items():
+    for key, value in contact.weblinks.items():
         if key not in area_contact.hide_items:
             key = key.replace('_', r'\_')
             value = value.replace('_', r'\_')
@@ -332,7 +345,6 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
                     depth = '0.5cm'
                 else:
                     depth = '0.0cm'
-#                value = r'\href{' + value + r'}{' + key + '}'
             cont.append('\t\t\\node [text depth={}] {{{}}}; & \\node [text depth={}] {{{}}};\\\\'.format(depth, icons[icon_names[key]], depth, value))
     cont.append('\t\t'+ r'};')
     cont.append(r'\end{scope}')
@@ -585,7 +597,7 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
         for line in declare_layers():
             f.write('\t' + line + '\n')
         # Write letter
-        for line in assemble_letter(dict_letter, config_data, text):
+        for line in assemble_letter(dict_letter, text, dict_pers, dict_cont):
             f.write('\t' + line + '\n')
         # Write CV
         f.write('\t' + r'% === CURRICULUM VITAE ===' + '\n')
