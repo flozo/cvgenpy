@@ -39,7 +39,7 @@ def preamble(microtype, meta, include_meta):
     if include_meta is True:
         l3 = [
                 '\t' + 'pdftitle={{Bewerbung bei {} als {}}},'.format(meta.company, meta.position),
-                '\t' + 'pdfsubject={{Bewerbung}},',
+                '\t' + r'pdfsubject={Bewerbung},',
                 '\t' + 'pdfauthor={{{} {}}},'.format(meta.first_name, meta.family_name),
                 '\t' + 'pdfauthortitle={{{}}},'.format(meta.title),
                 '\t' + 'pdfcaptionwriter={{{} {}}},'.format(meta.first_name, meta.family_name),
@@ -99,7 +99,7 @@ def declare_layers():
     return l
 
 
-def assemble_letter(dict_letter, letter_text, dict_pers, dict_cont, dict_comp):
+def assemble_letter(dict_letter, letter_text, dict_pers, dict_cont, dict_comp, icons):
     """
     Assemble LaTeX code for letter
     """
@@ -161,8 +161,36 @@ def assemble_letter(dict_letter, letter_text, dict_pers, dict_cont, dict_comp):
             ]
         l = l + l3
     recipient = cv.Company(dict_comp).address()
-    l.append('\t' + r'% RECIPIENT ADDRESS')
+    # Recipient address
+    l.append('\t' + r'% |- Recipient address')
     l.append('\t\\node [anchor=north west, minimum width={0}cm, minimum height=2.73cm, text width={0}cm, align=left] at ({1}, {2}) {{{3}}};'.format(letter.address_width, letter.border_left, letter.backaddress_y, recipient))
+   # Sender address
+    l.append('\t' + r'% |- Sender address')
+    x = letter.width-letter.border_right
+    y = letter.height-letter.border_top
+    anchor = 'north east'
+    hsize = 'normalsize'
+    bsize = 'normalsize'
+    l4 = [
+            '\\begin{{scope}}[row sep=-\\pgflinewidth, column sep=-\\pgflinewidth, text depth=0.0cm, minimum height=0.5cm, font=\\{}]'.format(bsize),
+            '\t\\matrix at ({}, {}) ['.format(x, y),
+            '\t\t' + 'anchor={},'.format(anchor),
+            '\t\t' + r'matrix of nodes,',
+            '\t\t' + r'column 1/.style={nodes={cell1, text width=8.5cm, inner xsep=5pt}},',
+            '\t\t' + r'column 2/.style={nodes={cell3}},',
+            '\t\t' + r']{',
+            ]
+    contact = cv.Contact(dict_cont)
+    address_data = geo.Address(dict_cont)
+    address = address_data.twoline()
+    vspace2 = 0.5
+    l4.append('\t\t\\node [text depth={0}cm] {{{1}}}; & \\node [text depth={0}cm] {{{2}}};\\\\'.format(vspace2, address, icons['address']))
+    l4.append('\t\t\\node {{{}}}; & \\node {{{}}};\\\\'.format(contact.phone, icons['phone']))
+    l4.append('\t\t\\node {{{}}}; & \\node {{{}}};\\\\'.format(contact.email, icons['mail']))
+    l4.append('\t' + r'};')
+    l4.append('\t' + r'\end{scope}')
+    l = l + l4
+    # Letter text
     l.append('\t' + r'% |- Letter text')
     l.append('\t\\node [anchor=north west, text width={}cm, align=justify] at ({}, {}) {{'.format(letter.width-letter.border_left-letter.border_right, letter.border_left, letter.height-12.5))
     for line in letter_text:
@@ -601,7 +629,7 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
         for line in declare_layers():
             f.write('\t' + line + '\n')
         # Write letter
-        for line in assemble_letter(dict_letter, text, dict_pers, dict_cont, dict_comp):
+        for line in assemble_letter(dict_letter, text, dict_pers, dict_cont, dict_comp, icons):
             f.write('\t' + line + '\n')
         # Write CV
         f.write('\t' + r'% === CURRICULUM VITAE ===' + '\n')
