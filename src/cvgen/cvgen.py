@@ -57,13 +57,18 @@ def main():
     text = fn.read_text(os.path.join(config_dir, 'letter.txt'))  
     text = fn.format_text(text)
 
+    config_data = fn.read_config(config_file_data)
 
     # Check file extension
     outfile = str(args.outfile)
     if outfile[-4:0] != '.tex':
         outfile = outfile + '.tex'
     outfile = os.path.abspath(outfile)
-    out.assemble_latex(outfile, version_str, config_file_geo, config_file_data, text, args.microtype, args.metadata)
+    # Collect names of enclosed documents
+    encl = ['Curriculum vitae']
+    for app in config_data['Appendix'].values():
+        encl.append(app['name'])
+    out.assemble_latex(outfile, version_str, config_file_geo, config_file_data, text, args.microtype, args.metadata, encl)
     # Messages and execution of pdfLaTeX/mupdf
     if verbosity >= 1:
         print('[output] LaTeX file {} created.'.format(outfile))
@@ -85,7 +90,6 @@ def main():
         os.system('mupdf {}'.format(outfile_pdf))
     config_geo = fn.read_config(config_file_geo)
     if args.appendix is True or config_geo['structure']['appendices'] is True:
-        config_data = fn.read_config(config_file_data)
         if config_geo['structure']['appendices'] is False and verbosity >= 0:
             print('[output] Option --appendix is active. Ignoring contradicting setting in cvgeometry.json: "appendices": false')
         pdflist = [outfile_pdf]

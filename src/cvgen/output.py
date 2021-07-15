@@ -99,7 +99,7 @@ def declare_layers():
     return l
 
 
-def assemble_letter(dict_letter, letter_text, dict_pers, dict_cont, dict_comp, icons):
+def assemble_letter(dict_letter, letter_text, dict_pers, dict_cont, dict_comp, icons, encl):
     """
     Assemble LaTeX code for letter
     """
@@ -185,36 +185,36 @@ def assemble_letter(dict_letter, letter_text, dict_pers, dict_cont, dict_comp, i
     anchor = 'north east'
     bsize = 'normalsize'
     l4 = [
-            '\\begin{{scope}}[row sep=-\\pgflinewidth, column sep=-\\pgflinewidth, text height=0.0cm, minimum height=0.5cm, font=\\{}]'.format(bsize),
-            '\t\\matrix at ({}, {}) ['.format(x, y-0.15),
-            '\t\t' + 'anchor={},'.format(anchor),
-            '\t\t' + r'matrix of nodes,',
-            '\t\t' + r'column 1/.style={nodes={cell1, text width=8.5cm, inner xsep=5pt}},',
-            '\t\t' + r'column 2/.style={nodes={cell3}},',
-            '\t\t' + r']{',
+            '\t\\begin{{scope}}[row sep=-\\pgflinewidth, column sep=-\\pgflinewidth, text height=0.0cm, minimum height=0.5cm, font=\\{}]'.format(bsize),
+            '\t\t\\matrix at ({}, {}) ['.format(x, y-0.15),
+            '\t\t\t' + 'anchor={},'.format(anchor),
+            '\t\t\t' + r'matrix of nodes,',
+            '\t\t\t' + r'column 1/.style={nodes={cell1, text width=8.5cm, inner xsep=5pt}},',
+            '\t\t\t' + r'column 2/.style={nodes={cell3}},',
+            '\t\t\t' + r']{',
             ]
     contact = cv.Contact(dict_cont)
     address_data = geo.Address(dict_cont)
     address = address_data.twoline()
     vspace2 = 0.5
-    l4.append('\t\t\\node [text depth={0}cm] {{{1}}}; & \\node [text depth={0}cm] {{{2}}};\\\\'.format(vspace2, address, icons['address']))
-    l4.append('\t\t\\node {{{}}}; & \\node {{{}}};\\\\'.format(contact.phone, icons['phone']))
+    l4.append('\t\t\t\\node [text depth={0}cm] {{{1}}}; & \\node [text depth={0}cm] {{{2}}};\\\\'.format(vspace2, address, icons['address']))
+    l4.append('\t\t\t\\node {{{}}}; & \\node {{{}}};\\\\'.format(contact.phone, icons['phone']))
     clickable = True
     if clickable is True:
         email_subject = 'Ihre Bewerbung bei {}'.format(dict_comp['name'])
-        l4.append('\t\t\\node {{\\href{{mailto:{0}?subject={1}}}{{{0}}}}}; & \\node {{{2}}};\\\\'.format(contact.email, email_subject, icons['mail']))
+        l4.append('\t\t\t\\node {{\\href{{mailto:{0}?subject={1}}}{{{0}}}}}; & \\node {{{2}}};\\\\'.format(contact.email, email_subject, icons['mail']))
     else:
-        l4.append('\t\t\\node {{{}}}; & \\node {{{}}};\\\\'.format(contact.email, icons['mail']))
-    l4.append('\t' + r'};')
+        l4.append('\t\t\t\\node {{{}}}; & \\node {{{}}};\\\\'.format(contact.email, icons['mail']))
+    l4.append('\t\t\t' + r'};')
     l4.append('\t' + r'\end{scope}')
     # Date field
     date = 'Köln, {}'.format('14. Juli 2021')
-    l4.append('\t\t\t' + r'% |- Date field')
-    l4.append('\t\t\t' + '\\node [anchor=south east] at ({}, {}) {{{}}};'.format(letter.width-letter.border_right, letter.folding_mark_1_y, date))
+    l4.append('\t' + r'% |- Date field')
+    l4.append('\t' + '\\node [anchor=south east] at ({}, {}) {{{}}};'.format(letter.width-letter.border_right, letter.folding_mark_1_y, date))
     # Subject field
     subject = 'Bewerbung als {}'.format(dict_comp['position'])
-    l4.append('\t\t\t' + r'% |- Subject field')
-    l4.append('\t\t\t' + '\\node [anchor=south west] at ({}, {}) {{\\bf {}}};'.format(letter.border_left, letter.height-11.5, subject))
+    l4.append('\t' + r'% |- Subject field')
+    l4.append('\t' + '\\node [anchor=south west] at ({}, {}) {{\\bf {}}};'.format(letter.border_left, letter.height-11.5, subject))
     l = l + l4
     # Letter text
     l.append('\t' + r'% |- Letter text')
@@ -223,14 +223,22 @@ def assemble_letter(dict_letter, letter_text, dict_pers, dict_cont, dict_comp, i
         l.append('\t\t' + line)
     l.append('\t' + r'};')
     # Closing and signature
+    l.append('\t' + r'% |- Closing and signature')
     closing = 'Mit freundlichen Grüßen,'
     signature = dict_pers['signature']
-    l.append('\\node [anchor=south west, text width=10cm] at ({}, {}) {{{}\\\\\\includegraphics[height=1.3cm]{{{}}}\\\\{} {}}};'.format(letter.border_left, letter.border_bottom, closing, signature, dict_pers['first_name'], dict_pers['family_name']))
+    l.append('\t' + '\\node [anchor=south west, text width=10cm] at ({}, {}) {{{}\\\\\\includegraphics[height=1.3cm]{{{}}}\\\\{} {}}};'.format(letter.border_left, letter.border_bottom, closing, signature, dict_pers['first_name'], dict_pers['family_name']))
+    # Enclosure
+    l.append('\t' + r'% |- Enclosure')
+    enclosure = 'Anlagen:'
+    for item in encl:
+        enclosure = '{} {},'.format(enclosure, item)
+    enclosure = enclosure[:-1]
+    l.append('\t\\node [anchor=north west, text width=12cm] at ({}, {}) {{{}}};'.format(letter.border_left, letter.border_bottom, enclosure))
     l.append(r'\end{tikzpicture}')
     return l
  
 
-def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text, microtype, include_meta):
+def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text, microtype, include_meta, encl):
     """
     Read out config values, create objects, and assemble LaTeX code
     """
@@ -659,7 +667,7 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
         for line in declare_layers():
             f.write('\t' + line + '\n')
         # Write letter
-        for line in assemble_letter(dict_letter, text, dict_pers, dict_cont, dict_comp, icons):
+        for line in assemble_letter(dict_letter, text, dict_pers, dict_cont, dict_comp, icons, encl):
             f.write('\t' + line + '\n')
         # Write CV
         f.write('\t' + r'% === CURRICULUM VITAE ===' + '\n')
