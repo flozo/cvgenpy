@@ -222,6 +222,10 @@ def assemble_letter(dict_letter, letter_text, dict_pers, dict_cont, dict_comp, i
     for line in letter_text:
         l.append('\t\t' + line)
     l.append('\t' + r'};')
+    # Closing and signature
+    closing = 'Mit freundlichen Grüßen,'
+    signature = dict_pers['signature']
+    l.append('\\node [anchor=south west, text width=10cm] at ({}, {}) {{{}\\\\\\includegraphics[height=1.3cm]{{{}}}\\\\{} {}}};'.format(letter.border_left, letter.border_bottom, closing, signature, dict_pers['first_name'], dict_pers['family_name']))
     l.append(r'\end{tikzpicture}')
     return l
  

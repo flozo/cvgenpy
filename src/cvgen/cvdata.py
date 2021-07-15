@@ -14,6 +14,7 @@ class Personal(object):
         self.marital_status = dict_personal['marital_status']
         self.children = dict_personal['children']
         self.photo = dict_personal['photo']
+        self.signature = dict_personal['signature']
 
 
 class Contact(object):
@@ -166,6 +167,7 @@ def write_config(config_dir):
                 'marital_status': 'unmarried',
                 'children': 'no',
                 'photo': '/home/user/Photo1.jpg',
+                'signature': '/home/user/Signature.pdf',
                 },
             'Contact': {
                 'street': 'Street name',
