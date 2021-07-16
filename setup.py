@@ -13,7 +13,7 @@ long_description = (here/'README.md').read_text(encoding='utf-8')
 
 setup(
         name = 'cvgen',
-        version = '0.19',
+        version = '0.20',
         description = 'A program for generating a curriculum vitae.',
         long_description = long_description,
         long_description_content_type = 'text/markdown',
@@ -22,7 +22,7 @@ setup(
 #        author_email = 'mail@mail.net',
 # Classifiers from https://pypi.org/classifiers/
         classifiers = [
-            'Development Status :: 3 - Alpha',
+            'Development Status :: 2 - Pre-Alpha',
             'Environment :: Console',
             'Intended Audience :: End Users/Desktop',
             'License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)',
