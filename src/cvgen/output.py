@@ -3,6 +3,7 @@
 import cvdata as cv
 import geometry as geo
 import functions as fn
+from datetime import datetime
 from PyPDF2 import PdfFileMerger
 
 
@@ -99,7 +100,7 @@ def declare_layers():
     return l
 
 
-def assemble_letter(dict_letter, letter_text, dict_pers, dict_cont, dict_comp, icons, encl):
+def assemble_letter(dict_letter, letter_text, dict_pers, dict_cont, dict_comp, icons, encl, dict_set):
     """
     Assemble LaTeX code for letter
     """
@@ -208,7 +209,8 @@ def assemble_letter(dict_letter, letter_text, dict_pers, dict_cont, dict_comp, i
     l4.append('\t\t\t' + r'};')
     l4.append('\t' + r'\end{scope}')
     # Date field
-    date = 'Köln, {}'.format('14. Juli 2021')
+    today = datetime.today().strftime(dict_set['date_format'])
+    date = '{}, {}'.format(contact.city, today)
     l4.append('\t' + r'% |- Date field')
     l4.append('\t' + '\\node [anchor=south east] at ({}, {}) {{{}}};'.format(letter.width-letter.border_right, letter.folding_mark_1_y, date))
     # Subject field
@@ -299,8 +301,6 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
     cv_lang = config_geo['cv']['layout']['language']
     cv_pages = config_geo['cv']['layout']['pages']
     dict_areas = config_geo['cv']['areas']
-    # Create area objects
-#    area_education = geo.Area(dict_areas['timeline'])
     # Create objects
     layout = geo.Layout(dict_layout)
     background_box = geo.Box(color=dict_layout['background_color'], width=dict_layout['width'], height=dict_layout['height'])
@@ -308,6 +308,9 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
     box_bottom = geo.Box(color=dict_box_bottom['color'], width=layout.width, height=dict_box_bottom['size'])
     box_left = geo.Box(color=dict_box_left['color'], width=dict_box_left['size'], height=layout.height)
     box_right = geo.Box(color=dict_box_right['color'], width=dict_box_right['size'], height=layout.height)
+
+    # General settings
+    dict_set = config_geo['general']
 
     # Icons
     icons = config_geo['icons']
@@ -667,7 +670,7 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
         for line in declare_layers():
             f.write('\t' + line + '\n')
         # Write letter
-        for line in assemble_letter(dict_letter, text, dict_pers, dict_cont, dict_comp, icons, encl):
+        for line in assemble_letter(dict_letter, text, dict_pers, dict_cont, dict_comp, icons, encl, dict_set):
             f.write('\t' + line + '\n')
         # Write CV
         f.write('\t' + r'% === CURRICULUM VITAE ===' + '\n')

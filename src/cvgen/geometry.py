@@ -176,6 +176,9 @@ def write_config(config_dir):
     Settings are defined as nested dictionary and parsed to a JSON file.
     """
     settings_dict = {
+            'general': {
+                'date_format': '%d.%m.%Y',
+                },
             'structure': {
                 'title_page': False,
                 'letter': False,
