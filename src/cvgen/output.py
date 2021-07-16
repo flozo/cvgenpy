@@ -44,6 +44,7 @@ def preamble(microtype, meta, include_meta):
                 '\t' + 'pdfauthor={{{} {}}},'.format(meta.first_name, meta.family_name),
                 '\t' + 'pdfauthortitle={{{}}},'.format(meta.title),
                 '\t' + 'pdfcaptionwriter={{{} {}}},'.format(meta.first_name, meta.family_name),
+                '\t' + 'pdfdate={{{}}},'.format(datetime.today().strftime('%Y-%m-%d')),
                 '\t' + 'pdfproducer={{cvgen {}}},'.format(meta.version),
                 '\t' + 'pdfcontactcity={{{}}},'.format(meta.city),
                 '\t' + 'pdfcontactcountry={{{}}},'.format(meta.country),
@@ -301,6 +302,7 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
     cv_lang = config_geo['cv']['layout']['language']
     cv_pages = config_geo['cv']['layout']['pages']
     dict_areas = config_geo['cv']['areas']
+    structure = config_geo['structure']
     # Create objects
     layout = geo.Layout(dict_layout)
     background_box = geo.Box(color=dict_layout['background_color'], width=dict_layout['width'], height=dict_layout['height'])
@@ -669,44 +671,46 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
         # Write layer declaration
         for line in declare_layers():
             f.write('\t' + line + '\n')
-        # Write letter
-        for line in assemble_letter(dict_letter, text, dict_pers, dict_cont, dict_comp, icons, encl, dict_set):
-            f.write('\t' + line + '\n')
-        # Write CV
-        f.write('\t' + r'% === CURRICULUM VITAE ===' + '\n')
-        f.write('\t' + r'\begin{tikzpicture}[' + '\n')
-        f.write('\t\t' + r'inner xsep=0pt,' + '\n')
-        f.write('\t\t' + r'inner ysep=0pt,' + '\n')
-        f.write('\t\t' + r']' + '\n')
-        for line in draw_background():
-            f.write(line + '\n')
-        f.write('\t\t' + r'\begin{pgfonlayer}{foreground}' + '\n')
-        for c in cont:
-            f.write('\t\t\t' + c + '\n')
-        for skill in skills:
-            f.write('\t\t\t' + skill + '\n')
-        for k in know:
-            f.write('\t\t\t' + k + '\n')
-        for c in cert:
-            f.write('\t\t\t' + c + '\n')
-        for i in photo:
-            f.write('\t\t\t' + i + '\n')
-        for t in title:
-            f.write('\t\t\t' + t + '\n')
-        for p in pers:
-            f.write('\t\t\t' + p + '\n')
-        for car_item in car:
-            f.write('\t\t\t' + car_item + '\n')
-        for edu_item in edu:
-            f.write('\t\t\t' + edu_item + '\n')
-        f.write('\t\t' + r'\end{pgfonlayer}' + '\n')
-        f.write('\t' + r'\end{tikzpicture}' + '\n')
-        if cv_pages > 1:
+        if structure['letter'] is True:
+            # Write letter
+            for line in assemble_letter(dict_letter, text, dict_pers, dict_cont, dict_comp, icons, encl, dict_set):
+                f.write('\t' + line + '\n')
+        if structure['cv'] is True:
+            # Write CV
+            f.write('\t' + r'% === CURRICULUM VITAE ===' + '\n')
             f.write('\t' + r'\begin{tikzpicture}[' + '\n')
             f.write('\t\t' + r'inner xsep=0pt,' + '\n')
             f.write('\t\t' + r'inner ysep=0pt,' + '\n')
             f.write('\t\t' + r']' + '\n')
-            f.write('\t\t' + '\\fill[fill=none] (0, 0) rectangle ({}, {});\n'.format(layout.width, layout.height))
+            for line in draw_background():
+                f.write(line + '\n')
+            f.write('\t\t' + r'\begin{pgfonlayer}{foreground}' + '\n')
+            for c in cont:
+                f.write('\t\t\t' + c + '\n')
+            for skill in skills:
+                f.write('\t\t\t' + skill + '\n')
+            for k in know:
+                f.write('\t\t\t' + k + '\n')
+            for c in cert:
+                f.write('\t\t\t' + c + '\n')
+            for i in photo:
+                f.write('\t\t\t' + i + '\n')
+            for t in title:
+                f.write('\t\t\t' + t + '\n')
+            for p in pers:
+                f.write('\t\t\t' + p + '\n')
+            for car_item in car:
+                f.write('\t\t\t' + car_item + '\n')
+            for edu_item in edu:
+                f.write('\t\t\t' + edu_item + '\n')
+            f.write('\t\t' + r'\end{pgfonlayer}' + '\n')
             f.write('\t' + r'\end{tikzpicture}' + '\n')
+            if cv_pages > 1:
+                f.write('\t' + r'\begin{tikzpicture}[' + '\n')
+                f.write('\t\t' + r'inner xsep=0pt,' + '\n')
+                f.write('\t\t' + r'inner ysep=0pt,' + '\n')
+                f.write('\t\t' + r']' + '\n')
+                f.write('\t\t' + '\\fill[fill=none] (0, 0) rectangle ({}, {});\n'.format(layout.width, layout.height))
+                f.write('\t' + r'\end{tikzpicture}' + '\n')
         f.write(r'\end{document}' + '\n')
 

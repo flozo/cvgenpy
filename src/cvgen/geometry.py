@@ -247,7 +247,7 @@ def write_config(config_dir):
                 'layout': {
                     'width': 21.0,
                     'height': 29.7,
-                    'pages': 2,
+                    'pages': 1,
                     'background_color': 'white',
                     'box_top': False,
                     'box_bottom': False,
@@ -255,6 +255,7 @@ def write_config(config_dir):
                     'box_right': False,
                     'include_photo': True,
                     'title_on_every_page': False,
+                    'table_style': True,
                     'language': 'en',
                     },
                 'areas': {
