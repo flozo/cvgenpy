@@ -39,6 +39,9 @@ class Letter(object):
         self.sender_height = dict_letter['sender_height']
         self.subject_y = dict_letter['subject_y']
         self.text_y = dict_letter['text_y']
+        self.text_width = self.width-self.border_left-self.border_right
+        self.closing_y_shift = dict_letter['closing_y_shift']
+        self.enclosure_y_shift = dict_letter['enclosure_y_shift']
         self.perforation_mark_x = dict_letter['perforation_mark_x']
         self.perforation_mark_y = dict_letter['perforation_mark_y']
         self.perforation_mark_width = dict_letter['perforation_mark_width']
@@ -209,8 +212,10 @@ def write_config(config_dir):
                 'sender_y': 20.7,
                 'sender_width': 20.7,
                 'sender_height': 20.7,
-                'subject_y': 20.7,
-                'text_y': 20.7,
+                'subject_y': 18.5,
+                'text_y': 18.0,
+                'closing_y_shift': 0.0,
+                'enclosure_y_shift': -1.0,
                 'perforation_mark_x': 0.1,
                 'perforation_mark_y': 14.85,
                 'perforation_mark_width': 0.5,

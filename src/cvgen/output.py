@@ -130,11 +130,11 @@ def assemble_letter(dict_letter, letter_text, dict_pers, dict_cont, dict_comp, i
              '\t\t\t' + r'% |- Address field, recipient area',
              '\t\t\t' + '\\filldraw ({}, {}) rectangle +({}, {});'.format(letter.border_left, letter.address_y, letter.address_width-0.5, 2.73),
              '\t\t\t' + r'% |- Date field',
-             '\t\t\t' + '\\filldraw ({}, {}) rectangle ({}, {});'.format(letter.address_x+letter.address_width, letter.address_y, letter.width-letter.border_right, letter.height-10.5),
+             '\t\t\t' + '\\filldraw ({}, {}) rectangle ({}, {});'.format(letter.border_left, letter.folding_mark_1_y, letter.width-letter.border_right, letter.address_y),
              '\t\t\t' + r'% |- Subject field',
-             '\t\t\t' + '\\filldraw ({}, {}) rectangle +({}, {});'.format(letter.border_left, letter.height-10.5, letter.width-letter.border_right-letter.border_left, -1),
+             '\t\t\t' + '\\filldraw ({}, {}) rectangle ({}, {});'.format(letter.border_left, letter.subject_y, letter.width-letter.border_right, letter.folding_mark_1_y),
              '\t\t\t' + r'% |- Text area',
-             '\t\t\t\\filldraw ({}, {}) rectangle ({}, {});'.format(letter.border_left, letter.border_bottom, letter.width-letter.border_right, letter.height-12.5),
+             '\t\t\t\\filldraw ({}, {}) rectangle ({}, {});'.format(letter.border_left, letter.border_bottom, letter.width-letter.border_right, letter.text_y),
              '\t\t' + r'\end{scope}',
              '\t' + r'\end{pgfonlayer}',
              ]
@@ -214,11 +214,11 @@ def assemble_letter(dict_letter, letter_text, dict_pers, dict_cont, dict_comp, i
     # Subject field
     subject = 'Bewerbung als {}'.format(dict_comp['position'])
     l4.append('\t' + r'% |- Subject field')
-    l4.append('\t' + '\\node [anchor=south west] at ({}, {}) {{\\bf {}}};'.format(letter.border_left, letter.height-11.5, subject))
+    l4.append('\t' + '\\node [anchor=south west] at ({}, {}) {{\\bf {}}};'.format(letter.border_left, letter.subject_y, subject))
     l = l + l4
     # Letter text
     l.append('\t' + r'% |- Letter text')
-    l.append('\t\\node [anchor=north west, text width={}cm, align=justify] at ({}, {}) {{'.format(letter.width-letter.border_left-letter.border_right, letter.border_left, letter.height-12.5))
+    l.append('\t\\node (textbox) [anchor=north west, text width={}cm, align=justify] at ({}, {}) {{'.format(letter.text_width, letter.border_left, letter.text_y))
     for line in letter_text:
         l.append('\t\t' + line)
     l.append('\t' + r'};')
@@ -226,14 +226,14 @@ def assemble_letter(dict_letter, letter_text, dict_pers, dict_cont, dict_comp, i
     l.append('\t' + r'% |- Closing and signature')
     closing = 'Mit freundlichen Grüßen,'
     signature = dict_pers['signature']
-    l.append('\t' + '\\node [anchor=south west, text width=10cm] at ({}, {}) {{{}\\\\\\includegraphics[height=1.3cm]{{{}}}\\\\{} {}}};'.format(letter.border_left, letter.border_bottom, closing, signature, dict_pers['first_name'], dict_pers['family_name']))
+    l.append('\t' + '\\node (closing) [anchor=north west, text width=10cm, yshift={}cm] at (textbox.south west) {{{}\\\\\\includegraphics[height=1.3cm]{{{}}}\\\\{} {}}};'.format(letter.closing_y_shift, closing, signature, dict_pers['first_name'], dict_pers['family_name']))
     # Enclosure
     l.append('\t' + r'% |- Enclosure')
     enclosure = 'Anlagen:'
     for item in encl:
         enclosure = '{} {},'.format(enclosure, item)
     enclosure = enclosure[:-1]
-    l.append('\t\\node [anchor=north west, text width=12cm] at ({}, {}) {{{}}};'.format(letter.border_left, letter.border_bottom, enclosure))
+    l.append('\t\\node [anchor=north west, text width={}cm, yshift={}cm] at (closing.south west) {{{}}};'.format(letter.text_width, letter.enclosure_y_shift, enclosure))
     l.append(r'\end{tikzpicture}')
     return l
  
