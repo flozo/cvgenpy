@@ -271,18 +271,18 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
         """
         l = [
             '\t\t' + r'\begin{pgfonlayer}{background}',
-            '\t\t\t' + '\\fill[{}] (0, 0) rectangle (\\paperw, \paperh);'.format(layout.background_color),
+            '\t\t\t' + '\\fill[fill={}] (0, 0) rectangle (\\paperw, \paperh);'.format(layout.background_color),
             '\t\t' + r'\end{pgfonlayer}',
             '\t\t' + r'\begin{pgfonlayer}{forebackground}',
             ]
         if layout.box_left is True:
-            l.append('\t\t\t' + '\\fill[{}] (0, 0) rectangle (\\boxlw, \\paperh); % box left'.format(box_left.color))
+            l.append('\t\t\t' + '\\fill[fill={}] (0, 0) rectangle (\\boxlw, \\paperh); % box left'.format(box_left.color))
         if layout.box_right is True:
-            l.append('\t\t\t' + '\\fill[{}] ({}, 0) rectangle (\\paperw, \\paperh); % box right'.format(box_right.color, layout.width-box_right.width))
+            l.append('\t\t\t' + '\\fill[fill={}] ({}, 0) rectangle (\\paperw, \\paperh); % box right'.format(box_right.color, layout.width-box_right.width))
         if layout.box_top is True:
-            l.append('\t\t\t' + '\\fill[{}] (0, {}) rectangle (\\paperw, \\paperh); % box top'.format(box_top.color, layout.height-box_top.height))
+            l.append('\t\t\t' + '\\fill[fill={}] (0, {}) rectangle (\\paperw, \\paperh); % box top'.format(box_top.color, layout.height-box_top.height))
         if layout.box_bottom is True:
-            l.append('\t\t\t' + '\\fill[{}] (0, 0) rectangle (\\paperw, \\boxbh); % box bottom'.format(box_bottom.color))
+            l.append('\t\t\t' + '\\fill[fill={}] (0, 0) rectangle (\\paperw, \\boxbh); % box bottom'.format(box_bottom.color))
         l.append('\t\t' + r'\end{pgfonlayer}')
         return l
 

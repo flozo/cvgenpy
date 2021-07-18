@@ -10,8 +10,8 @@ import output as out
 import os
 
 # Version
-version_num = '0.20'
-version_dat = '2021-07-16'
+version_num = '0.21'
+version_dat = '2021-07-18'
 version_str = '{} ({})'.format(version_num, version_dat)
 
 def main():

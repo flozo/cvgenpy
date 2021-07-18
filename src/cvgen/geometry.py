@@ -3,59 +3,73 @@
 import json
 
 
-class Layout(object):
-    def __init__(self, dict_layout):
-        self.width = dict_layout['width']
-        self.height = dict_layout['height']
-        self.pages = dict_layout['pages']
-        self.background_color = dict_layout['background_color']
-        self.box_top = dict_layout['box_top']
-        self.box_bottom = dict_layout['box_bottom']
-        self.box_left = dict_layout['box_left']
-        self.box_right = dict_layout['box_right']
-        self.include_photo = dict_layout['include_photo']
-        self.title_on_every_page = dict_layout['title_on_every_page']
-
-
-class Letter(object):
-    def __init__(self, dict_letter):
-        self.width = dict_letter['width']
-        self.height = dict_letter['height']
-        self.border_top = dict_letter['border_top']
-        self.border_bottom = dict_letter['border_bottom']
-        self.border_left = dict_letter['border_left']
-        self.border_right = dict_letter['border_right']
-        self.address_x = dict_letter['address_x']
-        self.address_y = dict_letter['address_y']
-        self.address_width = dict_letter['address_width']
-        self.address_height = dict_letter['address_height']
-        self.backaddress_y = dict_letter['backaddress_y']
-        self.backaddress_sepline_thickness = dict_letter['backaddress_sepline_thickness']
-        self.backaddress_sepchar = dict_letter['backaddress_sepchar']
-        self.backaddress_fontsize = dict_letter['backaddress_fontsize']
-        self.sender_x = dict_letter['sender_x']
-        self.sender_y = dict_letter['sender_y']
-        self.sender_width = dict_letter['sender_width']
-        self.sender_height = dict_letter['sender_height']
-        self.subject_y = dict_letter['subject_y']
-        self.text_y = dict_letter['text_y']
+class Page:
+    """
+    General page properties
+    """
+    def __init__(self, settings):
+        self.width = settings['width']
+        self.height = settings['height']
+        self.border_top = settings['border_top']
+        self.border_bottom = settings['border_bottom']
+        self.border_left = settings['border_left']
+        self.border_right = settings['border_right']
         self.text_width = self.width-self.border_left-self.border_right
-        self.closing_y_shift = dict_letter['closing_y_shift']
-        self.enclosure_y_shift = dict_letter['enclosure_y_shift']
-        self.perforation_mark_x = dict_letter['perforation_mark_x']
-        self.perforation_mark_y = dict_letter['perforation_mark_y']
-        self.perforation_mark_width = dict_letter['perforation_mark_width']
-        self.perforation_mark_thickness = dict_letter['perforation_mark_thickness']
-        self.folding_mark_1_x = dict_letter['folding_mark_1_x']
-        self.folding_mark_1_y = dict_letter['folding_mark_1_y']
-        self.folding_mark_1_width = dict_letter['folding_mark_1_width']
-        self.folding_mark_1_thickness = dict_letter['folding_mark_1_thickness']
-        self.folding_mark_2_x = dict_letter['folding_mark_2_x']
-        self.folding_mark_2_y = dict_letter['folding_mark_2_y']
-        self.folding_mark_2_width = dict_letter['folding_mark_2_width']
-        self.folding_mark_2_thickness = dict_letter['folding_mark_2_thickness']
-        self.highlight = dict_letter['highlight']
-        self.highlight_color = dict_letter['highlight_color']
+        self.text_height = self.height-self.border_top-self.border_bottom
+        self.background_color = settings['background_color']
+ 
+
+class Layout(Page):
+    """
+    Specific CV properties
+    """
+    def __init__(self, layout):
+        super().__init__(layout)
+        self.pages = layout['pages']
+        self.box_top = layout['box_top']
+        self.box_bottom = layout['box_bottom']
+        self.box_left = layout['box_left']
+        self.box_right = layout['box_right']
+        self.include_photo = layout['include_photo']
+        self.title_on_every_page = layout['title_on_every_page']
+
+
+class Letter(Page):
+    """
+    Specific letter properties
+    """
+    def __init__(self, letter):
+        super().__init__(letter)
+        self.address_x = letter['address_x']
+        self.address_y = letter['address_y']
+        self.address_width = letter['address_width']
+        self.address_height = letter['address_height']
+        self.backaddress_y = letter['backaddress_y']
+        self.backaddress_sepline_thickness = letter['backaddress_sepline_thickness']
+        self.backaddress_sepchar = letter['backaddress_sepchar']
+        self.backaddress_fontsize = letter['backaddress_fontsize']
+        self.sender_x = letter['sender_x']
+        self.sender_y = letter['sender_y']
+        self.sender_width = letter['sender_width']
+        self.sender_height = letter['sender_height']
+        self.subject_y = letter['subject_y']
+        self.text_y = letter['text_y']
+        self.closing_y_shift = letter['closing_y_shift']
+        self.enclosure_y_shift = letter['enclosure_y_shift']
+        self.perforation_mark_x = letter['perforation_mark_x']
+        self.perforation_mark_y = letter['perforation_mark_y']
+        self.perforation_mark_width = letter['perforation_mark_width']
+        self.perforation_mark_thickness = letter['perforation_mark_thickness']
+        self.folding_mark_1_x = letter['folding_mark_1_x']
+        self.folding_mark_1_y = letter['folding_mark_1_y']
+        self.folding_mark_1_width = letter['folding_mark_1_width']
+        self.folding_mark_1_thickness = letter['folding_mark_1_thickness']
+        self.folding_mark_2_x = letter['folding_mark_2_x']
+        self.folding_mark_2_y = letter['folding_mark_2_y']
+        self.folding_mark_2_width = letter['folding_mark_2_width']
+        self.folding_mark_2_thickness = letter['folding_mark_2_thickness']
+        self.highlight = letter['highlight']
+        self.highlight_color = letter['highlight_color']
         
 
 class Address(object):
@@ -181,7 +195,7 @@ def write_config(config_dir):
                 },
             'structure': {
                 'title_page': False,
-                'letter': False,
+                'letter': True,
                 'cv': True,
                 'appendices': False,
                 },
@@ -233,6 +247,7 @@ def write_config(config_dir):
                 'folding_mark_2_thickness': 0.1,
                 'highlight': True,
                 'highlight_color': 'Greys-D',
+                'background_color': 'none',
                 },
             'icons': {
                 'address': r'\faIcon{map-marker-alt}',
@@ -247,8 +262,12 @@ def write_config(config_dir):
                 'layout': {
                     'width': 21.0,
                     'height': 29.7,
+                    'border_top': 2.0,
+                    'border_bottom': 2.0,
+                    'border_left': 2.5,
+                    'border_right': 2.0,
                     'pages': 1,
-                    'background_color': 'white',
+                    'background_color': 'none',
                     'box_top': False,
                     'box_bottom': False,
                     'box_left': True,
