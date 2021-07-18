@@ -17,30 +17,32 @@ class Personal(object):
         self.signature = dict_personal['signature']
 
 
-class Contact(object):
-    def __init__(self, dict_contact):
-        self.street = dict_contact['street']
-        self.house = dict_contact['house']
-        self.city = dict_contact['city']
-        self.postalcode = dict_contact['postal_code']
-        self.country = dict_contact['country']
-        self.phone = dict_contact['phone']
-        self.email = dict_contact['email']
-        self.weblinks = dict_contact['weblinks']
-        self.icons = dict_contact['icons']
+class Address:
+    def __init__(self, address):
+        self.street = address['street']
+        self.house = address['house']
+        self.city = address['city']
+        self.postalcode = address['postal_code']
+        self.country = address['country']
 
 
-class Company(object):
-    def __init__(self, dict_company):
-        self.name = dict_company['name']
-        self.attention = dict_company['attention']
-        self.street = dict_company['street']
-        self.house = dict_company['house']
-        self.city = dict_company['city']
-        self.postalcode = dict_company['postalcode']
-        self.position = dict_company['position']
-        self.color_main = dict_company['color_main']
-        self.color_accent = dict_company['color_accent']
+class Contact(Address):
+    def __init__(self, contact):
+        super().__init__(contact)
+        self.phone = contact['phone']
+        self.email = contact['email']
+        self.weblinks = contact['weblinks']
+        self.icons = contact['icons']
+
+
+class Company(Address):
+    def __init__(self, company):
+        super().__init__(company)
+        self.name = company['name']
+        self.attention = company['attention']
+        self.position = company['position']
+        self.color_main = company['color_main']
+        self.color_accent = company['color_accent']
 
     def address(self):
         if self.attention == '':
@@ -200,7 +202,8 @@ def write_config(config_dir):
                 'street': 'Street name',
                 'house': '987b',
                 'city': 'City',
-                'postalcode': '67890',
+                'postal_code': '67890',
+                'country': 'Country',
                 'position': 'Position',
                 'color_main': 'blue',
                 'color_accent': 'yellow',
