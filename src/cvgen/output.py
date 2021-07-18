@@ -177,9 +177,11 @@ def assemble_letter(dict_letter, letter_text, dict_pers, dict_cont, dict_comp, i
     size = 'Large'
     headline = '{}~{}~{}'.format(dict_pers['title'], dict_pers['first_name'], dict_pers['family_name'])
     l.append('\t' + r'% |- Headline')
-    l.append('\t\\node [anchor={}, align=right, font=\\{}, inner ysep=2pt] at ({}, {}) {{{}}};'.format(anchor, size, x, y, headline))
+    l.append('\t' + letter.add_title(headline, size, 'right', 'black', 0.1))
     l.append('\t' + r'% |- Headline separator')
-    l.append('\t' + '\\draw [draw=Blues-K, line width=2.0] ({}, {}) -- +({}, 0);'.format(letter.border_left, y, x-letter.border_left))
+    l.append('\t' + letter.add_headsepline(0.1, 'Blues-K'))
+#    l.append('\t' + r'% |- Footline separator')
+#    l.append('\t' + letter.add_footsepline(0.1, 'Blues-K'))
     # Sender address
     l.append('\t' + r'% |- Sender address')
     x = letter.width-letter.border_right
@@ -340,29 +342,46 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
     pers.append('\\node [below={} of pers.south west, anchor=north west, font=\\{}, align=left] {{{}}};'.format(area_personal.head_vspace, bsize, about_str))
 
     # Assemble title
-    area_title = geo.Area(dict_areas['title'])
-    x = area_title.pos_x
-    y = area_title.pos_y
-    l = area_title.length
-    anchor = area_title.anchor
-    hsize = area_title.head_font_size
-    bsize = area_title.body_font_size
-    title = [
-            '% TITLE',
-            '\\node [anchor={}, font=\\{}] at ({}, {}) {{{} {}}};'.format(anchor, hsize, x, y, person.first_name, person.family_name),
-            ]
-    if area_title.head_sepline is True:
-        title.append('\\draw [draw={}, line width=1pt] ({}, {}) -- ({}, {});'.format(area_title.color, x, y-0.8, l, y-0.8))
-    title.append('\\node [anchor={}, font=\\{}, text height=0.6cm] at ({}, {}) {{{}}};'.format(anchor, bsize, x, y-0.8, area_title.title))
+#    area_title = geo.Area(dict_areas['title'])
+#    x = area_title.pos_x
+#    y = area_title.pos_y
+#    l = area_title.length
+#    anchor = area_title.anchor
+#    hsize = area_title.head_font_size
+#    bsize = area_title.body_font_size
+    # Headline
+    x = layout.width-layout.border_right
+    y = layout.height-layout.border_top
+    size = 'Large'
+    headline = '{}~{}~{}'.format(person.title, person.first_name, person.family_name)
+    title = []
+    title.append('\t' + r'% |- Headline')
+    title.append('\t' + layout.add_title(headline, size, 'right', 'black', 0.1))
+    title.append('\t' + r'% |- Headline separator')
+    title.append('\t' + layout.add_headsepline(0.1, 'Blues-K'))
+#    l.append('\t' + r'% |- Footline separator')
+#    l.append('\t' + layout.add_footsepline(0.1, 'Blues-K'))
+#    title.append('% TITLE')
+#    title.append(layout.add_headsepline(0.1, 'Blues-K'))
+#    title.append(layout.add_title(0.1, 'Blues-K'))
+#            '\\node [anchor={}, font=\\{}] at ({}, {}) {{{} {}}};'.format(anchor, hsize, x, y, person.first_name, person.family_name),
+#            ]
+#    if area_title.head_sepline is True:
+#        title.append('\\draw [draw={}, line width=1pt] ({}, {}) -- ({}, {});'.format(area_title.color, x, y-0.8, l, y-0.8))
+#    title.append('\\node [anchor={}, font=\\{}, text height=0.6cm] at ({}, {}) {{{}}};'.format(anchor, bsize, x, y-0.8, area_title.title))
  
 
     # Assemble photo
     dict_photo = config_geo['cv']['areas']['photo']
     photo_file = config_data['Personal']['photo']
     area_photo = geo.PhotoArea(dict_photo)
-    x = area_photo.pos_x
-    y = area_photo.pos_y
-    anchor = area_photo.anchor
+    x = layout.width-layout.border_right
+    y = layout.height-layout.border_top-0.2
+    thickness = 0.1
+    anchor = 'north east'
+#    x = area_photo.pos_x
+#    y = area_photo.pos_y
+#    anchor = area_photo.anchor
     width = area_photo.width
     height = area_photo.height
     if area_photo.border is True:
@@ -372,9 +391,9 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
     photo = [
             '% PHOTO AREA',
             r'\begin{scope}',
-            '\t' + '\\clip  ({}, {}) rectangle ({}, {});'.format(x, y, x+width, y-height),
-            '\t\\node[anchor={}, inner sep=0] (image) at ({}, {}) {{\\includegraphics[width={}cm]{{{}}}}};'.format(anchor, x, y, width, photo_file),
-            '\t' + '\\draw [draw={}, line width={}] ({}, {}) rectangle ({}, {});'.format(border_color, area_photo.border_width, x, y, x+width, y-height),
+#            '\t' + '\\clip  ({}, {}) rectangle ({}, {});'.format(x, y, x+width, y-height),
+            '\t\\node[anchor={}, inner sep=0, draw={}, line width={}cm] (image) at ({}, {}) {{\\includegraphics[width={}cm]{{{}}}}};'.format(anchor, border_color, thickness, x, y, width, photo_file),
+#            '\t' + '\\draw [draw={}, line width={}] ({}, {}) rectangle ({}, {});'.format(border_color, area_photo.border_width, x, y, x+width, y-height),
             r'\end{scope}',
             ]
 

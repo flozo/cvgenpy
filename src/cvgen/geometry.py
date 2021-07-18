@@ -3,6 +3,15 @@
 import json
 
 
+class Sepline:
+    def __init__(self, sepline):
+        self.x = sepline['x']
+        self.y = sepline['y']
+        self.width = sepline['width']
+        self.thickness = sepline['thickness']
+        self.color = sepline['color']
+
+
 class Page:
     """
     General page properties
@@ -17,7 +26,37 @@ class Page:
         self.text_width = self.width-self.border_left-self.border_right
         self.text_height = self.height-self.border_top-self.border_bottom
         self.background_color = settings['background_color']
+
+    def add_headsepline(self, thickness, color):
+        """
+        Add header separation line
+        """
+        args = {'x': self.border_left,
+                'y': self.height-self.border_top,
+                'width': self.text_width,
+                'thickness': thickness,
+                'color': color}
+        sepline = Sepline(args)
+        return '\\draw [draw={}, line width={}cm] ({}, {}) -- +({}, 0);'.format(sepline.color, sepline.thickness, sepline.x, sepline.y, sepline.width)
+
+    def add_footsepline(self, thickness, color):
+        """
+        Add footer separation line
+        """
+        args = {'x': self.border_left,
+                'y': self.border_bottom,
+                'width': self.text_width,
+                'thickness': thickness,
+                'color': color}
+        sepline = Sepline(args)
+        return '\\draw [draw={}, line width={}cm] ({}, {}) -- +({}, 0);'.format(sepline.color, sepline.thickness, sepline.x, sepline.y, sepline.width)
  
+    def add_title(self, text, fontsize, align, color, yshift):
+        """
+        Add page title
+        """
+        return '\\node [anchor=south west, text width={}cm, align={}, font=\\{}, color={}, yshift={}cm] at ({}, {}) {{{}}};'.format(self.text_width, align, fontsize, color, yshift, self.border_left, self.height-self.border_top, text)
+
 
 class Layout(Page):
     """

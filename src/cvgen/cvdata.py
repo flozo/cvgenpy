@@ -21,8 +21,8 @@ class Address:
     def __init__(self, address):
         self.street = address['street']
         self.house = address['house']
-        self.city = address['city']
         self.postalcode = address['postal_code']
+        self.city = address['city']
         self.country = address['country']
 
 
@@ -174,8 +174,8 @@ def write_config(config_dir):
             'Contact': {
                 'street': 'Street name',
                 'house': '123a',
-                'city': 'City',
                 'postal_code': '12345',
+                'city': 'City',
                 'country': 'Country',
                 'phone': '+00(123)456789',
                 'mobile': '+00(123)456789',
@@ -201,8 +201,8 @@ def write_config(config_dir):
                 'attention': 'James Jones',
                 'street': 'Street name',
                 'house': '987b',
-                'city': 'City',
                 'postal_code': '67890',
+                'city': 'City',
                 'country': 'Country',
                 'position': 'Position',
                 'color_main': 'blue',
