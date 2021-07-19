@@ -208,6 +208,9 @@ class Area(object):
 
 
 class Cell:
+    """
+    Definitions for a table cell
+    """
     def __init__(self, name, xsep, ysep, align, minimum_width, minimum_height, text_width, text_height):
         self.name = name
         self.shape = 'rectangle'
@@ -221,30 +224,65 @@ class Cell:
         self.text_height = text_height
 
     def set_style(self):
+        """
+        Assemble TikZ style
+        """
         return '{}/.style={{{}, draw={}, inner xsep={}pt, inner ysep={}pt, align={}, minimum width={}cm, minimum height={}cm, text width={}cm, text height={}cm}},'.format(self.name, self.shape, self.draw, self.inner_xsep, self.inner_ysep, self.align, self.minimum_width, self.minimum_height, self.text_width, self.text_height) 
 
 
+class Textbox:
+    """
+    General textbox definition
+    """
+    def __init__(self, settings, text):
+        self.anchor = settings['anchor']
+        self.x = settings['x']
+        self.y = settings['y']
+        self.font_size = settings['font_size']
+        self.uppercase = settings['uppercase']
+        self.yshift = settings['yshift']
+        if self.uppercase is True:
+            self.text = text.upper()
+        else:
+            self.text = text
+
+    def create(self):
+        return '\\node [anchor={}, font=\\{}, yshift={}cm] at ({}, {}) {{{}}};'.format(self.anchor, self.font_size, self.yshift, self.x, self.y, self.text)
+
+
 class Table:
-    def __init__(self, table):
-        self.name = table['name']
-        self.anchor = table['anchor']
-        self.x = table['x']
-        self.y = table['y']
-        self.column_styles = table['column_styles']
+    """
+    Definitions for a table (matrix of nodes)
+    """
+    def __init__(self, settings, items):
+        self.name = settings['name']
+        self.anchor = settings['anchor']
+        self.x = settings['x']
+        self.y = settings['y']
+        self.font_size = settings['font_size']
+        self.column_styles = settings['column_styles']
+        self.items = items
 
     def head(self):
+        """
+        Assemble table header using table properties and column styles
+        """
         l = [
                 '% {}'.format(self.name.upper()),
                 '\\matrix ({}) at ({}, {}) ['.format(self.name, self.x, self.y),
                 '\t' + 'anchor={},'.format(self.anchor),
+                '\t' + 'font=\\{},'.format(self.font_size),
                 '\t' + 'matrix of nodes,',
                 ]
         for i, style in enumerate(self.column_styles):
-            l.append('\t' + 'column{}/.style={{nodes={{{}}}}},'.format(i+1, style))
+            l.append('\t' + 'column {}/.style={{nodes={{{}}}}},'.format(i+1, style))
         l.append('\t]{')
         return l
 
     def add_row(self, entries):
+        """
+        Add single row to a table
+        """
         row = '\t'
         for entry in entries:
             row = row + '\\node {{{}}}; & '.format(entry)
@@ -253,7 +291,20 @@ class Table:
         return row
 
     def foot(self):
+        """
+        Footer line
+        """
         return '\t};'
+
+    def assemble(self):
+        """
+        Assemble complete table
+        """
+        table = self.head()
+        for item in self.items:
+            table.append(self.add_row(item))
+        table.append(self.foot())
+        return table
 
 
 class Box(object):

@@ -481,6 +481,7 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
     car.append('\t\t' + r'};')
     car.append(r'\end{scope}')
 
+
     # Read education items
     dict_edu = config_data['Education']
     edu_items = []
@@ -489,38 +490,37 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
             edu_items.append(cv.EduPeriodItem(edu_item))
         else:
             edu_items.append(cv.EduEventItem(edu_item))
-    # Assemble education items
-    area_edu = geo.Area(dict_areas['education'])
-    x = area_edu.pos_x
-    y = area_edu.pos_y
-    anchor = area_edu.anchor
-    hsize = area_edu.head_font_size
-    bsize = area_edu.body_font_size
-    hspace1 = area_edu.body_indent
-    vspace1 = area_edu.body_vspace
-    edu = [
-            '% EDUCATION AREA',
-            '% |- Title:',
-            r'\node [anchor={}, font=\{}] at ({}, {}) {{{}}};'.format(anchor, hsize, x, y, area_edu.title),
-            '% |- Items:',
-            '\\begin{{scope}}[row sep=-\\pgflinewidth, column sep=-\\pgflinewidth, text depth=0.0cm, minimum height=0.5cm, font=\{}]'.format(bsize),
-            '\t\\matrix (edu) at ({}, {}) ['.format(x, y-area_edu.head_vspace),
-            '\t\t' + 'anchor={},'.format(anchor),
-            '\t\t' + r'matrix of nodes,',
-            '\t\t' + r'column 1/.style={nodes={cell1}},',
-            '\t\t' + r'column 2/.style={nodes={cell2}},',
-            '\t\t' + r']{',
-            ]
 
+    # Assemble education area
+    area_edu = geo.Area(dict_areas['education'])
+    edu_title_set = {
+            'anchor': 'north west',
+            'x': area_edu.pos_x,
+            'y': area_edu.pos_y,
+            'font_size': area_edu.head_font_size,
+            'uppercase': True,
+            'yshift': area_edu.body_vspace,
+            }
+    edu_set = {
+            'name': 'Education',
+            'anchor': area_edu.anchor,
+            'x': area_edu.pos_x,
+            'y': area_edu.pos_y,
+            'font_size': 'small',
+            'column_styles': ['cell1', 'cell2'],
+            }
+
+    # Assemble education items
+    items = []
     for edu_item in reversed(edu_items):
         if isinstance(edu_item, cv.EduPeriodItem):
-            edu.append('\t\t\\node {{{}\\,--\\,{}}}; & \\node {{{}}};\\\\'.format(edu_item.start_date, edu_item.end_date, edu_item.school_name))
-            edu.append('\t\t & \\node [text depth=0.5cm] {{{}}};\\\\'.format(edu_item.description))
+            items.append(['{}\\,--\\,{}'.format(edu_item.start_date, edu_item.end_date), edu_item.school_name])
+            items.append(['', edu_item.description])
         else:
-            edu.append('\t\t\\node {{{}}}; & \\node {{{}}};\\\\'.format(edu_item.date, edu_item.school_name))
-            edu.append('\t\t & \\node [text depth=0.5cm] {{{}}};\\\\'.format(edu_item.description))
-    edu.append('\t\t' + r'};')
-    edu.append(r'\end{scope}')
+            items.append([edu_item.date, edu_item.school_name])
+            items.append(['', edu_item.description])
+    edu = geo.Table(edu_set, items).assemble()
+    edu.insert(0, geo.Textbox(edu_title_set, 'Education').create())
 
     # Read skill items
     dict_skills = config_data['skills']
@@ -604,19 +604,16 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
             'anchor': 'north west',
             'x': x,
             'y': y,
+            'font_size': 'small',
             'column_styles': ['cell5', 'cell6'],
             }
-    test_table = geo.Table(test_set)
+#    test_table = geo.Table(test_set)
     items = [
             ['01/2020-12/2020', 'University'],
+            ['', 'What I did...'],
             ['01/2018-12/2019', 'School'],
             ]
-    test = test_table.head()
-    for item in items:
-        print(item)
-        test.append(test_table.add_row(item))
-    test.append(test_table.foot())
-
+    test = geo.Table(test_set, items).assemble()
 
 
     # Assemble knowledge
