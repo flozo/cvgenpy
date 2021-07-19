@@ -445,42 +445,38 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
             cont.append('\t\t\\node [text depth={}] {{{}}}; & \\node [text depth={}] {{{}}};\\\\'.format(depth, icons[icon_names[key]], depth, value))
     cont.append('\t\t'+ r'};')
     cont.append(r'\end{scope}')
-    
+
+
     # Read career items
     dict_career = config_data['Career']
-
-    # Assemble career items
-    area_career = geo.Area(dict_areas['career'])
-    x = area_career.pos_x
-    y = area_career.pos_y
-    anchor = area_career.anchor
-    hsize = area_career.head_font_size
-    bsize = area_career.body_font_size
-    hspace1 = area_career.body_indent
-    vspace1 = area_career.body_vspace
-    car = [
-            '% CAREER AREA',
-            '% |- Title:',
-            r'\node [anchor={}, font=\{}] at ({}, {}) {{{}}};'.format(anchor, hsize, x, y, area_career.title),
-            '% |- Items:',
-            '\\begin{{scope}}[row sep=-\\pgflinewidth, column sep=-\\pgflinewidth, text depth=0.0cm, minimum height=0.5cm, font=\\{}]'.format(bsize),
-            '\t\\matrix (edu) at ({}, {}) ['.format(x, y-area_career.head_vspace),
-            '\t\t' + 'anchor={},'.format(anchor),
-            '\t\t' + r'matrix of nodes,',
-            '\t\t' + r'column 1/.style={nodes={cell1}},',
-            '\t\t' + r'column 2/.style={nodes={cell2}},',
-            '\t\t' + r']{',
-            ]
-
     car_items = []
     for car_item in dict_career.values():
         car_items.append(cv.CareerItem(car_item))
+    # Assemble carrer area
+    area_career = geo.Area(dict_areas['career'])
+    career_title_set = {
+            'anchor': 'north west',
+            'x': area_career.pos_x,
+            'y': area_career.pos_y,
+            'font_size': area_career.head_font_size,
+            'uppercase': True,
+            'yshift': area_career.body_vspace,
+            }
+    career_set = {
+            'name': 'Career',
+            'anchor': area_career.anchor,
+            'x': area_career.pos_x,
+            'y': area_career.pos_y,
+            'font_size': 'small',
+            'column_styles': ['cell1', 'cell2'],
+            }
+    # Assemble career items
+    items = []
     for car_item in reversed(car_items):
-        car.append('\t\t\\node {{{}\\,--\\,{}}}; & \\node {{{}}};\\\\'.format(car_item.start_date, car_item.end_date, car_item.company_name))
-        car.append('\t\t & \\node [text depth=0.5cm] {{{}}};\\\\'.format(car_item.description))
-    car.append('\t\t' + r'};')
-    car.append(r'\end{scope}')
-
+        items.append(['{}\\,--\\,{}'.format(car_item.start_date, car_item.end_date), car_item.company_name])
+        items.append(['', car_item.description])
+    car = geo.Table(career_set, items).assemble()
+    car.insert(0, geo.Textbox(career_title_set, 'Career').create())
 
     # Read education items
     dict_edu = config_data['Education']
@@ -490,7 +486,6 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
             edu_items.append(cv.EduPeriodItem(edu_item))
         else:
             edu_items.append(cv.EduEventItem(edu_item))
-
     # Assemble education area
     area_edu = geo.Area(dict_areas['education'])
     edu_title_set = {
@@ -509,7 +504,6 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
             'font_size': 'small',
             'column_styles': ['cell1', 'cell2'],
             }
-
     # Assemble education items
     items = []
     for edu_item in reversed(edu_items):
