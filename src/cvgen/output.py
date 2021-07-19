@@ -61,13 +61,13 @@ def tikzset():
     """
     l = [
         r'\tikzset{',
-        '\t' + r'cell1/.style={rectangle, draw=black, inner xsep=0pt, inner ysep=4pt, text height=0.25cm, align=right, minimum width=2.0cm, text width=3.5cm},',
-        '\t' + r'cell2/.style={rectangle, draw=black, inner xsep=6pt, inner ysep=4pt, text height=0.25cm, align=left, minimum width=1.5cm, text width=8.0cm},',
-        '\t' + r'cell3/.style={rectangle, draw=black, inner xsep=0pt, inner ysep=4pt, text height=0.25cm, align=center, minimum width=0.6cm, text width=0.4cm},',
-        '\t' + r'cell4/.style={rectangle, draw=black, inner xsep=3pt, inner ysep=4pt, text height=0.25cm, align=left, minimum width=1.0cm, text width=5.8cm},',
-        '\t' + r'cell5/.style={rectangle, draw=black, inner xsep=0pt, inner ysep=4pt, text height=0.25cm, align=left, minimum width=0.6cm, text width=4.5cm},',
-        '\t' + r'cell6/.style={rectangle, draw=black, inner xsep=0pt, inner ysep=4pt, text height=0.25cm, align=right, minimum width=1.0cm, text width=2.0cm},',
-        '\t' + r'cell7/.style={rectangle, draw=black, inner xsep=0pt, inner ysep=4pt, text height=0.25cm, align=left, minimum width=1.0cm, text width=6.5cm},',
+        '\t' + geo.Cell('cell1', 0, 4, 'right', 2.0, 0.5, 3.5, 0.25).set_style(),
+        '\t' + geo.Cell('cell2', 6, 4, 'left', 1.5, 0.5, 8.0, 0.25).set_style(),
+        '\t' + geo.Cell('cell3', 0, 4, 'center', 0.6, 0.5, 0.4, 0.25).set_style(),
+        '\t' + geo.Cell('cell4', 3, 4, 'left', 1.0, 0.5, 5.8, 0.25).set_style(),
+        '\t' + geo.Cell('cell5', 0, 4, 'left', 0.6, 0.5, 4.5, 0.25).set_style(),
+        '\t' + geo.Cell('cell6', 0, 4, 'right', 1.0, 0.5, 2.0, 0.25).set_style(),
+        '\t' + geo.Cell('cell7', 0, 4, 'left', 1.0, 0.5, 6.5, 0.25).set_style(),
         '\t' + r'circfull/.style={draw=none, fill=Blues-K},',
         '\t' + r'circopen/.style={draw=none, fill=Greys-G},',
         '\t' + r'pics/skillmax/.style n args={3}{code={',
@@ -598,6 +598,27 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
     hsize = area_know.head_font_size
     bsize = area_know.body_font_size
 
+    # Assemble test area
+    test_set = {
+            'name': 'Test',
+            'anchor': 'north west',
+            'x': x,
+            'y': y,
+            'column_styles': ['cell5', 'cell6'],
+            }
+    test_table = geo.Table(test_set)
+    items = [
+            ['01/2020-12/2020', 'University'],
+            ['01/2018-12/2019', 'School'],
+            ]
+    test = test_table.head()
+    for item in items:
+        print(item)
+        test.append(test_table.add_row(item))
+    test.append(test_table.foot())
+
+
+
     # Assemble knowledge
     know = [
             '% KNOWLEDGE AREA',
@@ -716,6 +737,8 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
                 f.write('\t\t\t' + skill + '\n')
             for k in know:
                 f.write('\t\t\t' + k + '\n')
+            for t in test:
+                f.write('\t\t\t' + t + '\n')
             for c in cert:
                 f.write('\t\t\t' + c + '\n')
             for i in photo:

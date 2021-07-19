@@ -207,6 +207,55 @@ class Area(object):
             self.title = self.title.lower()
 
 
+class Cell:
+    def __init__(self, name, xsep, ysep, align, minimum_width, minimum_height, text_width, text_height):
+        self.name = name
+        self.shape = 'rectangle'
+        self.draw = 'none'
+        self.inner_xsep = xsep
+        self.inner_ysep = ysep
+        self.align = align
+        self.minimum_width = minimum_width
+        self.minimum_height = minimum_height
+        self.text_width = text_width
+        self.text_height = text_height
+
+    def set_style(self):
+        return '{}/.style={{{}, draw={}, inner xsep={}pt, inner ysep={}pt, align={}, minimum width={}cm, minimum height={}cm, text width={}cm, text height={}cm}},'.format(self.name, self.shape, self.draw, self.inner_xsep, self.inner_ysep, self.align, self.minimum_width, self.minimum_height, self.text_width, self.text_height) 
+
+
+class Table:
+    def __init__(self, table):
+        self.name = table['name']
+        self.anchor = table['anchor']
+        self.x = table['x']
+        self.y = table['y']
+        self.column_styles = table['column_styles']
+
+    def head(self):
+        l = [
+                '% {}'.format(self.name.upper()),
+                '\\matrix ({}) at ({}, {}) ['.format(self.name, self.x, self.y),
+                '\t' + 'anchor={},'.format(self.anchor),
+                '\t' + 'matrix of nodes,',
+                ]
+        for i, style in enumerate(self.column_styles):
+            l.append('\t' + 'column{}/.style={{nodes={{{}}}}},'.format(i+1, style))
+        l.append('\t]{')
+        return l
+
+    def add_row(self, entries):
+        row = '\t'
+        for entry in entries:
+            row = row + '\\node {{{}}}; & '.format(entry)
+        row = row[:-3]
+        row = row + '\\\\'
+        return row
+
+    def foot(self):
+        return '\t};'
+
+
 class Box(object):
     def __init__(self, color, width, height):
         self.color = color
@@ -528,7 +577,7 @@ def write_config(config_dir):
                         'color': 'Greys-J',
                         },
                     'box_left': {
-                        'size': 7.5,
+                        'size': 7.0,
                         'color': 'Greys-C',
                         },
                     'box_right': {
