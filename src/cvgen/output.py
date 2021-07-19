@@ -101,7 +101,7 @@ def declare_layers():
     return l
 
 
-def assemble_letter(dict_letter, letter_text, dict_pers, dict_cont, dict_comp, icons, encl, dict_set):
+def assemble_letter(dict_letter, letter_text, dict_pers, dict_cont, dict_comp, icons, encl, dict_set, draft):
     """
     Assemble LaTeX code for letter
     """
@@ -120,12 +120,12 @@ def assemble_letter(dict_letter, letter_text, dict_pers, dict_cont, dict_comp, i
         '\t' + r'\end{pgfonlayer}',
         ]
     # Area highlighting
-    if letter.highlight is True:
+    if draft is True:
         l2 = [
              '\t' + r'% AREA HIGHLIGHTING',
              '\t' + r'\begin{pgfonlayer}{forebackground}',
              '\t\t' + r'\begin{scope}[',
-             '\t\t\t' + 'fill={}, draw={},'.format(letter.highlight_color, 'black'),
+             '\t\t\t' + 'fill={}, draw={},'.format(letter.draft_highlight_color, 'black'),
              '\t\t\t' + ']',
              '\t\t\t' + r'% |- Border',
              '\t\t\t\\filldraw ({}, {}) rectangle ({}, {});'.format(letter.border_left, letter.border_bottom, letter.width-letter.border_right, letter.height-letter.border_top),
@@ -246,7 +246,7 @@ def assemble_letter(dict_letter, letter_text, dict_pers, dict_cont, dict_comp, i
     return l
  
 
-def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text, microtype, include_meta, encl):
+def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text, microtype, include_meta, encl, draft):
     """
     Read out config values, create objects, and assemble LaTeX code
     """
@@ -696,7 +696,7 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
             f.write('\t' + line + '\n')
         if structure['letter'] is True:
             # Write letter
-            for line in assemble_letter(dict_letter, text, dict_pers, dict_cont, dict_comp, icons, encl, dict_set):
+            for line in assemble_letter(dict_letter, text, dict_pers, dict_cont, dict_comp, icons, encl, dict_set, draft):
                 f.write('\t' + line + '\n')
         if structure['cv'] is True:
             # Write CV

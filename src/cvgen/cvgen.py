@@ -28,6 +28,8 @@ def main():
                         help='execute pdflatex after creating *.tex file')
     parser.add_argument('-M', '--microtype', action='store_true',
                         help='use microtype package for fine tuning of type set')
+    parser.add_argument('-d', '--draft', action='store_true',
+                        help='Draft mode: highlight text fields')
     parser.add_argument('-m', '--metadata', action='store_true',
                         help='add PDF metadata')
     parser.add_argument('-s', '--show', action='store_true',
@@ -58,6 +60,7 @@ def main():
     text = fn.format_text(text)
 
     config_data = fn.read_config(config_file_data)
+    config_geo = fn.read_config(config_file_geo)
 
     # Check file extension
     outfile = str(args.outfile)
@@ -68,7 +71,11 @@ def main():
     encl = ['Curriculum vitae']
     for app in config_data['Appendix'].values():
         encl.append(app['name'])
-    out.assemble_latex(outfile, version_str, config_file_geo, config_file_data, text, args.microtype, args.metadata, encl)
+    draft = args.draft
+    if draft is True:
+        print('[output] Option --draft is active.')
+#            print('[output] Option --draft is active. Ignoring contradicting setting in cvgeometry.json: "draft": false')
+    out.assemble_latex(outfile, version_str, config_file_geo, config_file_data, text, args.microtype, args.metadata, encl, draft)
     # Messages and execution of pdfLaTeX/mupdf
     if verbosity >= 1:
         print('[output] LaTeX file {} created.'.format(outfile))
@@ -88,7 +95,6 @@ def main():
         if verbosity >= 1:
             print('[output] Opening PDF file via: mupdf {} ...'.format(outfile_pdf))
         os.system('mupdf {}'.format(outfile_pdf))
-    config_geo = fn.read_config(config_file_geo)
     if args.appendix is True or config_geo['structure']['appendices'] is True:
         if config_geo['structure']['appendices'] is False and verbosity >= 0:
             print('[output] Option --appendix is active. Ignoring contradicting setting in cvgeometry.json: "appendices": false')

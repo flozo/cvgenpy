@@ -26,6 +26,8 @@ class Page:
         self.text_width = self.width-self.border_left-self.border_right
         self.text_height = self.height-self.border_top-self.border_bottom
         self.background_color = settings['background_color']
+        self.draft = settings['draft']
+        self.draft_highlight_color = settings['draft_highlight_color']
 
     def add_headsepline(self, thickness, color, fullwidth):
         """
@@ -113,8 +115,6 @@ class Letter(Page):
         self.folding_mark_2_y = letter['folding_mark_2_y']
         self.folding_mark_2_width = letter['folding_mark_2_width']
         self.folding_mark_2_thickness = letter['folding_mark_2_thickness']
-        self.highlight = letter['highlight']
-        self.highlight_color = letter['highlight_color']
         
 
 class Address(object):
@@ -267,7 +267,7 @@ def write_config(config_dir):
                 'address_width': 9.0,
                 'address_height': 4.5,
                 'backaddress_y': 23.43,
-                'backaddress_sepline_thickness': 0.1,
+                'backaddress_sepline_thickness': 0.5,
                 'backaddress_sepchar': 'bullet',
                 'backaddress_fontsize': 'scriptsize',
                 'sender_x': 11.0,
@@ -281,18 +281,18 @@ def write_config(config_dir):
                 'perforation_mark_x': 0.1,
                 'perforation_mark_y': 14.85,
                 'perforation_mark_width': 0.5,
-                'perforation_mark_thickness': 0.1,
+                'perforation_mark_thickness': 0.3,
                 'folding_mark_1_x': 0.1,
                 'folding_mark_1_y': 19.2,
                 'folding_mark_1_width': 0.25,
-                'folding_mark_1_thickness': 0.1,
+                'folding_mark_1_thickness': 0.3,
                 'folding_mark_2_x': 0.1,
                 'folding_mark_2_y': 8.7,
                 'folding_mark_2_width': 0.25,
-                'folding_mark_2_thickness': 0.1,
-                'highlight': True,
-                'highlight_color': 'Greys-D',
+                'folding_mark_2_thickness': 0.3,
                 'background_color': 'none',
+                'draft': False,
+                'draft_highlight_color': 'Greys-D',
                 },
             'icons': {
                 'address': r'\faIcon{map-marker-alt}',
@@ -321,6 +321,8 @@ def write_config(config_dir):
                     'title_on_every_page': False,
                     'table_style': True,
                     'language': 'en',
+                    'draft': False,
+                    'draft_highlight_color': 'Greys-D',
                     },
                 'areas': {
                     'title': {
