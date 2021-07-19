@@ -27,7 +27,7 @@ class Page:
         self.text_height = self.height-self.border_top-self.border_bottom
         self.background_color = settings['background_color']
 
-    def add_headsepline(self, thickness, color):
+    def add_headsepline(self, thickness, color, fullwidth):
         """
         Add header separation line
         """
@@ -36,10 +36,13 @@ class Page:
                 'width': self.text_width,
                 'thickness': thickness,
                 'color': color}
+        if fullwidth is True:
+            args['x'] = 0
+            args['width'] = self.width
         sepline = Sepline(args)
         return '\\draw [draw={}, line width={}cm] ({}, {}) -- +({}, 0);'.format(sepline.color, sepline.thickness, sepline.x, sepline.y, sepline.width)
 
-    def add_footsepline(self, thickness, color):
+    def add_footsepline(self, thickness, color, fullwidth):
         """
         Add footer separation line
         """
@@ -48,6 +51,9 @@ class Page:
                 'width': self.text_width,
                 'thickness': thickness,
                 'color': color}
+        if fullwidth is True:
+            args['x'] = 0
+            args['width'] = self.width
         sepline = Sepline(args)
         return '\\draw [draw={}, line width={}cm] ({}, {}) -- +({}, 0);'.format(sepline.color, sepline.thickness, sepline.x, sepline.y, sepline.width)
  
@@ -530,7 +536,7 @@ def write_config(config_dir):
                     },
                 'skills': {
                     'layout': {
-                        'show_circles': True,
+                        'show_circles': False,
                         'circle_number': 5,
                         'circle_distance': 0.35,
                         'group_color': 'Blues-K',

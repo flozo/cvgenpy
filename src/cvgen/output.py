@@ -112,6 +112,8 @@ def assemble_letter(dict_letter, letter_text, dict_pers, dict_cont, dict_comp, i
         r'\begin{tikzpicture}[',
         '\t' + r'inner xsep=0pt,',
         '\t' + r'inner ysep=0pt,',
+        '\t' + r'trim left=0pt,',
+        '\t' + r'trim right={\paperw cm},',
         '\t' + r']',
         '\t' + r'\begin{pgfonlayer}{background}',
         '\t\t\\fill [fill=none] (0, 0) rectangle ({}, {});'.format(letter.width, letter.height),
@@ -173,15 +175,16 @@ def assemble_letter(dict_letter, letter_text, dict_pers, dict_cont, dict_comp, i
     # Headline
     x = letter.width-letter.border_right
     y = letter.height-letter.border_top
+    fullwidth = True
     anchor = 'south east'
     size = 'Large'
     headline = '{}~{}~{}'.format(dict_pers['title'], dict_pers['first_name'], dict_pers['family_name'])
     l.append('\t' + r'% |- Headline')
     l.append('\t' + letter.add_title(headline, size, 'right', 'black', 0.1))
     l.append('\t' + r'% |- Headline separator')
-    l.append('\t' + letter.add_headsepline(0.1, 'Blues-K'))
+    l.append('\t' + letter.add_headsepline(0.1, 'Blues-K', fullwidth))
 #    l.append('\t' + r'% |- Footline separator')
-#    l.append('\t' + letter.add_footsepline(0.1, 'Blues-K'))
+#    l.append('\t' + letter.add_footsepline(0.1, 'Blues-K', fullwidth))
     # Sender address
     l.append('\t' + r'% |- Sender address')
     x = letter.width-letter.border_right
@@ -352,15 +355,16 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
     # Headline
     x = layout.width-layout.border_right
     y = layout.height-layout.border_top
+    fullwidth = True
     size = 'Large'
     headline = '{}~{}~{}'.format(person.title, person.first_name, person.family_name)
     title = []
     title.append('\t' + r'% |- Headline')
     title.append('\t' + layout.add_title(headline, size, 'right', 'black', 0.1))
     title.append('\t' + r'% |- Headline separator')
-    title.append('\t' + layout.add_headsepline(0.1, 'Blues-K'))
+    title.append('\t' + layout.add_headsepline(0.1, 'Blues-K', fullwidth))
 #    l.append('\t' + r'% |- Footline separator')
-#    l.append('\t' + layout.add_footsepline(0.1, 'Blues-K'))
+#    l.append('\t' + layout.add_footsepline(0.1, 'Blues-K', fullwidth))
 #    title.append('% TITLE')
 #    title.append(layout.add_headsepline(0.1, 'Blues-K'))
 #    title.append(layout.add_title(0.1, 'Blues-K'))
@@ -700,6 +704,8 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
             f.write('\t' + r'\begin{tikzpicture}[' + '\n')
             f.write('\t\t' + r'inner xsep=0pt,' + '\n')
             f.write('\t\t' + r'inner ysep=0pt,' + '\n')
+            f.write('\t\t' + r'trim left=0pt,' + '\n')
+            f.write('\t\t' + r'trim right={\paperw cm},' + '\n')
             f.write('\t\t' + r']' + '\n')
             for line in draw_background():
                 f.write(line + '\n')
