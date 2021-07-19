@@ -401,58 +401,48 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
             r'\end{scope}',
             ]
 
-    # Assemble contact area
+    # Contact
     area_contact = geo.Area(dict_areas['contact'])
-    x = area_contact.pos_x
-    y = area_contact.pos_y
-    anchor = area_contact.anchor
-    hsize = area_contact.head_font_size
-    bsize = area_contact.body_font_size
-    hspace1 = area_contact.body_indent
-    vspace1 = area_contact.body_vspace
-    cont = [
-            '% CONTACT AREA',
-            '% |- Title:',
-            '\\node (cont) [anchor={}, font=\\{}] at ({}, {}) {{{}}};'.format(anchor, hsize, x, y, area_contact.title),
-            '% |- Items:',
-            '\\begin{{scope}}[row sep=-\\pgflinewidth, column sep=-\\pgflinewidth, text depth=0.0cm, minimum height=0.5cm, font=\\{}]'.format(bsize),
-            '\t\\matrix (con) at ({}, {}) ['.format(x, y-area_contact.head_vspace),
-            '\t\t' + 'anchor=north west,'.format(anchor),
-            '\t\t' + r'matrix of nodes,',
-            '\t\t' + r'column 1/.style={nodes={cell3}},',
-            '\t\t' + r'column 2/.style={nodes={cell4}},',
-            '\t\t' + r']{',
-            ]
-    dict_cont = config_data['Contact']
-    contact = cv.Contact(dict_cont)
-    address_data = geo.Address(dict_cont)
+    dict_contact = config_data['Contact']
+    contact = cv.Contact(dict_contact)
+    address_data = geo.Address(dict_contact)
     address = address_data.twoline()
-    vspace2 = 0.5
-    cont.append('\t\t\\node [text depth={}cm] {{{}}}; & \\node [text depth={}cm] {{{}}};\\\\'.format(vspace2, icons['address'], vspace2, address))
-    cont.append('\t\t\\node {{{}}}; & \\node {{{}}};\\\\'.format(icons['phone'], contact.phone))
-    cont.append('\t\t\\node {{{}}}; & \\node {{{}}};\\\\'.format(icons['mail'], contact.email))
-    cont.append('\t\t\\vspace{1cm} & \\vspace{1cm}\\\\')
+    contact_title_set = {
+            'anchor': 'north west',
+            'x': area_contact.pos_x,
+            'y': area_contact.pos_y,
+            'font_size': area_contact.head_font_size,
+            'uppercase': True,
+            'yshift': area_contact.body_vspace,
+            }
+    contact_set = {
+            'name': 'Contact',
+            'anchor': area_contact.anchor,
+            'x': area_contact.pos_x,
+            'y': area_contact.pos_y,
+            'font_size': 'small',
+            'column_styles': ['cell3', 'cell4'],
+            }
+    items = [
+            [icons['address'], address],
+            [icons['phone'], contact.phone],
+            [icons['mail'], contact.email],
+            ]
     for key, value in contact.weblinks.items():
         if key not in area_contact.hide_items:
             key = key.replace('_', r'\_')
             value = value.replace('_', r'\_')
             if (area_contact.hyperlinks is True) and (value != ''):
                 value = r'\href{' + value + r'}{' + value.replace('https://', '').replace('www.', '') + '}'
-                if 'linkedin' in value:
-                    depth = '0.5cm'
-                else:
-                    depth = '0.0cm'
-            cont.append('\t\t\\node [text depth={}] {{{}}}; & \\node [text depth={}] {{{}}};\\\\'.format(depth, icons[icon_names[key]], depth, value))
-    cont.append('\t\t'+ r'};')
-    cont.append(r'\end{scope}')
+            items.append([icons[icon_names[key]], value])
+    cont = geo.Table(contact_set, items).assemble()
+    cont.insert(0, geo.Textbox(contact_title_set, 'Contact').create())
 
-
-    # Read career items
+    # Career
     dict_career = config_data['Career']
     car_items = []
     for car_item in dict_career.values():
         car_items.append(cv.CareerItem(car_item))
-    # Assemble carrer area
     area_career = geo.Area(dict_areas['career'])
     career_title_set = {
             'anchor': 'north west',
@@ -470,7 +460,6 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
             'font_size': 'small',
             'column_styles': ['cell1', 'cell2'],
             }
-    # Assemble career items
     items = []
     for car_item in reversed(car_items):
         items.append(['{}\\,--\\,{}'.format(car_item.start_date, car_item.end_date), car_item.company_name])
@@ -478,7 +467,7 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
     car = geo.Table(career_set, items).assemble()
     car.insert(0, geo.Textbox(career_title_set, 'Career').create())
 
-    # Read education items
+    # Education
     dict_edu = config_data['Education']
     edu_items = []
     for edu_item in dict_edu.values():
@@ -486,7 +475,6 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
             edu_items.append(cv.EduPeriodItem(edu_item))
         else:
             edu_items.append(cv.EduEventItem(edu_item))
-    # Assemble education area
     area_edu = geo.Area(dict_areas['education'])
     edu_title_set = {
             'anchor': 'north west',
@@ -504,7 +492,6 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
             'font_size': 'small',
             'column_styles': ['cell1', 'cell2'],
             }
-    # Assemble education items
     items = []
     for edu_item in reversed(edu_items):
         if isinstance(edu_item, cv.EduPeriodItem):
@@ -591,25 +578,7 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
     anchor = area_know.anchor
     hsize = area_know.head_font_size
     bsize = area_know.body_font_size
-
-    # Assemble test area
-    test_set = {
-            'name': 'Test',
-            'anchor': 'north west',
-            'x': x,
-            'y': y,
-            'font_size': 'small',
-            'column_styles': ['cell5', 'cell6'],
-            }
-#    test_table = geo.Table(test_set)
-    items = [
-            ['01/2020-12/2020', 'University'],
-            ['', 'What I did...'],
-            ['01/2018-12/2019', 'School'],
-            ]
-    test = geo.Table(test_set, items).assemble()
-
-
+    
     # Assemble knowledge
     know = [
             '% KNOWLEDGE AREA',
@@ -708,7 +677,7 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
             f.write('\t' + line + '\n')
         if structure['letter'] is True:
             # Write letter
-            for line in assemble_letter(dict_letter, text, dict_pers, dict_cont, dict_comp, icons, encl, dict_set, draft):
+            for line in assemble_letter(dict_letter, text, dict_pers, dict_contact, dict_comp, icons, encl, dict_set, draft):
                 f.write('\t' + line + '\n')
         if structure['cv'] is True:
             # Write CV
@@ -728,8 +697,6 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
                 f.write('\t\t\t' + skill + '\n')
             for k in know:
                 f.write('\t\t\t' + k + '\n')
-            for t in test:
-                f.write('\t\t\t' + t + '\n')
             for c in cert:
                 f.write('\t\t\t' + c + '\n')
             for i in photo:
