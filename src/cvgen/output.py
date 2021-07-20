@@ -575,11 +575,6 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
         know_groups.append(item.group)  # get all groups
     know_groups = list(set(know_groups))  # get unique groups
     area_know = geo.Area(dict_areas['knowledge'])
-#    x = area_know.pos_x
-#    y = area_know.pos_y
-#    anchor = area_know.anchor
-#    hsize = area_know.head_font_size
-#    bsize = area_know.body_font_size
     know_title_set = {
             'anchor': 'north west',
             'x': area_know.pos_x,
@@ -606,72 +601,44 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
         items.append([group.replace('&', '\&'), row])
     know = geo.Table(know_set, items).assemble()
     know.insert(0, geo.Textbox(know_title_set, 'Knowledge').create())
-#     know = [
-#            '% KNOWLEDGE AREA',
-#            '% |- Title:',
-#            r'\node [anchor={}, font=\{}] at ({}, {}) {{{}}};'.format(anchor, hsize, x, y, area_know.title),
-#            '% |- Items:',
-#            '\\begin{{scope}}[row sep=-\\pgflinewidth, column sep=-\\pgflinewidth, text depth=0.0cm, minimum height=0.5cm, font=\{}]'.format(bsize),
-#            '\t\\matrix (skills) at ({}, {}) ['.format(x, y-area_know.head_vspace),
-#            '\t\t' + 'anchor={},'.format(anchor),
-#            '\t\t' + r'matrix of nodes,',
-#            '\t\t' + r'column 1/.style={nodes={cell5}},',
-#            '\t\t' + r'column 2/.style={nodes={cell6}},',
-#            '\t\t' + r']{',
-#            ]
-#    for group in know_groups:
-#        know.append('\t\t\\node {{{}}};\\\\'.format(group.replace('&', '\&')))
-#        for item in know_objects:
-#            if item.group == group:
-#                    know.append('\t\t\\node {{{}}}; & \\node {{{}}};\\\\'.format(item.name, item.description))
-#        know.append('\t\t\\node {{{}}};\\\\')
-#    know.append('\t\t' + r'};')
-#    know.append(r'\end{scope}')
 
-    # Read certificate items
+    # Certificates
     dict_cert = config_data['certificates']
     cert_objects = []
     for item in dict_cert.values():
         cert_objects.append(cv.CertificateItem(item))
-
     cert_groups = []
     for item in cert_objects:
         cert_groups.append(item.group)  # get all groups
     cert_groups = list(set(cert_groups))  # get unique groups
-    
     area_cert = geo.Area(dict_areas['certificates'])
-    x = area_cert.pos_x
-    y = area_cert.pos_y
-    anchor = area_cert.anchor
-    hsize = area_cert.head_font_size
-    bsize = area_cert.body_font_size
-
-    # Assemble certificates
-    cert = [
-            '% CERTIFICATES AREA',
-            '% |- Title:',
-            r'\node [anchor={}, font=\{}] at ({}, {}) {{{}}};'.format(anchor, hsize, x, y, area_cert.title),
-            '% |- Items:',
-            '\\begin{{scope}}[row sep=-\\pgflinewidth, column sep=-\\pgflinewidth, text depth=0.0cm, minimum height=0.5cm, font=\{}]'.format(bsize),
-            '\t\\matrix (skills) at ({}, {}) ['.format(x, y-area_cert.head_vspace),
-            '\t\t' + 'anchor={},'.format(anchor),
-            '\t\t' + r'matrix of nodes,',
-            '\t\t' + r'column 1/.style={nodes={cell5}},',
-            '\t\t' + r'column 2/.style={nodes={cell6}},',
-            '\t\t' + r']{',
-            ]
+    cert_title_set = {
+            'anchor': 'north west',
+            'x': area_cert.pos_x,
+            'y': area_cert.pos_y,
+            'font_size': area_cert.head_font_size,
+            'uppercase': True,
+            'yshift': area_cert.body_vspace,
+            }
+    cert_set = {
+            'name': 'Certificates',
+            'anchor': area_cert.anchor,
+            'x': area_cert.pos_x,
+            'y': area_cert.pos_y,
+            'font_size': 'small',
+            'column_styles': ['cell5', 'cell6'],
+            }
+    items = []
     for group in cert_groups:
-        cert.append('\t\t\\node {{{}}};\\\\'.format(group.replace('&', '\&')))
-        for item in cert_objects:
-            if item.group == group:
+        items.append([group.replace('&', '\&')])
+        for obj in cert_objects:
+            if obj.group == group:
                 if area_cert.hyperlinks is True:
-                    value = '\\href{{{}}}{{{}}}'.format(item.name, item.url)
+                    items.append(['\\href{{{}}}{{{}}}'.format(obj.name, obj.url)])
                 else:
-                    value = item.name
-                cert.append('\t\t\\node {{{}}};\\\\'.format(value))
-#        cert.append('\t\t\\node {{{}}};\\\\')
-    cert.append('\t\t' + r'};')
-    cert.append(r'\end{scope}')
+                    items.append([obj.name])
+    cert = geo.Table(cert_set, items).assemble()
+    cert.insert(0, geo.Textbox(cert_title_set, 'Certificates').create())
 
     # Metadata
     dict_comp = config_data['company']
