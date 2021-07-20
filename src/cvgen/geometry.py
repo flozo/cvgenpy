@@ -66,6 +66,21 @@ class Page:
         """
         return '\\node [anchor=south west, text width={}cm, align={}, font=\\{}, color={}, yshift={}cm] at ({}, {}) {{{}}};'.format(self.text_width, align, fontsize, color, yshift, self.border_left, self.height-self.border_top, text)
 
+    def latex_head(self):
+        l = [
+                '% {}'.format(self.name.upper()),
+                '\\begin{tikzpicture}[',
+                '\t' + 'inner xsep=0pt,',
+                '\t' + 'inner ysep=0pt,',
+                '\t' + 'trim left=0pt,',
+                '\t' + 'trim right={\\paperw cm},',
+                '\t' + ']',
+                ]
+        return l
+
+    def latex_foot(self):
+        return ['\\end{tikzpicture}']
+
 
 class CV(Page):
     """

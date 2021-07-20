@@ -685,13 +685,8 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
                 f.write('\t' + line + '\n')
         if structure['cv'] is True:
             # Write CV
-            f.write('\t' + r'% === CURRICULUM VITAE ===' + '\n')
-            f.write('\t' + r'\begin{tikzpicture}[' + '\n')
-            f.write('\t\t' + r'inner xsep=0pt,' + '\n')
-            f.write('\t\t' + r'inner ysep=0pt,' + '\n')
-            f.write('\t\t' + r'trim left=0pt,' + '\n')
-            f.write('\t\t' + r'trim right={\paperw cm},' + '\n')
-            f.write('\t\t' + r']' + '\n')
+            for l in cvl.latex_head():
+                f.write('\t' + l + '\n')
             for line in draw_background():
                 f.write(line + '\n')
             f.write('\t\t' + r'\begin{pgfonlayer}{foreground}' + '\n')
@@ -714,7 +709,8 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
             for edu_item in edu:
                 f.write('\t\t\t' + edu_item + '\n')
             f.write('\t\t' + r'\end{pgfonlayer}' + '\n')
-            f.write('\t' + r'\end{tikzpicture}' + '\n')
+            for l in cvl.latex_foot():
+                f.write('\t' + l + '\n')
             if cv_pages > 1:
                 f.write('\t' + r'\begin{tikzpicture}[' + '\n')
                 f.write('\t\t' + r'inner xsep=0pt,' + '\n')
