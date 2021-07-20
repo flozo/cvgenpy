@@ -565,46 +565,68 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
     skills.insert(0, geo.Textbox(skill_title_set, 'Skills').create())
         
 
-    # Read knowledge items
+    # Knowledge
     dict_know = config_data['knowledge']
     know_objects = []
     for item in dict_know.values():
         know_objects.append(cv.KnowledgeItem(item))
-
     know_groups = []
     for item in know_objects:
         know_groups.append(item.group)  # get all groups
     know_groups = list(set(know_groups))  # get unique groups
-    
     area_know = geo.Area(dict_areas['knowledge'])
-    x = area_know.pos_x
-    y = area_know.pos_y
-    anchor = area_know.anchor
-    hsize = area_know.head_font_size
-    bsize = area_know.body_font_size
-    
-    # Assemble knowledge
-    know = [
-            '% KNOWLEDGE AREA',
-            '% |- Title:',
-            r'\node [anchor={}, font=\{}] at ({}, {}) {{{}}};'.format(anchor, hsize, x, y, area_know.title),
-            '% |- Items:',
-            '\\begin{{scope}}[row sep=-\\pgflinewidth, column sep=-\\pgflinewidth, text depth=0.0cm, minimum height=0.5cm, font=\{}]'.format(bsize),
-            '\t\\matrix (skills) at ({}, {}) ['.format(x, y-area_know.head_vspace),
-            '\t\t' + 'anchor={},'.format(anchor),
-            '\t\t' + r'matrix of nodes,',
-            '\t\t' + r'column 1/.style={nodes={cell5}},',
-            '\t\t' + r'column 2/.style={nodes={cell6}},',
-            '\t\t' + r']{',
-            ]
+#    x = area_know.pos_x
+#    y = area_know.pos_y
+#    anchor = area_know.anchor
+#    hsize = area_know.head_font_size
+#    bsize = area_know.body_font_size
+    know_title_set = {
+            'anchor': 'north west',
+            'x': area_know.pos_x,
+            'y': area_know.pos_y,
+            'font_size': area_know.head_font_size,
+            'uppercase': True,
+            'yshift': area_know.body_vspace,
+            }
+    know_set = {
+            'name': 'Knowledge',
+            'anchor': area_know.anchor,
+            'x': area_know.pos_x,
+            'y': area_know.pos_y,
+            'font_size': 'small',
+            'column_styles': ['cell5', 'cell6'],
+            }
+    items = []
     for group in know_groups:
-        know.append('\t\t\\node {{{}}};\\\\'.format(group.replace('&', '\&')))
-        for item in know_objects:
-            if item.group == group:
-                    know.append('\t\t\\node {{{}}}; & \\node {{{}}};\\\\'.format(item.name, item.description))
-        know.append('\t\t\\node {{{}}};\\\\')
-    know.append('\t\t' + r'};')
-    know.append(r'\end{scope}')
+        row = ''
+        for obj in know_objects:
+            if obj.group == group:
+                row = row + obj.name + ', '
+        row = row[:-2]
+        items.append([group.replace('&', '\&'), row])
+    know = geo.Table(know_set, items).assemble()
+    know.insert(0, geo.Textbox(know_title_set, 'Knowledge').create())
+#     know = [
+#            '% KNOWLEDGE AREA',
+#            '% |- Title:',
+#            r'\node [anchor={}, font=\{}] at ({}, {}) {{{}}};'.format(anchor, hsize, x, y, area_know.title),
+#            '% |- Items:',
+#            '\\begin{{scope}}[row sep=-\\pgflinewidth, column sep=-\\pgflinewidth, text depth=0.0cm, minimum height=0.5cm, font=\{}]'.format(bsize),
+#            '\t\\matrix (skills) at ({}, {}) ['.format(x, y-area_know.head_vspace),
+#            '\t\t' + 'anchor={},'.format(anchor),
+#            '\t\t' + r'matrix of nodes,',
+#            '\t\t' + r'column 1/.style={nodes={cell5}},',
+#            '\t\t' + r'column 2/.style={nodes={cell6}},',
+#            '\t\t' + r']{',
+#            ]
+#    for group in know_groups:
+#        know.append('\t\t\\node {{{}}};\\\\'.format(group.replace('&', '\&')))
+#        for item in know_objects:
+#            if item.group == group:
+#                    know.append('\t\t\\node {{{}}}; & \\node {{{}}};\\\\'.format(item.name, item.description))
+#        know.append('\t\t\\node {{{}}};\\\\')
+#    know.append('\t\t' + r'};')
+#    know.append(r'\end{scope}')
 
     # Read certificate items
     dict_cert = config_data['certificates']
