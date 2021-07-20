@@ -302,8 +302,6 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
     dict_box_bottom = dict_box['box_bottom']
     dict_box_left = dict_box['box_left']
     dict_box_right = dict_box['box_right']
-    dict_skill_layout = config_geo['cv']['skills']['layout']
-    dict_skill_circle = config_geo['cv']['skills']['circle']
     cv_lang = config_geo['cv']['layout']['language']
     cv_pages = config_geo['cv']['layout']['pages']
     dict_areas = config_geo['cv']['areas']
@@ -345,13 +343,7 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
     pers.append('\\node [below={} of pers.south west, anchor=north west, font=\\{}, align=left] {{{}}};'.format(area_personal.head_vspace, bsize, about_str))
 
     # Assemble title
-#    area_title = geo.Area(dict_areas['title'])
-#    x = area_title.pos_x
-#    y = area_title.pos_y
-#    l = area_title.length
-#    anchor = area_title.anchor
-#    hsize = area_title.head_font_size
-#    bsize = area_title.body_font_size
+    area_title = geo.Area(dict_areas['title'])
     # Headline
     x = layout.width-layout.border_right
     y = layout.height-layout.border_top
@@ -361,8 +353,9 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
     title = []
     title.append('\t' + r'% |- Headline')
     title.append('\t' + layout.add_title(headline, size, 'right', 'black', 0.1))
-    title.append('\t' + r'% |- Headline separator')
-    title.append('\t' + layout.add_headsepline(0.1, 'Blues-K', fullwidth))
+    if area_title.head_sepline is True:
+        title.append('\t' + r'% |- Headline separator')
+        title.append('\t' + layout.add_headsepline(0.1, 'Blues-K', fullwidth))
 #    l.append('\t' + r'% |- Footline separator')
 #    l.append('\t' + layout.add_footsepline(0.1, 'Blues-K', fullwidth))
 #    title.append('% TITLE')
@@ -370,7 +363,6 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
 #    title.append(layout.add_title(0.1, 'Blues-K'))
 #            '\\node [anchor={}, font=\\{}] at ({}, {}) {{{} {}}};'.format(anchor, hsize, x, y, person.first_name, person.family_name),
 #            ]
-#    if area_title.head_sepline is True:
 #        title.append('\\draw [draw={}, line width=1pt] ({}, {}) -- ({}, {});'.format(area_title.color, x, y-0.8, l, y-0.8))
 #    title.append('\\node [anchor={}, font=\\{}, text height=0.6cm] at ({}, {}) {{{}}};'.format(anchor, bsize, x, y-0.8, area_title.title))
  
@@ -503,63 +495,75 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
     edu = geo.Table(edu_set, items).assemble()
     edu.insert(0, geo.Textbox(edu_title_set, 'Education').create())
 
-    # Read skill items
+    # Skills
+    dict_skill_layout = config_geo['cv']['skills']['layout']
+    dict_skill_circle = config_geo['cv']['skills']['circle']
     dict_skills = config_data['skills']
     skill_objects = []
     for item in dict_skills.values():
         skill_objects.append(cv.SkillItem(item))
-
     skill_groups = []
     for item in skill_objects:
         skill_groups.append(item.group)  # get all skill groups
     skill_groups = list(set(skill_groups))  # get unique skill groups
-    
-    skill_circle = geo.SkillCircle(dict_skill_circle)
     skill_layout = geo.SkillLayout(dict_skill_layout)
-    num = skill_layout.number
-    dist = skill_layout.distance
-    rad = skill_circle.radius
     area_skills = geo.Area(dict_areas['skills'])
-    x = area_skills.pos_x
-    y = area_skills.pos_y
-    anchor = area_skills.anchor
-    hsize = area_skills.head_font_size
-    bsize = area_skills.body_font_size
-
-    # Assemble skills
-    skills = [
-            '% SKILL AREA',
-            '% |- Title:',
-            r'\node [anchor={}, font=\{}] at ({}, {}) {{{}}};'.format(anchor, hsize, x, y, area_skills.title),
-            '% |- Items:',
-            '\\begin{{scope}}[row sep=-\\pgflinewidth, column sep=-\\pgflinewidth, text depth=0.0cm, minimum height=0.5cm, font=\{}]'.format(bsize),
-            '\t\\matrix (skills) at ({}, {}) ['.format(x, y-area_skills.head_vspace),
-            '\t\t' + 'anchor={},'.format(anchor),
-            '\t\t' + r'matrix of nodes,',
-            '\t\t' + r'column 1/.style={nodes={cell5}},',
-            '\t\t' + r'column 2/.style={nodes={cell6}},',
-            '\t\t' + r']{',
-            ]
-    desc = 0
-    descr = []
-    for group in skill_groups:
-        skills.append('\t\t\\node {{{}}};\\\\'.format(group.replace('&', '\&')))
-        for item in skill_objects:
-            if item.group == group:
-                if item.level == num:
-                    skills.append('\t\t\\node {{{}}}; & \\node {{\\tikz{{\\pic {{skillmax={{{}}}{{{}}}{{{}}}}};}}}};\\\\'.format(item.name, num, dist, rad))
-                elif item.level == 0:
-                    skills.append('\t\t\\node {{{}}}; & \\node {{\\tikz{{\\pic {{skillmin={{{}}}{{{}}}{{{}}}}};}}}};\\\\'.format(item.name, num, dist, rad))
-                else:
-                    skills.append('\t\t\\node {{{}}}; & \\node {{\\tikz{{\\pic {{skill={{{}}}{{{}}}{{{}}}{{{}}}{{{}}}}};}}}};\\\\'.format(item.name, item.level, item.level+1, num, dist, rad))
-                if item.description != '':
-                    skills.append('\t\t\\node (d{}) {{}}; & \\node {{}};\\\\'.format(desc))
-                    descr.append('\\node [cell7, anchor=north west, font=\{}] at (d{}.north west) {{({})}};'.format(bsize, desc, item.description))
-                    desc += 1
-        skills.append('\t\t\\node {{{}}};\\\\')
-    skills.append('\t\t' + r'};')
-    skills.append(r'\end{scope}')
-    skills = skills + descr
+    skill_title_set = {
+            'anchor': area_skills.anchor,
+            'x': area_skills.pos_x,
+            'y': area_skills.pos_y,
+            'font_size': area_skills.head_font_size,
+            'uppercase': True,
+            'yshift': area_skills.body_vspace,
+            }
+    items = []
+    if skill_layout.show_circles is True:
+        skill_set = {
+                'name': 'Skills',
+                'anchor': area_skills.anchor,
+                'x': area_skills.pos_x,
+                'y': area_skills.pos_y,
+                'font_size': 'small',
+                'column_styles': ['cell5', 'cell6'],
+                 }
+        skill_circle = geo.SkillCircle(dict_skill_circle)
+        num = skill_layout.number
+        dist = skill_layout.distance
+        rad = skill_circle.radius
+        for group in skill_groups:
+            items.append([group.replace('&', '\&'), ''])
+            for obj in skill_objects:
+                if obj.group == group:
+                    if obj.level == num:
+                        items.append([obj.name, '\\tikz{{\\pic {{skillmax={{{}}}{{{}}}{{{}}}}};}}'.format(num, dist, rad)])
+                    elif obj.level == 0:
+                        items.append([obj.name, '\\tikz{{\\pic {{skillmin={{{}}}{{{}}}{{{}}}}};}}'.format(num, dist, rad)])
+                    else:
+                        items.append([obj.name, '\\tikz{{\\pic {{skill={{{}}}{{{}}}{{{}}}{{{}}}{{{}}}}};}}'.format(obj.level, obj.level+1, num, dist, rad)])
+#                    if item.description != '':
+#                        items.append([])
+#                        skills.append('\t\t\\node (d{}) {{}}; & \\node {{}};\\\\'.format(desc))
+#                        descr.append('\\node [cell7, anchor=north west, font=\{}] at (d{}.north west) {{({})}};'.format(bsize, desc, item.description))
+#                        desc += 1
+    else:
+        skill_set = {
+                'name': 'Skills',
+                'anchor': area_skills.anchor,
+                'x': area_skills.pos_x,
+                'y': area_skills.pos_y,
+                'font_size': 'small',
+                'column_styles': ['cell1', 'cell2'],
+                 }
+        for group in skill_groups:
+            row = ''
+            for obj in skill_objects:
+                if obj.group == group:
+                    row = row + obj.name + ', '
+            row = row[:-2]
+            items.append([group.replace('&', '\&'), row])
+    skills = geo.Table(skill_set, items).assemble()
+    skills.insert(0, geo.Textbox(skill_title_set, 'Skills').create())
+        
 
     # Read knowledge items
     dict_know = config_data['knowledge']

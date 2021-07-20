@@ -327,6 +327,7 @@ class SkillLayout(object):
     def __init__(self, dict_skill_layout):
         self.number = dict_skill_layout['circle_number']
         self.distance = dict_skill_layout['circle_distance']
+        self.show_circles = dict_skill_layout['show_circles']
 
 
 def write_config(config_dir):
@@ -638,7 +639,7 @@ def write_config(config_dir):
                     },
                 'skills': {
                     'layout': {
-                        'show_circles': False,
+                        'show_circles': True,
                         'circle_number': 5,
                         'circle_distance': 0.35,
                         'group_color': 'Blues-K',
