@@ -16,7 +16,8 @@ class Page:
     """
     General page properties
     """
-    def __init__(self, settings):
+    def __init__(self, name, settings):
+        self.name = name
         self.width = settings['width']
         self.height = settings['height']
         self.border_top = settings['border_top']
@@ -66,12 +67,13 @@ class Page:
         return '\\node [anchor=south west, text width={}cm, align={}, font=\\{}, color={}, yshift={}cm] at ({}, {}) {{{}}};'.format(self.text_width, align, fontsize, color, yshift, self.border_left, self.height-self.border_top, text)
 
 
-class Layout(Page):
+class CV(Page):
     """
     Specific CV properties
     """
     def __init__(self, layout):
-        super().__init__(layout)
+        name = 'Curriculum vitae'
+        super().__init__(name, layout)
         self.pages = layout['pages']
         self.box_top = layout['box_top']
         self.box_bottom = layout['box_bottom']
@@ -86,7 +88,8 @@ class Letter(Page):
     Specific letter properties
     """
     def __init__(self, letter):
-        super().__init__(letter)
+        name = 'Letter'
+        super().__init__(name, letter)
         self.address_x = letter['address_x']
         self.address_y = letter['address_y']
         self.address_width = letter['address_width']
@@ -238,6 +241,8 @@ class Textbox:
         self.anchor = settings['anchor']
         self.x = settings['x']
         self.y = settings['y']
+        self.inner_xsep = settings['inner_xsep']
+        self.inner_ysep = settings['inner_ysep']
         self.font_size = settings['font_size']
         self.uppercase = settings['uppercase']
         self.yshift = settings['yshift']
@@ -247,7 +252,7 @@ class Textbox:
             self.text = text
 
     def create(self):
-        return '\\node [anchor={}, font=\\{}, yshift={}cm] at ({}, {}) {{{}}};'.format(self.anchor, self.font_size, self.yshift, self.x, self.y, self.text)
+        return '\\node [anchor={}, inner xsep={}pt, inner ysep={}, font=\\{}, yshift={}cm] at ({}, {}) {{{}}};'.format(self.anchor, self.inner_xsep, self.inner_ysep, self.font_size, self.yshift, self.x, self.y, self.text)
 
 
 class Table:
@@ -450,8 +455,8 @@ def write_config(config_dir):
                         },
                     'personal': {
                         'title': 'About me',
-                        'pos_x': 8.0,
-                        'pos_y': 26,
+                        'pos_x': 6.25,
+                        'pos_y': 27,
                         'anchor': 'north west',
                         'head_vspace': 0.3,
                         'head_sepline': False,
@@ -459,7 +464,7 @@ def write_config(config_dir):
                         'head_font_size': 'large',
                         'body_vspace': 1,
                         'body_indent': 2,
-                        'body_font_size': 'small',
+                        'body_font_size': 'normalsize',
                         'color': 'black',
                         'icon_color': 'black',
                         'length': 9.5,
@@ -472,7 +477,7 @@ def write_config(config_dir):
                         },
                     'photo': {
                         'pos_x': 16,
-                        'pos_y': 28,
+                        'pos_y': 27,
                         'anchor': 'north west',
                         'width': 4.0,
                         'height': 6.0,
@@ -482,8 +487,8 @@ def write_config(config_dir):
                         },
                     'contact': {
                         'title': 'Contact',
-                        'pos_x': 0.6,
-                        'pos_y': 26,
+                        'pos_x': 5.15,
+                        'pos_y': 24,
                         'anchor': 'north west',
                         'head_vspace': 0.5,
                         'head_sepline': False,
@@ -492,7 +497,7 @@ def write_config(config_dir):
                         'body_vspace': 1,
                         'body_vspace': 1,
                         'body_indent': 2,
-                        'body_font_size': 'footnotesize',
+                        'body_font_size': 'normalsize',
                         'color': 'black',
                         'icon_color': 'Blues-K',
                         'length': 10,
@@ -505,8 +510,8 @@ def write_config(config_dir):
                         },
                     'career': {
                         'title': 'Career',
-                        'pos_x': 8.0,
-                        'pos_y': 23,
+                        'pos_x': 2.2,
+                        'pos_y': 18,
                         'anchor': 'north west',
                         'head_vspace': 0.5,
                         'head_sepline': False,
@@ -515,7 +520,7 @@ def write_config(config_dir):
                         'body_vspace': 1,
                         'body_vspace': 1,
                         'body_indent': 2,
-                        'body_font_size': 'small',
+                        'body_font_size': 'normalsize',
                         'color': 'black',
                         'icon_color': 'black',
                         'length': 10,
@@ -528,8 +533,8 @@ def write_config(config_dir):
                         },
                     'education': {
                         'title': 'Education',
-                        'pos_x': 8.0,
-                        'pos_y': 16,
+                        'pos_x': 2.2,
+                        'pos_y': 10,
                         'anchor': 'north west',
                         'head_vspace': 0.5,
                         'head_sepline': False,
@@ -538,7 +543,7 @@ def write_config(config_dir):
                         'body_vspace': 1,
                         'body_vspace': 1,
                         'body_indent': 2,
-                        'body_font_size': 'small',
+                        'body_font_size': 'normalsize',
                         'color': 'black',
                         'icon_color': 'black',
                         'length': 10,
@@ -551,7 +556,7 @@ def write_config(config_dir):
                         },
                     'skills': {
                         'title': 'Skill profile',
-                        'pos_x': 0.6,
+                        'pos_x': 2.2,
                         'pos_y': 20.5,
                         'anchor': 'north west',
                         'head_vspace': 0.5,
@@ -561,7 +566,7 @@ def write_config(config_dir):
                         'body_vspace': 1,
                         'body_vspace': 1,
                         'body_indent': 2,
-                        'body_font_size': 'footnotesize',
+                        'body_font_size': 'normalsize',
                         'color': 'black',
                         'icon_color': 'black',
                         'length': 10,
@@ -574,7 +579,7 @@ def write_config(config_dir):
                         },
                     'knowledge': {
                         'title': 'Knowledge',
-                        'pos_x': 0.6,
+                        'pos_x': 2.2,
                         'pos_y': 9.8,
                         'anchor': 'north west',
                         'head_vspace': 0.5,
@@ -584,7 +589,7 @@ def write_config(config_dir):
                         'body_vspace': 1,
                         'body_vspace': 1,
                         'body_indent': 2,
-                        'body_font_size': 'footnotesize',
+                        'body_font_size': 'normalsize',
                         'color': 'black',
                         'icon_color': 'black',
                         'length': 10,
@@ -597,7 +602,7 @@ def write_config(config_dir):
                         },
                     'certificates': {
                         'title': 'Certificates',
-                        'pos_x': 0.6,
+                        'pos_x': 2.2,
                         'pos_y': 3.7,
                         'anchor': 'north west',
                         'head_vspace': 0.5,
@@ -607,7 +612,7 @@ def write_config(config_dir):
                         'body_vspace': 1,
                         'body_vspace': 1,
                         'body_indent': 2,
-                        'body_font_size': 'footnotesize',
+                        'body_font_size': 'normalsize',
                         'color': 'black',
                         'icon_color': 'black',
                         'length': 10,
@@ -629,7 +634,7 @@ def write_config(config_dir):
                         'color': 'Greys-J',
                         },
                     'box_left': {
-                        'size': 7.0,
+                        'size': 6.0,
                         'color': 'Greys-C',
                         },
                     'box_right': {
@@ -639,7 +644,7 @@ def write_config(config_dir):
                     },
                 'skills': {
                     'layout': {
-                        'show_circles': True,
+                        'show_circles': False,
                         'circle_number': 5,
                         'circle_distance': 0.35,
                         'group_color': 'Blues-K',

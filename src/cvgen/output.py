@@ -62,9 +62,9 @@ def tikzset():
     l = [
         r'\tikzset{',
         '\t' + geo.Cell('cell1', 0, 4, 'right', 2.0, 0.5, 3.5, 0.25).set_style(),
-        '\t' + geo.Cell('cell2', 6, 4, 'left', 1.5, 0.5, 8.0, 0.25).set_style(),
+        '\t' + geo.Cell('cell2', 16, 4, 'left', 1.5, 0.5, 8.0, 0.25).set_style(),
         '\t' + geo.Cell('cell3', 0, 4, 'center', 0.6, 0.5, 0.4, 0.25).set_style(),
-        '\t' + geo.Cell('cell4', 3, 4, 'left', 1.0, 0.5, 5.8, 0.25).set_style(),
+        '\t' + geo.Cell('cell4', 16, 4, 'left', 1.0, 0.5, 5.8, 0.25).set_style(),
         '\t' + geo.Cell('cell5', 0, 4, 'left', 0.6, 0.5, 4.5, 0.25).set_style(),
         '\t' + geo.Cell('cell6', 0, 4, 'right', 1.0, 0.5, 2.0, 0.25).set_style(),
         '\t' + geo.Cell('cell7', 0, 4, 'left', 1.0, 0.5, 6.5, 0.25).set_style(),
@@ -256,16 +256,16 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
         Define variables for geometry data
         """
         l = [
-            r'\paperw = {}; % paper width'.format(layout.width),
-            r'\paperh = {}; % paper height'.format(layout.height),
+            r'\paperw = {}; % paper width'.format(cvl.width),
+            r'\paperh = {}; % paper height'.format(cvl.height),
             ]
-        if layout.box_left is True:
+        if cvl.box_left is True:
             l.append(r'\boxlw = {}; % box left width'.format(box_left.width))
-        if layout.box_right is True:
+        if cvl.box_right is True:
             l.append(r'\boxrw = {}; % box right width'.format(box_right.width))
-        if layout.box_top is True:
+        if cvl.box_top is True:
             l.append(r'\boxth = {}; % box top height'.format(box_top.height))
-        if layout.box_bottom is True:
+        if cvl.box_bottom is True:
             l.append(r'\boxbh = {}; % box bottom height'.format(box_bottom.height))
         return l
 
@@ -276,17 +276,17 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
         """
         l = [
             '\t\t' + r'\begin{pgfonlayer}{background}',
-            '\t\t\t' + '\\fill[fill={}] (0, 0) rectangle (\\paperw, \paperh);'.format(layout.background_color),
+            '\t\t\t' + '\\fill[fill={}] (0, 0) rectangle (\\paperw, \paperh);'.format(cvl.background_color),
             '\t\t' + r'\end{pgfonlayer}',
             '\t\t' + r'\begin{pgfonlayer}{forebackground}',
             ]
-        if layout.box_left is True:
+        if cvl.box_left is True:
             l.append('\t\t\t' + '\\fill[fill={}] (0, 0) rectangle (\\boxlw, \\paperh); % box left'.format(box_left.color))
-        if layout.box_right is True:
-            l.append('\t\t\t' + '\\fill[fill={}] ({}, 0) rectangle (\\paperw, \\paperh); % box right'.format(box_right.color, layout.width-box_right.width))
-        if layout.box_top is True:
-            l.append('\t\t\t' + '\\fill[fill={}] (0, {}) rectangle (\\paperw, \\paperh); % box top'.format(box_top.color, layout.height-box_top.height))
-        if layout.box_bottom is True:
+        if cvl.box_right is True:
+            l.append('\t\t\t' + '\\fill[fill={}] ({}, 0) rectangle (\\paperw, \\paperh); % box right'.format(box_right.color, cvl.width-box_right.width))
+        if cvl.box_top is True:
+            l.append('\t\t\t' + '\\fill[fill={}] (0, {}) rectangle (\\paperw, \\paperh); % box top'.format(box_top.color, cvl.height-box_top.height))
+        if cvl.box_bottom is True:
             l.append('\t\t\t' + '\\fill[fill={}] (0, 0) rectangle (\\paperw, \\boxbh); % box bottom'.format(box_bottom.color))
         l.append('\t\t' + r'\end{pgfonlayer}')
         return l
@@ -307,12 +307,12 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
     dict_areas = config_geo['cv']['areas']
     structure = config_geo['structure']
     # Create objects
-    layout = geo.Layout(dict_layout)
+    cvl = geo.CV(dict_layout)
     background_box = geo.Box(color=dict_layout['background_color'], width=dict_layout['width'], height=dict_layout['height'])
-    box_top = geo.Box(color=dict_box_top['color'], width=layout.width, height=dict_box_top['size'])
-    box_bottom = geo.Box(color=dict_box_bottom['color'], width=layout.width, height=dict_box_bottom['size'])
-    box_left = geo.Box(color=dict_box_left['color'], width=dict_box_left['size'], height=layout.height)
-    box_right = geo.Box(color=dict_box_right['color'], width=dict_box_right['size'], height=layout.height)
+    box_top = geo.Box(color=dict_box_top['color'], width=cvl.width, height=dict_box_top['size'])
+    box_bottom = geo.Box(color=dict_box_bottom['color'], width=cvl.width, height=dict_box_bottom['size'])
+    box_left = geo.Box(color=dict_box_left['color'], width=dict_box_left['size'], height=cvl.height)
+    box_right = geo.Box(color=dict_box_right['color'], width=dict_box_right['size'], height=cvl.height)
 
     # General settings
     dict_set = config_geo['general']
@@ -345,22 +345,22 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
     # Assemble title
     area_title = geo.Area(dict_areas['title'])
     # Headline
-    x = layout.width-layout.border_right
-    y = layout.height-layout.border_top
+    x = cvl.width-cvl.border_right
+    y = cvl.height-cvl.border_top
     fullwidth = True
     size = 'Large'
     headline = '{}~{}~{}'.format(person.title, person.first_name, person.family_name)
     title = []
     title.append('\t' + r'% |- Headline')
-    title.append('\t' + layout.add_title(headline, size, 'right', 'black', 0.1))
+    title.append('\t' + cvl.add_title(headline, size, 'right', 'black', 0.1))
     if area_title.head_sepline is True:
         title.append('\t' + r'% |- Headline separator')
-        title.append('\t' + layout.add_headsepline(0.1, 'Blues-K', fullwidth))
+        title.append('\t' + cvl.add_headsepline(0.1, 'Blues-K', fullwidth))
 #    l.append('\t' + r'% |- Footline separator')
-#    l.append('\t' + layout.add_footsepline(0.1, 'Blues-K', fullwidth))
+#    l.append('\t' + cvl.add_footsepline(0.1, 'Blues-K', fullwidth))
 #    title.append('% TITLE')
-#    title.append(layout.add_headsepline(0.1, 'Blues-K'))
-#    title.append(layout.add_title(0.1, 'Blues-K'))
+#    title.append(cvl.add_headsepline(0.1, 'Blues-K'))
+#    title.append(cvl.add_title(0.1, 'Blues-K'))
 #            '\\node [anchor={}, font=\\{}] at ({}, {}) {{{} {}}};'.format(anchor, hsize, x, y, person.first_name, person.family_name),
 #            ]
 #        title.append('\\draw [draw={}, line width=1pt] ({}, {}) -- ({}, {});'.format(area_title.color, x, y-0.8, l, y-0.8))
@@ -371,8 +371,8 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
     dict_photo = config_geo['cv']['areas']['photo']
     photo_file = config_data['Personal']['photo']
     area_photo = geo.PhotoArea(dict_photo)
-    x = layout.width-layout.border_right
-    y = layout.height-layout.border_top-0.2
+    x = cvl.width-cvl.border_right
+    y = cvl.height-cvl.border_top-0.2
     thickness = 0.1
     anchor = 'north east'
 #    x = area_photo.pos_x
@@ -401,8 +401,10 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
     address = address_data.twoline()
     contact_title_set = {
             'anchor': 'north west',
-            'x': area_contact.pos_x,
+            'x': box_left.width,
             'y': area_contact.pos_y,
+            'inner_xsep': 8,
+            'inner_ysep': 0,
             'font_size': area_contact.head_font_size,
             'uppercase': True,
             'yshift': area_contact.body_vspace,
@@ -412,7 +414,7 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
             'anchor': area_contact.anchor,
             'x': area_contact.pos_x,
             'y': area_contact.pos_y,
-            'font_size': 'small',
+            'font_size': area_contact.body_font_size,
             'column_styles': ['cell3', 'cell4'],
             }
     items = [
@@ -438,8 +440,10 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
     area_career = geo.Area(dict_areas['career'])
     career_title_set = {
             'anchor': 'north west',
-            'x': area_career.pos_x,
+            'x': box_left.width,
             'y': area_career.pos_y,
+            'inner_xsep': 8,
+            'inner_ysep': 0,
             'font_size': area_career.head_font_size,
             'uppercase': True,
             'yshift': area_career.body_vspace,
@@ -449,7 +453,7 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
             'anchor': area_career.anchor,
             'x': area_career.pos_x,
             'y': area_career.pos_y,
-            'font_size': 'small',
+            'font_size': area_career.body_font_size,
             'column_styles': ['cell1', 'cell2'],
             }
     items = []
@@ -470,8 +474,10 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
     area_edu = geo.Area(dict_areas['education'])
     edu_title_set = {
             'anchor': 'north west',
-            'x': area_edu.pos_x,
+            'x': box_left.width,
             'y': area_edu.pos_y,
+            'inner_xsep': 8,
+            'inner_ysep': 0,
             'font_size': area_edu.head_font_size,
             'uppercase': True,
             'yshift': area_edu.body_vspace,
@@ -481,7 +487,7 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
             'anchor': area_edu.anchor,
             'x': area_edu.pos_x,
             'y': area_edu.pos_y,
-            'font_size': 'small',
+            'font_size': area_edu.body_font_size,
             'column_styles': ['cell1', 'cell2'],
             }
     items = []
@@ -510,8 +516,10 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
     area_skills = geo.Area(dict_areas['skills'])
     skill_title_set = {
             'anchor': area_skills.anchor,
-            'x': area_skills.pos_x,
+            'x': box_left.width,
             'y': area_skills.pos_y,
+            'inner_xsep': 8,
+            'inner_ysep': 0,
             'font_size': area_skills.head_font_size,
             'uppercase': True,
             'yshift': area_skills.body_vspace,
@@ -523,7 +531,7 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
                 'anchor': area_skills.anchor,
                 'x': area_skills.pos_x,
                 'y': area_skills.pos_y,
-                'font_size': 'small',
+                'font_size': area_skills.body_font_size,
                 'column_styles': ['cell5', 'cell6'],
                  }
         skill_circle = geo.SkillCircle(dict_skill_circle)
@@ -551,7 +559,7 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
                 'anchor': area_skills.anchor,
                 'x': area_skills.pos_x,
                 'y': area_skills.pos_y,
-                'font_size': 'small',
+                'font_size': area_skills.body_font_size,
                 'column_styles': ['cell1', 'cell2'],
                  }
         for group in skill_groups:
@@ -563,7 +571,6 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
             items.append([group.replace('&', '\&'), row])
     skills = geo.Table(skill_set, items).assemble()
     skills.insert(0, geo.Textbox(skill_title_set, 'Skills').create())
-        
 
     # Knowledge
     dict_know = config_data['knowledge']
@@ -577,8 +584,10 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
     area_know = geo.Area(dict_areas['knowledge'])
     know_title_set = {
             'anchor': 'north west',
-            'x': area_know.pos_x,
+            'x': box_left.width,
             'y': area_know.pos_y,
+            'inner_xsep': 8,
+            'inner_ysep': 0,
             'font_size': area_know.head_font_size,
             'uppercase': True,
             'yshift': area_know.body_vspace,
@@ -588,7 +597,7 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
             'anchor': area_know.anchor,
             'x': area_know.pos_x,
             'y': area_know.pos_y,
-            'font_size': 'small',
+            'font_size': area_know.body_font_size,
             'column_styles': ['cell5', 'cell6'],
             }
     items = []
@@ -614,8 +623,10 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
     area_cert = geo.Area(dict_areas['certificates'])
     cert_title_set = {
             'anchor': 'north west',
-            'x': area_cert.pos_x,
+            'x': box_left.width,
             'y': area_cert.pos_y,
+            'inner_xsep': 8,
+            'inner_ysep': 0,
             'font_size': area_cert.head_font_size,
             'uppercase': True,
             'yshift': area_cert.body_vspace,
@@ -625,7 +636,7 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
             'anchor': area_cert.anchor,
             'x': area_cert.pos_x,
             'y': area_cert.pos_y,
-            'font_size': 'small',
+            'font_size': area_cert.body_font_size,
             'column_styles': ['cell5', 'cell6'],
             }
     items = []
@@ -709,7 +720,7 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
                 f.write('\t\t' + r'inner xsep=0pt,' + '\n')
                 f.write('\t\t' + r'inner ysep=0pt,' + '\n')
                 f.write('\t\t' + r']' + '\n')
-                f.write('\t\t' + '\\fill[fill=none] (0, 0) rectangle ({}, {});\n'.format(layout.width, layout.height))
+                f.write('\t\t' + '\\fill[fill=none] (0, 0) rectangle ({}, {});\n'.format(cvl.width, cvl.height))
                 f.write('\t' + r'\end{tikzpicture}' + '\n')
         f.write(r'\end{document}' + '\n')
 
