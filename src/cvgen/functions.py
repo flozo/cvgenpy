@@ -76,3 +76,28 @@ def mergepdfs(pdflist, target):
     merger.write(target)
     merger.close()
 
+
+def make_link_url(url, shorten_http, shorten_www, label):
+    """
+    Create clickable link from URL
+    """
+    if label == '':
+        label = url
+        if shorten_http is True:
+            label = label.replace('https://', '').replace('http://', '')
+        if shorten_www is True:
+            label = label.replace('www.', '')
+    return '\\href{{{}}}{{{}}}'.format(url, label)
+
+
+def make_link_email(address, label, subject):
+    """
+    Create clickable link from email address with optional subject
+    """
+    if label == '':
+        label = address
+    if subject == '':
+        return '\\href{{mailto:{0}}}{{{1}}}'.format(address, label)
+    else:
+        return '\\href{{mailto:{0}?subject={1}}}{{{2}}}'.format(address, subject, label)
+

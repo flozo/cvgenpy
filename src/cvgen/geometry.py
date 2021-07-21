@@ -29,6 +29,7 @@ class Page:
         self.background_color = settings['background_color']
         self.draft = settings['draft']
         self.draft_highlight_color = settings['draft_highlight_color']
+        self.language = settings['language']
 
     def add_headsepline(self, thickness, color, fullwidth):
         """
@@ -184,6 +185,24 @@ class Personal(object):
         if lang == 'de':
             about_str = 'Geboren am {} in {}\\\\{}, {} Kinder'.format(self.birth_date, self.birth_location_city, self.marital_status, self.children)
         return about_str
+
+
+class Signature:
+    def __init__(self, name, x, y, height, text_above, text_below, filename):
+        self.name = name
+        self.x = x
+        self.y = y
+        self.height = height
+        self.text_above = text_above
+        self.text_below = text_below
+        self.filename = filename
+
+    def create(self):
+        if self.name == '':
+            namestr = ''
+        else:
+            namestr = '({}) '.format(self.name)
+        return '\\node {}[anchor=north west, text width=10cm] at ({}, {}) {{{}\\\\\\includegraphics[height={}cm]{{{}}}\\\\{}}};'.format(namestr, self.x, self.y, self.text_above, self.height, self.filename, self.text_below)
 
 
 class PhotoArea(object):
@@ -397,7 +416,7 @@ def write_config(config_dir):
                 'sender_height': 20.7,
                 'subject_y': 18.5,
                 'text_y': 18.0,
-                'closing_y_shift': 0.0,
+                'closing_y_shift': 5.0,
                 'enclosure_y_shift': -1.0,
                 'perforation_mark_x': 0.1,
                 'perforation_mark_y': 14.85,
@@ -432,7 +451,7 @@ def write_config(config_dir):
                     'border_bottom': 2.0,
                     'border_left': 2.5,
                     'border_right': 2.0,
-                    'pages': 1,
+                    'pages': 2,
                     'background_color': 'none',
                     'box_top': False,
                     'box_bottom': False,
@@ -572,7 +591,7 @@ def write_config(config_dir):
                     'skills': {
                         'title': 'Skill profile',
                         'pos_x': 2.2,
-                        'pos_y': 20.5,
+                        'pos_y': 22.5,
                         'anchor': 'north west',
                         'head_vspace': 0.5,
                         'head_sepline': False,
@@ -595,7 +614,7 @@ def write_config(config_dir):
                     'knowledge': {
                         'title': 'Knowledge',
                         'pos_x': 2.2,
-                        'pos_y': 9.8,
+                        'pos_y': 15.8,
                         'anchor': 'north west',
                         'head_vspace': 0.5,
                         'head_sepline': False,
@@ -617,8 +636,8 @@ def write_config(config_dir):
                         },
                     'certificates': {
                         'title': 'Certificates',
-                        'pos_x': 2.2,
-                        'pos_y': 3.7,
+                        'pos_x': 6.0,
+                        'pos_y': 9.7,
                         'anchor': 'north west',
                         'head_vspace': 0.5,
                         'head_sepline': False,

@@ -209,7 +209,9 @@ def assemble_letter(dict_letter, letter_text, dict_pers, dict_cont, dict_comp, i
     clickable = True
     if clickable is True:
         email_subject = 'Ihre Bewerbung bei {}'.format(dict_comp['name'])
-        l4.append('\t\t\t\\node {{\\href{{mailto:{0}?subject={1}}}{{{0}}}}}; & \\node {{{2}}};\\\\'.format(contact.email, email_subject, icons['mail']))
+        email = fn.make_link_email(contact.email, '', email_subject)
+        l4.append('\t\t\t\\node {{{0}}}; & \\node {{{1}}};\\\\'.format(email, icons['mail']))
+#        l4.append('\t\t\t\\node {{\\href{{mailto:{0}?subject={1}}}{{{0}}}}}; & \\node {{{2}}};\\\\'.format(contact.email, email_subject, icons['mail']))
     else:
         l4.append('\t\t\t\\node {{{}}}; & \\node {{{}}};\\\\'.format(contact.email, icons['mail']))
     l4.append('\t\t\t' + r'};')
@@ -233,8 +235,11 @@ def assemble_letter(dict_letter, letter_text, dict_pers, dict_cont, dict_comp, i
     # Closing and signature
     l.append('\t' + r'% |- Closing and signature')
     closing = 'Mit freundlichen Grüßen,'
-    signature = dict_pers['signature']
-    l.append('\t' + '\\node (closing) [anchor=north west, text width=10cm, yshift={}cm] at (textbox.south west) {{{}\\\\\\includegraphics[height=1.3cm]{{{}}}\\\\{} {}}};'.format(letter.closing_y_shift, closing, signature, dict_pers['first_name'], dict_pers['family_name']))
+    below = '{} {}'.format(dict_pers['first_name'], dict_pers['family_name'])
+    name = 'closing'
+    signature = geo.Signature(name, letter.border_left, letter.border_bottom+letter.closing_y_shift, 1.3, closing, below, dict_pers['signature'])
+    l.append(signature.create())
+#    l.append('\t' + '\\node (closing) [anchor=north west, text width=10cm, yshift={}cm] at (textbox.south west) {{{}\\\\\\includegraphics[height=1.3cm]{{{}}}\\\\{} {}}};'.format(letter.closing_y_shift, closing, signature, dict_pers['first_name'], dict_pers['family_name']))
     # Enclosure
     l.append('\t' + r'% |- Enclosure')
     enclosure = 'Anlagen:'
@@ -297,17 +302,17 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
     config_geo = fn.read_config(config_file_geo)
     dict_layout = config_geo['cv']['layout']
     dict_letter = config_geo['letter']
+    dict_comp = config_data['company']
     dict_box = config_geo['cv']['boxes']
     dict_box_top = dict_box['box_top']
     dict_box_bottom = dict_box['box_bottom']
     dict_box_left = dict_box['box_left']
     dict_box_right = dict_box['box_right']
-    cv_lang = config_geo['cv']['layout']['language']
-    cv_pages = config_geo['cv']['layout']['pages']
     dict_areas = config_geo['cv']['areas']
     structure = config_geo['structure']
-    # Create objects
     cvl = geo.CV(dict_layout)
+    cv_lang = cvl.language
+    cv_pages = cvl.pages
     background_box = geo.Box(color=dict_layout['background_color'], width=dict_layout['width'], height=dict_layout['height'])
     box_top = geo.Box(color=dict_box_top['color'], width=cvl.width, height=dict_box_top['size'])
     box_bottom = geo.Box(color=dict_box_bottom['color'], width=cvl.width, height=dict_box_bottom['size'])
@@ -417,17 +422,19 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
             'font_size': area_contact.body_font_size,
             'column_styles': ['cell3', 'cell4'],
             }
+    email_subject = 'Ihre Bewerbung bei {}'.format(dict_comp['name'])
+    email = fn.make_link_email(contact.email, '', email_subject)
     items = [
             [icons['address'], address],
             [icons['phone'], contact.phone],
-            [icons['mail'], contact.email],
+            [icons['mail'], email],
             ]
     for key, value in contact.weblinks.items():
         if key not in area_contact.hide_items:
             key = key.replace('_', r'\_')
             value = value.replace('_', r'\_')
             if (area_contact.hyperlinks is True) and (value != ''):
-                value = r'\href{' + value + r'}{' + value.replace('https://', '').replace('www.', '') + '}'
+                value = fn.make_link_url(value, True, True, '')
             items.append([icons[icon_names[key]], value])
     cont = geo.Table(contact_set, items).assemble()
     cont.insert(0, geo.Textbox(contact_title_set, 'Contact').create())
@@ -598,7 +605,7 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
             'x': area_know.pos_x,
             'y': area_know.pos_y,
             'font_size': area_know.body_font_size,
-            'column_styles': ['cell5', 'cell6'],
+            'column_styles': ['cell1', 'cell2'],
             }
     items = []
     for group in know_groups:
@@ -692,12 +699,6 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
             f.write('\t\t' + r'\begin{pgfonlayer}{foreground}' + '\n')
             for c in cont:
                 f.write('\t\t\t' + c + '\n')
-            for skill in skills:
-                f.write('\t\t\t' + skill + '\n')
-            for k in know:
-                f.write('\t\t\t' + k + '\n')
-            for c in cert:
-                f.write('\t\t\t' + c + '\n')
             for i in photo:
                 f.write('\t\t\t' + i + '\n')
             for t in title:
@@ -711,12 +712,29 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
             f.write('\t\t' + r'\end{pgfonlayer}' + '\n')
             for l in cvl.latex_foot():
                 f.write('\t' + l + '\n')
-            if cv_pages > 1:
-                f.write('\t' + r'\begin{tikzpicture}[' + '\n')
-                f.write('\t\t' + r'inner xsep=0pt,' + '\n')
-                f.write('\t\t' + r'inner ysep=0pt,' + '\n')
-                f.write('\t\t' + r']' + '\n')
+            if cv_pages == 2:
+                for l in cvl.latex_head():
+                    f.write('\t' + l + '\n')
+                for line in draw_background():
+                    f.write(line + '\n')
+                f.write('\t\t' + r'\begin{pgfonlayer}{foreground}' + '\n')
                 f.write('\t\t' + '\\fill[fill=none] (0, 0) rectangle ({}, {});\n'.format(cvl.width, cvl.height))
-                f.write('\t' + r'\end{tikzpicture}' + '\n')
+                for t in title:
+                    f.write('\t\t\t' + t + '\n')
+                for skill in skills:
+                    f.write('\t\t\t' + skill + '\n')
+                for k in know:
+                    f.write('\t\t\t' + k + '\n')
+                for c in cert:
+                    f.write('\t\t\t' + c + '\n')
+                closing = ''
+                below = '{} {}'.format(dict_pers['first_name'], dict_pers['family_name'])
+                name = 'closing2'
+                signature = geo.Signature(name, cvl.border_left+4, cvl.border_bottom+4, 1.3, closing, below, dict_pers['signature'])
+                f.write(signature.create())
+#                f.write('\t' + '\\node [anchor=north west, text width=10cm, yshift={}cm] at (textbox.south west) {{{}\\\\\\includegraphics[height=1.3cm]{{{}}}\\\\{} {}}};'.format(letter.closing_y_shift, closing, signature, dict_pers['first_name'], dict_pers['family_name']))
+                f.write('\t\t' + r'\end{pgfonlayer}' + '\n')
+                for l in cvl.latex_foot():
+                    f.write('\t' + l + '\n')
         f.write(r'\end{document}' + '\n')
 
