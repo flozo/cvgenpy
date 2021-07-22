@@ -399,40 +399,6 @@ def write_config(config_dir):
                         'description': 'Public health data analysis',
                        },
                     },
-            'Appendix': {
-                    'Appendix1': {
-                        'name': 'Reference letter1',
-                        'file': '/home/user/Reference_letter1.pdf',
-                        },
-                    'Appendix2': {
-                        'name': 'Reference letter2',
-                        'file': '/home/user/Reference_letter2.pdf',
-                        },
-                    'Appendix3': {
-                        'name': 'School certificate',
-                        'file': '/home/user/School_certificate.pdf',
-                        },
-                    'Appendix4': {
-                        'name': 'Bachelor certificate',
-                        'file': '/home/user/Bachelor_certificate.pdf',
-                        },
-                    'Appendix5': {
-                        'name': 'Master certificate',
-                       'file': '/home/user/Master_certificate.pdf',
-                        },
-                    'Appendix6': {
-                        'name': 'PhD certificate',
-                        'file': '/home/user/PhD_certificate.pdf',
-                        },
-                    'Appendix7': {
-                        'name': 'MOOC certificate1',
-                        'file': '/home/user/MOOC_certificate1.pdf',
-                        },
-                    'Appendix8': {
-                        'name': 'MOOC certificate2',
-                        'file': '/home/user/MOOC_certificate2.pdf',
-                        },
-                    },
             }               
     with open(config_dir, 'w') as f:
         json.dump(settings_dict, f, indent=4)
