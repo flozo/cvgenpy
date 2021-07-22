@@ -251,7 +251,7 @@ def assemble_letter(dict_letter, letter_text, dict_pers, dict_cont, dict_comp, i
     return l
  
 
-def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text, microtype, include_meta, encl, draft):
+def assemble_latex(outfile, version_str, config_file_geo, config_file_data, config_file_encl, text, microtype, include_meta, encl, draft, enclosure_latex):
     """
     Read out config values, create objects, and assemble LaTeX code
     """
@@ -731,10 +731,15 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, text
                 below = '{} {}'.format(dict_pers['first_name'], dict_pers['family_name'])
                 name = 'closing2'
                 signature = geo.Signature(name, cvl.border_left+4, cvl.border_bottom+4, 1.3, closing, below, dict_pers['signature'])
-                f.write(signature.create())
+                f.write('\t\t\t' + signature.create())
 #                f.write('\t' + '\\node [anchor=north west, text width=10cm, yshift={}cm] at (textbox.south west) {{{}\\\\\\includegraphics[height=1.3cm]{{{}}}\\\\{} {}}};'.format(letter.closing_y_shift, closing, signature, dict_pers['first_name'], dict_pers['family_name']))
                 f.write('\t\t' + r'\end{pgfonlayer}' + '\n')
                 for l in cvl.latex_foot():
+                    f.write('\t' + l + '\n')
+            print(config_file_encl)
+            if enclosure_latex is True:
+                enclosure = geo.Enclosure(config_file_encl).include()
+                for l in enclosure:
                     f.write('\t' + l + '\n')
         f.write(r'\end{document}' + '\n')
 

@@ -10,8 +10,8 @@ import output as out
 import os
 
 # Version
-version_num = '0.24'
-version_dat = '2021-07-21'
+version_num = '0.25'
+version_dat = '2021-07-22'
 version_str = '{} ({})'.format(version_num, version_dat)
 
 def main():
@@ -34,8 +34,12 @@ def main():
                         help='add PDF metadata')
     parser.add_argument('-s', '--show', action='store_true',
                         help='show pdf after executing pdflatex (implies -l)')
-    parser.add_argument('-a', '--appendix', action='store_true',
-                        help='include appendix pdfs')
+    # Make -e and -E mutually exclusive
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument('-e', '--enclosure-latex', dest='encl_latex', action='store_true',
+                        help='include enclosure using LaTeX')
+    group.add_argument('-E', '--enclosure-python', dest='encl_python', action='store_true',
+                        help='include enclosure using Python')
     parser.add_argument('outfile', nargs='?', help='write to file')
 
     args = parser.parse_args()
@@ -52,15 +56,18 @@ def main():
     fn.check_config_dir(config_dir)
     config_file_data = os.path.join(config_dir, 'cvdata.json')
     config_file_geo = os.path.join(config_dir, 'cvgeometry.json')
+    config_file_enclosure = os.path.join(config_dir, 'enclosure.json')
     config_file_letter = os.path.join(config_dir, 'letter.txt')
     fn.check_config_file(config_file_data)
     fn.check_config_file(config_file_geo)
+    fn.check_config_file(config_file_enclosure)
     fn.check_config_file(config_file_letter)
     text = fn.read_text(os.path.join(config_dir, 'letter.txt'))  
     text = fn.format_text(text)
 
     config_data = fn.read_config(config_file_data)
     config_geo = fn.read_config(config_file_geo)
+    config_encl = fn.read_config(config_file_enclosure)
 
     # Check file extension
     outfile = str(args.outfile)
@@ -75,7 +82,7 @@ def main():
     if draft is True:
         print('[output] Option --draft is active.')
 #            print('[output] Option --draft is active. Ignoring contradicting setting in cvgeometry.json: "draft": false')
-    out.assemble_latex(outfile, version_str, config_file_geo, config_file_data, text, args.microtype, args.metadata, encl, draft)
+    out.assemble_latex(outfile, version_str, config_file_geo, config_file_data, config_encl, text, args.microtype, args.metadata, encl, draft, args.encl_latex)
     # Messages and execution of pdfLaTeX/mupdf
     if verbosity >= 1:
         print('[output] LaTeX file {} created.'.format(outfile))
@@ -95,12 +102,12 @@ def main():
         if verbosity >= 1:
             print('[output] Opening PDF file via: mupdf {} ...'.format(outfile_pdf))
         os.system('mupdf {}'.format(outfile_pdf))
-    if args.appendix is True or config_geo['structure']['appendices'] is True:
-        if config_geo['structure']['appendices'] is False and verbosity >= 0:
-            print('[output] Option --appendix is active. Ignoring contradicting setting in cvgeometry.json: "appendices": false')
+    if args.encl_python is True:
+        if verbosity >= 0:
+            print('[output] Option --enclosure-python is active. Using Python to include enclosure documents...')
         pdflist = [outfile_pdf]
-        for pdf in config_data['Appendix'].values():
-            pdflist.append(pdf['file'])
+        for pdf in config_encl.values():
+            pdflist.append(pdf)
         complete_pdf = '{}_complete.pdf'.format(outfile[0:-4])
         if verbosity >= 1:
             print('[output] Concatenate PDFs: {} ...'.format(pdflist))

@@ -13,7 +13,6 @@ def read_text(textfile):
     """
     with open(textfile, 'r', encoding='utf-8') as f:
         rawtext = f.read()
-#        text = f.readlines()
     return rawtext
 
 
@@ -57,6 +56,8 @@ def check_config_file(config_file):
                 cv.write_config(config_file)
             elif 'geo' in config_file:
                 geo.write_config(config_file)
+            elif 'enclosure' in config_file:
+                generic_enclosure(config_file)
             elif 'letter' in config_file:
                 cv.write_letter(config_file)
             else:
@@ -65,6 +66,20 @@ def check_config_file(config_file):
         else:
             print('[config] No config file created.')
             
+
+def generic_enclosure(config_file):
+    settings_dict = {
+            'name': '/home/user/Document.pdf',
+            'reference_letter': '/home/user/Reference_letter.pdf',
+            'school_certificate': '/home/user/School_certificate.pdf',
+            'bachelor_certificate': '/home/user/Bachelor_certificate.pdf',
+            'master_certificate': '/home/user/Master_certificate.pdf',
+            'PhD_certificate': '/home/user/PhD_certificate.pdf',
+            'MOOC_certificate': '/home/user/MOOC_certificate.pdf',
+            }
+    with open(config_file, 'w') as f:
+        json.dump(settings_dict, f, indent=4)
+
 
 def mergepdfs(pdflist, target):                                                                                                                                                                                                               
     """

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import json
+from PyPDF2 import PdfFileReader
 
 
 class Sepline:
@@ -204,6 +205,51 @@ class Signature:
             namestr = '({}) '.format(self.name)
         return '\\node {}[anchor=north west, text width=10cm] at ({}, {}) {{{}\\\\\\includegraphics[height={}cm]{{{}}}\\\\{}}};'.format(namestr, self.x, self.y, self.text_above, self.height, self.filename, self.text_below)
 
+
+class Document:
+    """
+    Define document for enclosure
+    """
+    def __init__(self, name, filename):
+        self.name = name
+        self.filename = filename
+
+    def pagecount(self):
+        """
+        Count total page number of PDF document
+        """
+        with open(self.filename, 'rb') as pdf_file:
+            pages = PdfFileReader(pdf_file).numPages
+        return pages
+
+    def include(self):
+        """
+        Generate LaTeX code for including document
+        """
+        l = []
+        for page in range(self.pagecount()):
+            l.append('\\begin{tikzpicture}')
+            l.append('\t\\node [inner sep=0pt] at (current page.center) {{\\includegraphics[page={0}]{{{1}}}}};'.format(page+1, self.filename))
+            l.append('\\end{tikzpicture}')
+        return l
+
+
+class Enclosure:
+    """
+    Define entire enclosure
+    """
+    def __init__(self, dict_files):
+        self.files = dict_files
+
+    def include(self):
+        """
+        Generate LaTeX code to include all documents
+        """
+        doc = []
+        for key, value in self.files.items():
+            doc = doc + Document(key, value).include()
+        return doc
+ 
 
 class PhotoArea(object):
     def __init__(self, dict_photo):
