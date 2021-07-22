@@ -437,7 +437,7 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
                 value = fn.make_link_url(value, True, True, '')
             items.append([icons[icon_names[key]], value])
     cont = geo.Table(contact_set, items).assemble()
-    cont.insert(0, geo.Textbox(contact_title_set, 'Contact').create())
+    cont.insert(0, geo.Textbox(contact_title_set, area_contact.title).create())
 
     # Career
     dict_career = config_data['Career']
@@ -468,7 +468,7 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
         items.append(['{}\\,--\\,{}'.format(car_item.start_date, car_item.end_date), car_item.company_name])
         items.append(['', car_item.description])
     car = geo.Table(career_set, items).assemble()
-    car.insert(0, geo.Textbox(career_title_set, 'Career').create())
+    car.insert(0, geo.Textbox(career_title_set, area_career.title).create())
 
     # Education
     dict_edu = config_data['Education']
@@ -506,7 +506,7 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
             items.append([edu_item.date, edu_item.school_name])
             items.append(['', edu_item.description])
     edu = geo.Table(edu_set, items).assemble()
-    edu.insert(0, geo.Textbox(edu_title_set, 'Education').create())
+    edu.insert(0, geo.Textbox(edu_title_set, area_edu.title).create())
 
     # Skills
     dict_skill_layout = config_geo['cv']['skills']['layout']
@@ -577,7 +577,7 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
             row = row[:-2]
             items.append([group.replace('&', '\&'), row])
     skills = geo.Table(skill_set, items).assemble()
-    skills.insert(0, geo.Textbox(skill_title_set, 'Skills').create())
+    skills.insert(0, geo.Textbox(skill_title_set, area_skills.title).create())
 
     # Knowledge
     dict_know = config_data['knowledge']
@@ -616,7 +616,7 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
         row = row[:-2]
         items.append([group.replace('&', '\&'), row])
     know = geo.Table(know_set, items).assemble()
-    know.insert(0, geo.Textbox(know_title_set, 'Knowledge').create())
+    know.insert(0, geo.Textbox(know_title_set, area_know.title).create())
 
     # Certificates
     dict_cert = config_data['certificates']
@@ -656,7 +656,7 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
                 else:
                     items.append([obj.name])
     cert = geo.Table(cert_set, items).assemble()
-    cert.insert(0, geo.Textbox(cert_title_set, 'Certificates').create())
+    cert.insert(0, geo.Textbox(cert_title_set, area_cert.title).create())
 
     # Metadata
     dict_comp = config_data['company']
