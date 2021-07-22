@@ -75,7 +75,8 @@ def main():
         outfile = outfile + '.tex'
     outfile = os.path.abspath(outfile)
     # Collect names of enclosed documents
-    encl = ['Curriculum vitae']
+    encl = ['Lebenslauf']
+#    encl = ['Curriculum vitae']
     for app in config_data['Appendix'].values():
         encl.append(app['name'])
     draft = args.draft

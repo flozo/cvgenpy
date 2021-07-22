@@ -64,7 +64,7 @@ def tikzset():
         '\t' + geo.Cell('cell1', 0, 4, 'right', 2.0, 0.5, 3.5, 0.25).set_style(),
         '\t' + geo.Cell('cell2', 16, 4, 'left', 1.5, 0.5, 8.0, 0.25).set_style(),
         '\t' + geo.Cell('cell3', 0, 4, 'center', 0.6, 0.5, 0.4, 0.25).set_style(),
-        '\t' + geo.Cell('cell4', 16, 4, 'left', 1.0, 0.5, 5.8, 0.25).set_style(),
+        '\t' + geo.Cell('cell4', 16, 4, 'left', 1.0, 0.5, 7.8, 0.25).set_style(),
         '\t' + geo.Cell('cell5', 0, 4, 'left', 0.6, 0.5, 4.5, 0.25).set_style(),
         '\t' + geo.Cell('cell6', 0, 4, 'right', 1.0, 0.5, 2.0, 0.25).set_style(),
         '\t' + geo.Cell('cell7', 0, 4, 'left', 1.0, 0.5, 6.5, 0.25).set_style(),
@@ -165,7 +165,7 @@ def assemble_letter(dict_letter, letter_text, dict_pers, dict_cont, dict_comp, i
         l3 = [
             '\t' + r'% CONTENT',
             '\t' + r'% |- Backaddress',
-            '\t' + '\\node [anchor=south west, text width=9cm, align=center, font=\\scriptsize] at ({}, {}) {{{}}};'.format(letter.address_x, letter.backaddress_y, backaddress.oneline('0.6cm', '$\\bullet$'))
+            '\t' + '\\node [anchor=south west, text width=9cm, align=center, font=\\scriptsize] at ({}, {}) {{{}}};'.format(letter.address_x, letter.backaddress_y, backaddress.oneline('8pt', '$\\bullet$'))
             ]
         l = l + l3
     recipient = cv.Company(dict_comp).address()
@@ -411,7 +411,7 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
             'inner_xsep': 8,
             'inner_ysep': 0,
             'font_size': area_contact.head_font_size,
-            'uppercase': True,
+            'case': area_contact.head_case,
             'yshift': area_contact.body_vspace,
             }
     contact_set = {
@@ -452,7 +452,7 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
             'inner_xsep': 8,
             'inner_ysep': 0,
             'font_size': area_career.head_font_size,
-            'uppercase': True,
+            'case': area_career.head_case,
             'yshift': area_career.body_vspace,
             }
     career_set = {
@@ -486,7 +486,7 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
             'inner_xsep': 8,
             'inner_ysep': 0,
             'font_size': area_edu.head_font_size,
-            'uppercase': True,
+            'case': area_edu.head_case,
             'yshift': area_edu.body_vspace,
             }
     edu_set = {
@@ -528,7 +528,7 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
             'inner_xsep': 8,
             'inner_ysep': 0,
             'font_size': area_skills.head_font_size,
-            'uppercase': True,
+            'case': area_skills.head_case,
             'yshift': area_skills.body_vspace,
             }
     items = []
@@ -596,7 +596,7 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
             'inner_xsep': 8,
             'inner_ysep': 0,
             'font_size': area_know.head_font_size,
-            'uppercase': True,
+            'case': area_know.head_case,
             'yshift': area_know.body_vspace,
             }
     know_set = {
@@ -635,7 +635,7 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
             'inner_xsep': 8,
             'inner_ysep': 0,
             'font_size': area_cert.head_font_size,
-            'uppercase': True,
+            'case': area_cert.head_case,
             'yshift': area_cert.body_vspace,
             }
     cert_set = {

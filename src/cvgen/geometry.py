@@ -324,10 +324,12 @@ class Textbox:
         self.inner_xsep = settings['inner_xsep']
         self.inner_ysep = settings['inner_ysep']
         self.font_size = settings['font_size']
-        self.uppercase = settings['uppercase']
+        self.case = settings['case']
         self.yshift = settings['yshift']
-        if self.uppercase is True:
+        if self.case == 'upper':
             self.text = text.upper()
+        elif self.case == 'lower':
+            self.text = text.lower()
         else:
             self.text = text
 
