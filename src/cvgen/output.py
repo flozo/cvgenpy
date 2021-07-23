@@ -20,11 +20,16 @@ def preamble(microtype, meta, include_meta):
     Define LaTeX preamble with required packages included
     """
     l = [r'\documentclass[12pt, tikz, multi, crop]{standalone}']
+    l.append(r'\usepackage[utf8]{inputenc}')
+    l.append(r'\usepackage[T1]{fontenc}')
+    l.append(r'\usepackage[german]{babel}')
     if include_meta is True:
         l.append(r'\usepackage{hyperxmp}')
     l.append(r'\usepackage[sfdefault, scaled=1.0098]{FiraSans}')
     l.append(r'\usepackage{newtxsf}')
     l.append(r'\usepackage{fontawesome5}')
+    l.append(r'\usepackage[german=quotes]{csquotes}')
+    l.append(r'\usepackage{enumitem}')
     if microtype is True:
         l.append(r'\usepackage[activate={true, nocompatibility}, final, tracking=true, kerning=true, spacing=true, factor=1100, stretch=8, shrink=8]{microtype}')
     l2 = [
@@ -61,13 +66,13 @@ def tikzset():
     """
     l = [
         r'\tikzset{',
-        '\t' + geo.Cell('cell1', 0, 4, 'right', 2.0, 0.5, 4.0, 0.25).set_style(),
-        '\t' + geo.Cell('cell2', 16, 4, 'left', 1.5, 0.5, 9.0, 0.25).set_style(),
-        '\t' + geo.Cell('cell3', 0, 4, 'center', 0.6, 0.5, 0.4, 0.25).set_style(),
-        '\t' + geo.Cell('cell4', 16, 4, 'left', 1.0, 0.5, 7.8, 0.25).set_style(),
-        '\t' + geo.Cell('cell5', 0, 4, 'left', 0.6, 0.5, 4.5, 0.25).set_style(),
-        '\t' + geo.Cell('cell6', 0, 4, 'right', 1.0, 0.5, 2.0, 0.25).set_style(),
-        '\t' + geo.Cell('cell7', 0, 4, 'left', 1.0, 0.5, 5.0, 0.25).set_style(),
+        '\t' + geo.Cell('cell1', 16, 10, 'right', 2.0, 0.5, 4.0, 0.25).set_style(),
+        '\t' + geo.Cell('cell2', 2, 10, 'left', 1.5, 0.5, 9.5, 0.25).set_style(),
+        '\t' + geo.Cell('cell3', 16, 4, 'center', 0.6, 0.5, 0.4, 0.25).set_style(),
+        '\t' + geo.Cell('cell4', 2, 4, 'left', 1.0, 0.5, 7.8, 0.25).set_style(),
+        '\t' + geo.Cell('cell5', 0, 6, 'left', 0.6, 0.5, 4.5, 0.25).set_style(),
+        '\t' + geo.Cell('cell6', 0, 6, 'right', 1.0, 0.5, 2.0, 0.25).set_style(),
+        '\t' + geo.Cell('cell7', 8, 10, 'left', 1.0, 0.5, 5.0, 0.25).set_style(),
         '\t' + r'circfull/.style={draw=none, fill=Blues-K},',
         '\t' + r'circopen/.style={draw=none, fill=Greys-G},',
         '\t' + r'pics/skillmax/.style n args={3}{code={',
@@ -367,8 +372,6 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
         about_str = geo.Personal(dict_pers).oneline(cv_lang)
     elif area_personal.style == 'twoline':
         about_str = geo.Personal(dict_pers).twoline(cv_lang)
-    print(about_str)
-    print(geo.Textbox(personal_body_set, about_str).create())
     pers.append(geo.Textbox(personal_body_set, about_str).create())
 
     # Assemble title
@@ -486,10 +489,23 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
             'font_size': area_career.body_font_size,
             'column_styles': ['cell1', 'cell2', 'cell7'],
             }
+    item_set = {
+            'label': '\\textcolor{Blues-K}{\\Large\\textopenbullet}',
+            'labelsep': '0.5em',
+            'leftmargin': '1.2em',
+            'topsep': '0.7em',
+            'itemindent': '0.0em',
+            'itemsep': '-0.2em',
+            }
     items = []
     for car_item in reversed(car_items):
-        items.append(['{}\\,--\\,{}'.format(car_item.start_date, car_item.end_date), car_item.company_name, car_item.role])
-        items.append(['', car_item.description])
+        desc = fn.makelist(car_item.description)
+        if isinstance(desc, list):
+            description = geo.Itemize(**item_set, items=desc).generate()
+        else:
+            description = desc
+        items.append(['{}\\,--\\,{}'.format(car_item.start_date, car_item.end_date), '{}\\\\{}'.format(car_item.company_name, description), car_item.role])
+#        items.append(['', description])
     car = geo.Table(career_set, items).assemble()
     car.insert(0, geo.Textbox(career_title_set, area_career.title).create())
 
@@ -521,14 +537,29 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
             'font_size': area_edu.body_font_size,
             'column_styles': ['cell1', 'cell2', 'cell7'],
             }
+    item_set = {
+            'label': '\\textcolor{Blues-K}{\\Large\\textopenbullet}',
+            'labelsep': '0.5em',
+            'leftmargin': '1.2em',
+            'topsep': '0.3em',
+            'itemindent': '0.0em',
+            'itemsep': '-0.2em',
+            }
     items = []
     for edu_item in reversed(edu_items):
-        if isinstance(edu_item, cv.EduPeriodItem):
-            items.append(['{}\\,--\\,{}'.format(edu_item.start_date, edu_item.end_date), edu_item.school_name, edu_item.role])
-            items.append(['', edu_item.description])
+        desc = fn.makelist(edu_item.description)
+        if isinstance(desc, list):
+#            description = geo.Itemize('\\textcolor{Blues-K}{\\Large\\textopenbullet}', '0.3em', '1.0em', '0.0em', '0.0em', '-0.4em', desc).generate()
+            description = geo.Itemize(**item_set, items=desc).generate()
         else:
-            items.append([edu_item.date, edu_item.school_name, edu_item.graduation])
-            items.append(['', edu_item.description])
+            description = desc
+        if isinstance(edu_item, cv.EduPeriodItem):
+#            items.append(['{}\\,--\\,{}'.format(edu_item.start_date, edu_item.end_date), edu_item.school_name, edu_item.role])
+            items.append(['{}\\,--\\,{}'.format(edu_item.start_date, edu_item.end_date), '{}\\\\{}'.format(edu_item.school_name, description), edu_item.role])
+#            items.append(['', description])
+        else:
+            items.append([edu_item.date, '{}\\\\{}'.format(edu_item.school_name, description), edu_item.graduation])
+#            items.append(['', description])
     edu = geo.Table(edu_set, items).assemble()
     edu.insert(0, geo.Textbox(edu_title_set, area_edu.title).create())
 

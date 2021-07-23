@@ -116,3 +116,10 @@ def make_link_email(address, label, subject):
     else:
         return '\\href{{mailto:{0}?subject={1}}}{{{2}}}'.format(address, subject, label)
 
+
+def makelist(string):
+    if len(string) > 0 and string[0] == '[' and string[-1] == ']':
+        return string[1:-1].split(';')
+    else:
+        return string
+

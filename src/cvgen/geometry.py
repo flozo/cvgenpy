@@ -396,6 +396,40 @@ class Table:
         return table
 
 
+class Itemize:
+    """
+    Define itemize environment
+    """
+    def __init__(self, label, labelsep, leftmargin, topsep, itemindent, itemsep, items):
+        self.label = label
+        self.labelsep = labelsep
+        self.leftmargin = leftmargin
+        self.topsep = topsep
+        self.itemindent = itemindent
+        self.itemsep = itemsep
+        self.items = items
+
+    def generate(self):
+        """
+        Generate LaTeX code for itemize environment
+        """
+        l = [
+                '\\begin{itemize}[',
+                '\t' + 'topsep={},'.format(self.topsep),
+                '\t' + 'leftmargin={},'.format(self.leftmargin),
+                '\t' + 'labelsep={},'.format(self.labelsep),
+                '\t' + 'itemindent={},'.format(self.itemindent),
+                '\t' + 'itemsep={},'.format(self.itemsep),
+                '\t' + 'label={},'.format(self.label),
+                '\t' + ']',
+                ]
+        for item in self.items:
+            l.append('\t\item {}'.format(item))
+        l.append('\\end{itemize}')
+        l = ''.join(l)
+        return l
+
+
 class Box(object):
     def __init__(self, color, width, height):
         self.color = color
