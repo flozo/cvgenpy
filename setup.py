@@ -19,7 +19,7 @@ setup(
         long_description_content_type = 'text/markdown',
 #        url = 'https://github.com/flozo/Reponame',
         author = 'Johannes Engelmayer',
-#        author_email = 'mail@mail.net',
+        author_email = 'github.mail@flozo.de',
 # Classifiers from https://pypi.org/classifiers/
         classifiers = [
             'Development Status :: 2 - Pre-Alpha',
