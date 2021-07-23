@@ -61,7 +61,7 @@ def tikzset():
     """
     l = [
         r'\tikzset{',
-        '\t' + geo.Cell('cell1', 0, 4, 'right', 2.0, 0.5, 3.5, 0.25).set_style(),
+        '\t' + geo.Cell('cell1', 0, 4, 'right', 2.0, 0.5, 4.0, 0.25).set_style(),
         '\t' + geo.Cell('cell2', 16, 4, 'left', 1.5, 0.5, 8.0, 0.25).set_style(),
         '\t' + geo.Cell('cell3', 0, 4, 'center', 0.6, 0.5, 0.4, 0.25).set_style(),
         '\t' + geo.Cell('cell4', 16, 4, 'left', 1.0, 0.5, 7.8, 0.25).set_style(),
@@ -330,22 +330,47 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
     dict_pers = config_data['Personal']
     person = cv.Personal(dict_pers)
     area_personal = geo.Area(dict_areas['personal'])
-    x = area_personal.pos_x
-    y = area_personal.pos_y
-    anchor = area_personal.anchor
-    hsize = area_personal.head_font_size
+#    x = area_personal.pos_x
+#    y = area_personal.pos_y
+#    anchor = area_personal.anchor
+#    hsize = area_personal.head_font_size
     bsize = area_personal.body_font_size
+    personal_title_set = {
+            'anchor': area_personal.anchor,
+            'x': box_left.width,
+            'y': area_personal.pos_y,
+            'inner_xsep': 8,
+            'inner_ysep': 0,
+            'text_width': 8,
+            'font_size': area_personal.head_font_size,
+            'case': area_personal.head_case,
+            'yshift': area_personal.head_vspace,
+            }
+    personal_body_set = {
+            'anchor': area_personal.anchor,
+            'x': box_left.width,
+            'y': area_personal.pos_y,
+            'inner_xsep': 8,
+            'inner_ysep': 0,
+            'text_width': 8,
+            'font_size': area_personal.body_font_size,
+            'case': 'mixed',
+            'yshift': -0.6,
+            }
     pers = [
             '% PERSONAL AREA',
             '% |- Title:',
             ]
-    pers.append('\\node (pers) [anchor={}, font=\\{}] at ({}, {}) {{{}}};'.format(anchor, hsize, x, y, area_personal.title))
+    pers.append(geo.Textbox(personal_title_set, area_personal.title).create())
     pers.append('% |- Items:')
     if area_personal.style == 'oneline':
         about_str = geo.Personal(dict_pers).oneline(cv_lang)
     elif area_personal.style == 'twoline':
         about_str = geo.Personal(dict_pers).twoline(cv_lang)
-    pers.append('\\node [below={} of pers.south west, anchor=north west, font=\\{}, align=left] {{{}}};'.format(area_personal.head_vspace, bsize, about_str))
+    print(about_str)
+    print(geo.Textbox(personal_body_set, about_str).create())
+    pers.append(geo.Textbox(personal_body_set, about_str).create())
+#    pers.append('\\node [anchor=north west, font=\\{}, align=left] at ({}, {}) {{{}}};'.format(bsize, box_left.width, area_personal.pos_y, about_str))
 
     # Assemble title
     area_title = geo.Area(dict_areas['title'])
@@ -405,14 +430,15 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
     address_data = geo.Address(dict_contact)
     address = address_data.twoline()
     contact_title_set = {
-            'anchor': 'north west',
+            'anchor': area_contact.anchor,
             'x': box_left.width,
             'y': area_contact.pos_y,
             'inner_xsep': 8,
             'inner_ysep': 0,
             'font_size': area_contact.head_font_size,
+            'text_width': 8,
             'case': area_contact.head_case,
-            'yshift': area_contact.body_vspace,
+            'yshift': area_contact.head_vspace,
             }
     contact_set = {
             'name': 'Contact',
@@ -446,14 +472,15 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
         car_items.append(cv.CareerItem(car_item))
     area_career = geo.Area(dict_areas['career'])
     career_title_set = {
-            'anchor': 'north west',
+            'anchor': area_career.anchor,
             'x': box_left.width,
             'y': area_career.pos_y,
             'inner_xsep': 8,
             'inner_ysep': 0,
             'font_size': area_career.head_font_size,
+            'text_width': 8,
             'case': area_career.head_case,
-            'yshift': area_career.body_vspace,
+            'yshift': area_career.head_vspace,
             }
     career_set = {
             'name': 'Career',
@@ -485,9 +512,10 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
             'y': area_edu.pos_y,
             'inner_xsep': 8,
             'inner_ysep': 0,
+            'text_width': 8,
             'font_size': area_edu.head_font_size,
             'case': area_edu.head_case,
-            'yshift': area_edu.body_vspace,
+            'yshift': area_edu.head_vspace,
             }
     edu_set = {
             'name': 'Education',
@@ -527,9 +555,10 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
             'y': area_skills.pos_y,
             'inner_xsep': 8,
             'inner_ysep': 0,
+            'text_width': 8,
             'font_size': area_skills.head_font_size,
             'case': area_skills.head_case,
-            'yshift': area_skills.body_vspace,
+            'yshift': area_skills.head_vspace,
             }
     items = []
     if skill_layout.show_circles is True:
@@ -595,9 +624,10 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
             'y': area_know.pos_y,
             'inner_xsep': 8,
             'inner_ysep': 0,
+            'text_width': 8,
             'font_size': area_know.head_font_size,
             'case': area_know.head_case,
-            'yshift': area_know.body_vspace,
+            'yshift': area_know.head_vspace,
             }
     know_set = {
             'name': 'Knowledge',
@@ -634,9 +664,10 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
             'y': area_cert.pos_y,
             'inner_xsep': 8,
             'inner_ysep': 0,
+            'text_width': 8,
             'font_size': area_cert.head_font_size,
             'case': area_cert.head_case,
-            'yshift': area_cert.body_vspace,
+            'yshift': area_cert.head_vspace,
             }
     cert_set = {
             'name': 'Certificates',

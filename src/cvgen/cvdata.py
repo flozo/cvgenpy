@@ -11,6 +11,7 @@ class Personal(object):
         self.birth_date = dict_personal['birth_date']
         self.birth_location_city = dict_personal['birth_location_city']
         self.birth_location_country = dict_personal['birth_location_country']
+        self.citizenship = dict_personal['citizenship']
         self.marital_status = dict_personal['marital_status']
         self.children = dict_personal['children']
         self.photo = dict_personal['photo']
@@ -166,6 +167,7 @@ def write_config(config_dir):
                 'birth_date': '1900-01-01',
                 'birth_location_city': 'City',
                 'birth_location_country': 'Country',
+                'citizenship': 'klingon',
                 'marital_status': 'unmarried',
                 'children': 'no',
                 'photo': '/home/user/photo.jpg',

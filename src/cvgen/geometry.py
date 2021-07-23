@@ -170,21 +170,22 @@ class Personal(object):
     def __init__(self, dict_pers):
         self.birth_date = dict_pers['birth_date']
         self.birth_location_city = dict_pers['birth_location_city']
+        self.citizenship = dict_pers['citizenship']
         self.marital_status = dict_pers['marital_status']
         self.children = dict_pers['children']
 
     def oneline(self, lang):
         if lang == 'en':
-            about_str = 'Born {} in {}, {}, {} children'.format(self.birth_date, self.birth_location_city, self.marital_status, self.children)
+            about_str = 'Born {} in {}, {}, {}, {} children'.format(self.birth_date, self.birth_location_city, self.citizenship, self.marital_status, self.children)
         if lang == 'de':
-            about_str = 'Geboren am {} in {}, {}, {} Kinder'.format(self.birth_date, self.birth_location_city, self.marital_status, self.children)
+            about_str = 'Geboren am {} in {}, {}, {}, {} Kinder'.format(self.birth_date, self.birth_location_city, self.citizenship, self.marital_status, self.children)
         return about_str
 
     def twoline(self, lang):
         if lang == 'en':
-            about_str = 'Born {} in {}\\\\{}, {} children'.format(self.birth_date, self.birth_location_city, self.marital_status, self.children)
+            about_str = 'Born {} in {},\\\\{}, {}, {} children'.format(self.birth_date, self.birth_location_city, self.citizenship, self.marital_status, self.children)
         if lang == 'de':
-            about_str = 'Geboren am {} in {}\\\\{}, {} Kinder'.format(self.birth_date, self.birth_location_city, self.marital_status, self.children)
+            about_str = 'Geboren am {} in {},\\\\{}, {}, {} Kinder'.format(self.birth_date, self.birth_location_city, self.citizenship, self.marital_status, self.children)
         return about_str
 
 
@@ -325,6 +326,7 @@ class Textbox:
         self.inner_ysep = settings['inner_ysep']
         self.font_size = settings['font_size']
         self.case = settings['case']
+        self.text_width = settings['text_width'] 
         self.yshift = settings['yshift']
         if self.case == 'upper':
             self.text = text.upper()
@@ -334,7 +336,7 @@ class Textbox:
             self.text = text
 
     def create(self):
-        return '\\node [anchor={}, inner xsep={}pt, inner ysep={}, font=\\{}, yshift={}cm] at ({}, {}) {{{}}};'.format(self.anchor, self.inner_xsep, self.inner_ysep, self.font_size, self.yshift, self.x, self.y, self.text)
+        return '\\node [anchor={0}, inner xsep={1}pt, inner ysep={2}, font=\\{3}, yshift={4}cm, text width={5}cm] at ({6}, {7}) {{{8}}};'.format(self.anchor, self.inner_xsep, self.inner_ysep, self.font_size, self.yshift, self.text_width, self.x, self.y, self.text)
 
 
 class Table:
