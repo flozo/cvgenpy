@@ -62,12 +62,12 @@ def tikzset():
     l = [
         r'\tikzset{',
         '\t' + geo.Cell('cell1', 0, 4, 'right', 2.0, 0.5, 4.0, 0.25).set_style(),
-        '\t' + geo.Cell('cell2', 16, 4, 'left', 1.5, 0.5, 8.0, 0.25).set_style(),
+        '\t' + geo.Cell('cell2', 16, 4, 'left', 1.5, 0.5, 9.0, 0.25).set_style(),
         '\t' + geo.Cell('cell3', 0, 4, 'center', 0.6, 0.5, 0.4, 0.25).set_style(),
         '\t' + geo.Cell('cell4', 16, 4, 'left', 1.0, 0.5, 7.8, 0.25).set_style(),
         '\t' + geo.Cell('cell5', 0, 4, 'left', 0.6, 0.5, 4.5, 0.25).set_style(),
         '\t' + geo.Cell('cell6', 0, 4, 'right', 1.0, 0.5, 2.0, 0.25).set_style(),
-        '\t' + geo.Cell('cell7', 0, 4, 'left', 1.0, 0.5, 6.5, 0.25).set_style(),
+        '\t' + geo.Cell('cell7', 0, 4, 'left', 1.0, 0.5, 5.0, 0.25).set_style(),
         '\t' + r'circfull/.style={draw=none, fill=Blues-K},',
         '\t' + r'circopen/.style={draw=none, fill=Greys-G},',
         '\t' + r'pics/skillmax/.style n args={3}{code={',
@@ -370,7 +370,6 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
     print(about_str)
     print(geo.Textbox(personal_body_set, about_str).create())
     pers.append(geo.Textbox(personal_body_set, about_str).create())
-#    pers.append('\\node [anchor=north west, font=\\{}, align=left] at ({}, {}) {{{}}};'.format(bsize, box_left.width, area_personal.pos_y, about_str))
 
     # Assemble title
     area_title = geo.Area(dict_areas['title'])
@@ -405,9 +404,6 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
     y = cvl.height-cvl.border_top-0.2
     thickness = 0.1
     anchor = 'north east'
-#    x = area_photo.pos_x
-#    y = area_photo.pos_y
-#    anchor = area_photo.anchor
     width = area_photo.width
     height = area_photo.height
     if area_photo.border is True:
@@ -488,11 +484,11 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
             'x': area_career.pos_x,
             'y': area_career.pos_y,
             'font_size': area_career.body_font_size,
-            'column_styles': ['cell1', 'cell2'],
+            'column_styles': ['cell1', 'cell2', 'cell7'],
             }
     items = []
     for car_item in reversed(car_items):
-        items.append(['{}\\,--\\,{}'.format(car_item.start_date, car_item.end_date), car_item.company_name])
+        items.append(['{}\\,--\\,{}'.format(car_item.start_date, car_item.end_date), car_item.company_name, car_item.role])
         items.append(['', car_item.description])
     car = geo.Table(career_set, items).assemble()
     car.insert(0, geo.Textbox(career_title_set, area_career.title).create())
@@ -523,15 +519,15 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
             'x': area_edu.pos_x,
             'y': area_edu.pos_y,
             'font_size': area_edu.body_font_size,
-            'column_styles': ['cell1', 'cell2'],
+            'column_styles': ['cell1', 'cell2', 'cell7'],
             }
     items = []
     for edu_item in reversed(edu_items):
         if isinstance(edu_item, cv.EduPeriodItem):
-            items.append(['{}\\,--\\,{}'.format(edu_item.start_date, edu_item.end_date), edu_item.school_name])
+            items.append(['{}\\,--\\,{}'.format(edu_item.start_date, edu_item.end_date), edu_item.school_name, edu_item.role])
             items.append(['', edu_item.description])
         else:
-            items.append([edu_item.date, edu_item.school_name])
+            items.append([edu_item.date, edu_item.school_name, edu_item.graduation])
             items.append(['', edu_item.description])
     edu = geo.Table(edu_set, items).assemble()
     edu.insert(0, geo.Textbox(edu_title_set, area_edu.title).create())
