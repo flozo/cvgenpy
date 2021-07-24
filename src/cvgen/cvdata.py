@@ -88,11 +88,13 @@ class Metadata(object):
 
                 
 class SkillItem(object):
-    def __init__(self, dict_skill):
-        self.name = dict_skill['name']
-        self.description = dict_skill['description']
-        self.level = dict_skill['level']
-        self.group = dict_skill['group']
+    def __init__(self, category, elements):
+        self.category = category
+        self.elements = elements
+#        self.name = dict_skill['name']
+#        self.description = dict_skill['description']
+#        self.level = dict_skill['level']
+#        self.group = dict_skill['group']
 
 
 class SkillGroup(object):
