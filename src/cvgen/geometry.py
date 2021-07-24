@@ -5,6 +5,9 @@ from PyPDF2 import PdfFileReader
 
 
 class Sepline:
+    """
+    Define separation line.
+    """
     def __init__(self, sepline):
         self.x = sepline['x']
         self.y = sepline['y']
@@ -15,7 +18,7 @@ class Sepline:
 
 class Page:
     """
-    General page properties
+    Define general page properties.
     """
     def __init__(self, name, settings):
         self.name = name
@@ -34,7 +37,7 @@ class Page:
 
     def add_headsepline(self, thickness, color, fullwidth):
         """
-        Add header separation line
+        Add header separation line.
         """
         args = {'x': self.border_left,
                 'y': self.height-self.border_top,
@@ -49,7 +52,7 @@ class Page:
 
     def add_footsepline(self, thickness, color, fullwidth):
         """
-        Add footer separation line
+        Add footer separation line.
         """
         args = {'x': self.border_left,
                 'y': self.border_bottom,
@@ -64,11 +67,14 @@ class Page:
  
     def add_title(self, text, fontsize, align, color, yshift):
         """
-        Add page title
+        Add page title.
         """
         return '\\node [anchor=south west, text width={}cm, align={}, font=\\{}, color={}, yshift={}cm] at ({}, {}) {{{}}};'.format(self.text_width, align, fontsize, color, yshift, self.border_left, self.height-self.border_top, text)
 
     def latex_head(self):
+        """
+        LaTeX code for a tikzpicture head.
+        """
         l = [
                 '% {}'.format(self.name.upper()),
                 '\\begin{tikzpicture}[',
@@ -81,12 +87,15 @@ class Page:
         return l
 
     def latex_foot(self):
+        """
+        LaTeX code for a tikzpicture foot.
+        """
         return ['\\end{tikzpicture}']
 
 
 class CV(Page):
     """
-    Specific CV properties
+    Define specific CV properties.
     """
     def __init__(self, layout):
         name = 'Curriculum vitae'
@@ -102,7 +111,7 @@ class CV(Page):
 
 class Letter(Page):
     """
-    Specific letter properties
+    Define specific letter properties.
     """
     def __init__(self, letter):
         name = 'Letter'
@@ -138,6 +147,9 @@ class Letter(Page):
         
 
 class Address(object):
+    """
+    Define address properties.
+    """
     def __init__(self, dict_address):
         self.street = dict_address['street']
         self.house = dict_address['house']
@@ -146,13 +158,22 @@ class Address(object):
         self.country = dict_address['country']
 
     def oneline(self):
+        """
+        Write address as single-line LaTeX output.
+        """
         return '{} {}, {} {}'.format(self.street, self.house, self.postal_code, self.city)
 
     def twoline(self):
+        """
+        Write address as two-line LaTeX output.
+        """
         return '{} {}\\\\{} {}'.format(self.street, self.house, self.postal_code, self.city)
 
 
 class Backaddress(object):
+    """
+    Define backaddress properties.
+    """
     def __init__(self, dict_pers, dict_address):
         self.first_name = dict_pers['first_name']
         self.family_name = dict_pers['family_name']
@@ -163,10 +184,16 @@ class Backaddress(object):
         self.country = dict_address['country']
 
     def oneline(self, space='1.5cm', separator='$\\bullet$'):
+        """
+        Write backaddress as single-line LaTeX output.
+        """
         return '{0} {1}\\hspace{{{6}}}{7}\\hspace{{{6}}}{2} {3}\\hspace{{{6}}}{7}\\hspace{{{6}}}{4} {5}'.format(self.first_name, self.family_name, self.street, self.house, self.postal_code, self.city, space, separator)
 
 
 class Personal(object):
+    """
+    Define personal properties.
+    """
     def __init__(self, dict_pers):
         self.birth_date = dict_pers['birth_date']
         self.birth_location_city = dict_pers['birth_location_city']
@@ -175,6 +202,9 @@ class Personal(object):
         self.children = dict_pers['children']
 
     def oneline(self, lang):
+        """
+        Write personal data as single-line LaTeX output.
+        """
         if lang == 'en':
             about_str = 'Born {} in {}, {}, {}, {} children'.format(self.birth_date, self.birth_location_city, self.citizenship, self.marital_status, self.children)
         if lang == 'de':
@@ -182,6 +212,9 @@ class Personal(object):
         return about_str
 
     def twoline(self, lang):
+        """
+        Write personal data as two-line LaTeX output.
+        """
         if lang == 'en':
             about_str = 'Born {} in {},\\\\{}, {}, {} children'.format(self.birth_date, self.birth_location_city, self.citizenship, self.marital_status, self.children)
         if lang == 'de':
@@ -190,6 +223,9 @@ class Personal(object):
 
 
 class Signature:
+    """
+    Define signature properties.
+    """
     def __init__(self, name, x, y, height, text_above, text_below, filename):
         self.name = name
         self.x = x
@@ -200,6 +236,9 @@ class Signature:
         self.filename = filename
 
     def create(self):
+        """
+        Generate LaTeX output for signature.
+        """
         if self.name == '':
             namestr = ''
         else:
@@ -253,6 +292,9 @@ class Enclosure:
  
 
 class PhotoArea(object):
+    """
+    Definition of photo area.
+    """
     def __init__(self, dict_photo):
         self.pos_x = dict_photo['pos_x']
         self.pos_y = dict_photo['pos_y']
@@ -265,6 +307,9 @@ class PhotoArea(object):
 
 
 class Area(object):
+    """
+    General area definition.
+    """
     def __init__(self, dict_area):
         self.title = dict_area['title']
         self.pos_x = dict_area['pos_x']
@@ -431,6 +476,9 @@ class Itemize:
 
 
 class Box(object):
+    """
+    General box definition.
+    """
     def __init__(self, color, width, height):
         self.color = color
         self.width = width
@@ -438,6 +486,9 @@ class Box(object):
 
 
 class SkillCircle(object):
+    """
+    Definition of a skill circle.
+    """
     def __init__(self, dict_skill_circle):
         self.radius = dict_skill_circle['radius']
         self.fillcolor = dict_skill_circle['fillcolor']
@@ -447,6 +498,9 @@ class SkillCircle(object):
 
 
 class SkillLayout(object):
+    """
+    Definition of skill layout.
+    """
     def __init__(self, dict_skill_layout):
         self.number = dict_skill_layout['circle_number']
         self.distance = dict_skill_layout['circle_distance']

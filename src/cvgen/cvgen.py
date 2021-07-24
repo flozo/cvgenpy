@@ -10,13 +10,13 @@ import output as out
 import os
 
 # Version
-version_num = '0.26'
-version_dat = '2021-07-23'
+version_num = '0.27'
+version_dat = '2021-07-24'
 version_str = '{} ({})'.format(version_num, version_dat)
 
 def main():
     # Define argument parsers and subparsers
-    parser = argparse.ArgumentParser(description='A program for generating CVs in LaTeX. Written by Johannes Engelmayer')
+    parser = argparse.ArgumentParser(description='A program for generating CVs in LaTeX. Written by flozo.')
 
     parser.add_argument('-V', '--version', action='version', version='%(prog)s '+ version_str)
     parser.add_argument('-v', '--verbose', action='count', default=0,

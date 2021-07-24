@@ -17,6 +17,10 @@ def read_text(textfile):
 
 
 def format_text(rawtext):
+    """
+    Convert rawtext lines to list elements and
+    linebreaks to LaTeX linebreaks.
+    """
     text = rawtext.split('\n')
     # Remove comment lines
     text = [line for line in text if not '#' in line[:1]]
@@ -37,6 +41,9 @@ def read_config(config_file):
 
 
 def check_config_dir(config_dir):
+    """
+    Check if config directory exists. If not, ask for creating one.
+    """
     if not os.path.isdir(config_dir):
         print('[config] Config directory {} not found.'.format(config_dir))
         create_config_dir = input('[config] Create config directory {} ? (Y/n): '.format(config_dir))
@@ -48,6 +55,10 @@ def check_config_dir(config_dir):
 
 
 def check_config_file(config_file):
+    """
+    Check if config files exist. If not, ask for creating
+    config files with generic settings.
+    """
     if not os.path.isfile(config_file):
         print('[config] Config file {} not found.'.format(config_file))
         create_config_dir = input('[config] Create generic config file {} ? (Y/n): '.format(config_file))
@@ -68,6 +79,9 @@ def check_config_file(config_file):
             
 
 def generic_enclosure(config_file):
+    """
+    Define generic enclosure list.
+    """
     settings_dict = {
             'name': '/home/user/Document.pdf',
             'reference_letter': '/home/user/Reference_letter.pdf',
@@ -83,7 +97,7 @@ def generic_enclosure(config_file):
 
 def mergepdfs(pdflist, target):                                                                                                                                                                                                               
     """
-    Concatenate all PDFs
+    Concatenate all PDFs.
     """
     merger = PdfFileMerger()
     for pdf in pdflist:
@@ -94,7 +108,7 @@ def mergepdfs(pdflist, target):
 
 def make_link_url(url, shorten_http, shorten_www, label):
     """
-    Create clickable link from URL
+    Create clickable link from URL.
     """
     if label == '':
         label = url
@@ -107,7 +121,7 @@ def make_link_url(url, shorten_http, shorten_www, label):
 
 def make_link_email(address, label, subject):
     """
-    Create clickable link from email address with optional subject
+    Create clickable link from email address with optional subject.
     """
     if label == '':
         label = address
@@ -118,6 +132,9 @@ def make_link_email(address, label, subject):
 
 
 def makelist(string):
+    """
+    Convert string to list if first and last character are [ and ], respectively.
+    """
     if len(string) > 0 and string[0] == '[' and string[-1] == ']':
         return string[1:-1].split(';')
     else:

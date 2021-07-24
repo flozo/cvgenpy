@@ -73,6 +73,8 @@ def tikzset():
         '\t' + geo.Cell('cell5', 0, 6, 'left', 0.6, 0.5, 4.5, 0.25).set_style(),
         '\t' + geo.Cell('cell6', 0, 6, 'right', 1.0, 0.5, 2.0, 0.25).set_style(),
         '\t' + geo.Cell('cell7', 8, 10, 'left', 1.0, 0.5, 5.0, 0.25).set_style(),
+        '\t' + geo.Cell('cell8', 8, 6, 'right', 0.6, 0.5, 7.8, 0.25).set_style(),
+        '\t' + geo.Cell('cell9', 0, 6, 'center', 0.4, 0.5, 0.4, 0.25).set_style(),
         '\t' + r'circfull/.style={draw=none, fill=Blues-K},',
         '\t' + r'circopen/.style={draw=none, fill=Greys-G},',
         '\t' + r'pics/skillmax/.style n args={3}{code={',
@@ -201,8 +203,8 @@ def assemble_letter(dict_letter, letter_text, dict_pers, dict_cont, dict_comp, i
             '\t\t\\matrix at ({}, {}) ['.format(x, y-0.15),
             '\t\t\t' + 'anchor={},'.format(anchor),
             '\t\t\t' + r'matrix of nodes,',
-            '\t\t\t' + r'column 1/.style={nodes={cell1, text width=8.5cm, inner xsep=5pt}},',
-            '\t\t\t' + r'column 2/.style={nodes={cell3}},',
+            '\t\t\t' + r'column 1/.style={nodes={cell8}},',
+            '\t\t\t' + r'column 2/.style={nodes={cell9}},',
             '\t\t\t' + r']{',
             ]
     contact = cv.Contact(dict_cont)

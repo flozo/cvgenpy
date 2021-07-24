@@ -13,12 +13,12 @@ long_description = (here/'README.md').read_text(encoding='utf-8')
 
 setup(
         name = 'cvgen',
-        version = '0.26',
+        version = '0.27',
         description = 'A program for generating a curriculum vitae.',
         long_description = long_description,
         long_description_content_type = 'text/markdown',
 #        url = 'https://github.com/flozo/Reponame',
-        author = 'Johannes Engelmayer',
+        author = 'flozo',
         author_email = 'github.mail@flozo.de',
 # Classifiers from https://pypi.org/classifiers/
         classifiers = [
