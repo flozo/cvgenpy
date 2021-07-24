@@ -372,7 +372,9 @@ class Textbox:
         self.font_size = settings['font_size']
         self.case = settings['case']
         self.text_width = settings['text_width'] 
+        self.align = settings['align'] 
         self.yshift = settings['yshift']
+        self.color = settings['color']
         if self.case == 'upper':
             self.text = text.upper()
         elif self.case == 'lower':
@@ -381,7 +383,7 @@ class Textbox:
             self.text = text
 
     def create(self):
-        return '\\node [anchor={0}, inner xsep={1}pt, inner ysep={2}, font=\\{3}, yshift={4}cm, text width={5}cm] at ({6}, {7}) {{{8}}};'.format(self.anchor, self.inner_xsep, self.inner_ysep, self.font_size, self.yshift, self.text_width, self.x, self.y, self.text)
+        return '\\node [anchor={0}, inner xsep={1}pt, inner ysep={2}, font=\\{3}, yshift={4}cm, text width={5}cm, align={6}, color={7}] at ({8}, {9}) {{{10}}};'.format(self.anchor, self.inner_xsep, self.inner_ysep, self.font_size, self.yshift, self.text_width, self.align, self.color, self.x, self.y, self.text)
 
 
 class Table:

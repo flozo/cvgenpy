@@ -337,9 +337,11 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
             'inner_xsep': 8,
             'inner_ysep': 0,
             'text_width': 8,
+            'align': 'left',
             'font_size': area_personal.head_font_size,
             'case': area_personal.head_case,
             'yshift': area_personal.head_vspace,
+            'color': area_personal.color,
             }
     personal_body_set = {
             'anchor': area_personal.anchor,
@@ -348,9 +350,11 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
             'inner_xsep': 8,
             'inner_ysep': 0,
             'text_width': 8,
+            'align': 'left',
             'font_size': area_personal.body_font_size,
             'case': 'mixed',
             'yshift': -0.6,
+            'color': area_personal.color,
             }
     pers = [
             '% PERSONAL AREA',
@@ -365,14 +369,31 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
     pers.append(geo.Textbox(personal_body_set, about_str).create())
 
     # Assemble title
-    area_title = geo.Area(dict_areas['title'])
-    # Headline
     x = cvl.width-cvl.border_right
     y = cvl.height-cvl.border_top
+    area_title = geo.Area(dict_areas['title'])
+    titlebox_title_set = {
+            'anchor': area_title.anchor,
+            'x': area_title.pos_x,
+            'y': y,
+            'inner_xsep': 8,
+            'inner_ysep': 4,
+            'font_size': area_title.head_font_size,
+            'text_width': 3.5,
+            'align': 'right',
+            'case': area_title.head_case,
+            'yshift': area_title.head_vspace,
+            'color': area_title.color,
+            }
+    titlebox = geo.Textbox(titlebox_title_set, area_title.title).create()
+    title = []
+    title.append(titlebox)
+    
+    # Headline
     fullwidth = True
     size = 'Large'
     headline = '{}~{}~{}'.format(person.title, person.first_name, person.family_name)
-    title = []
+#    title = []
     title.append('\t' + r'% |- Headline')
     title.append('\t' + cvl.add_title(headline, size, 'right', 'black', 0.1))
     if area_title.head_sepline is True:
@@ -425,8 +446,10 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
             'inner_ysep': 0,
             'font_size': area_contact.head_font_size,
             'text_width': 8,
+            'align': 'left',
             'case': area_contact.head_case,
             'yshift': area_contact.head_vspace,
+            'color': area_contact.color,
             }
     contact_set = {
             'name': 'Contact',
@@ -467,8 +490,10 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
             'inner_ysep': 0,
             'font_size': area_career.head_font_size,
             'text_width': 8,
+            'align': 'left',
             'case': area_career.head_case,
             'yshift': area_career.head_vspace,
+            'color': area_career.color,
             }
     career_set = {
             'name': 'Career',
@@ -513,9 +538,11 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
             'inner_xsep': 8,
             'inner_ysep': 0,
             'text_width': 8,
+            'align': 'left',
             'font_size': area_edu.head_font_size,
             'case': area_edu.head_case,
             'yshift': area_edu.head_vspace,
+            'color': area_edu.color,
             }
     edu_set = {
             'name': 'Education',
@@ -569,9 +596,11 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
             'inner_xsep': 8,
             'inner_ysep': 0,
             'text_width': 8,
+            'align': 'left',
             'font_size': area_skills.head_font_size,
             'case': area_skills.head_case,
             'yshift': area_skills.head_vspace,
+            'color': area_skills.color,
             }
     items = []
     skill_set = {
@@ -661,9 +690,11 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
             'inner_xsep': 8,
             'inner_ysep': 0,
             'text_width': 8,
+            'align': 'left',
             'font_size': area_know.head_font_size,
             'case': area_know.head_case,
             'yshift': area_know.head_vspace,
+            'color': area_know.color,
             }
     know_set = {
             'name': 'Knowledge',
@@ -766,7 +797,6 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
             'position': company.position,
             'version': version_str,
             }
-#    meta = cv.Metadata(person.first_name, person.family_name, person.title, contact.city, contact.country, contact.email, company.name, company.position, version_str)
 
     # Insert variables into letter text
     for count, line in enumerate(text):
