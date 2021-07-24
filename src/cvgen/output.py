@@ -66,6 +66,7 @@ def tikzset():
         '\t' + geo.Cell('cell9', 0, 6, 'center', 0.4, 0.5, 0.4, 0.25).set_style(),
         '\t' + geo.Cell('cell10', 16, 4, 'right', 2.0, 0.5, 4.0, 0.25).set_style(),
         '\t' + geo.Cell('cell11', 2, 4, 'left', 1.5, 0.5, 9.5, 0.25).set_style(),
+        '\t' + geo.Cell('cell12', 2, 4, 'left', 1.5, 0.5, 4.5, 0.25).set_style(),
         '\t' + r'circfull/.style={draw=none, fill=Blues-K},',
         '\t' + r'circopen/.style={draw=none, fill=Greys-G},',
         '\t' + r'pics/skillmax/.style n args={3}{code={',
@@ -582,10 +583,10 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
             'column_styles': ['cell10', 'cell11'],
             }
     item_set = {
-            'label': '\\textcolor{Blues-K}{\\Large\\textopenbullet}',
+            'label': '',
             'labelsep': '0.5em',
-            'leftmargin': '1.2em',
-            'topsep': '0.3em',
+            'leftmargin': '0.0em',
+            'topsep': '0.0em',
             'itemindent': '0.0em',
             'itemsep': '-0.2em',
             }
@@ -670,59 +671,86 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
             'x': area_know.pos_x,
             'y': area_know.pos_y,
             'font_size': area_know.body_font_size,
-            'column_styles': ['cell1', 'cell2'],
+            'column_styles': ['cell10', 'cell12', 'cell12'],
             }
     items = []
-    for group in know_groups:
-        row = ''
-        for obj in know_objects:
-            if obj.group == group:
-                row = row + obj.name + ', '
-        row = row[:-2]
-        items.append([group.replace('&', '\&'), row])
+#    for group in know_groups:
+#        row = ''
+#        for obj in know_objects:
+#            if obj.group == group:
+#                row = row + obj.name + ', '
+#        row = row[:-2]
+#        items.append([group.replace('&', '\&'), row])
+    first = True
+    for obj in know_objects:
+        if obj.group == 'Sprachen':
+            if first is True:
+                items.append([obj.group, obj.name, obj.description])
+                first = False
+            else:
+                items.append(['', obj.name, obj.description])
+    items.append(['', '', ''])
     know = geo.Table(know_set, items).assemble()
+    items = []
+    know_set = {
+            'name': 'Knowledge',
+            'anchor': area_know.anchor,
+            'x': area_know.pos_x,
+            'y': area_know.pos_y-2.0,
+            'font_size': area_know.body_font_size,
+            'column_styles': ['cell10', 'cell11', 'cell12'],
+            }
+    first = True
+    for obj in know_objects:
+        if obj.group == 'Führerscheine':
+            if first is True:
+                items.append([obj.group, obj.name])
+                first = False
+            else:
+                items.append(['', obj.name])
+    know = know + geo.Table(know_set, items).assemble()
     know.insert(0, geo.Textbox(know_title_set, area_know.title).create())
 
-    # Certificates
-    dict_cert = config_data['certificates']
-    cert_objects = []
-    for item in dict_cert.values():
-        cert_objects.append(cv.CertificateItem(item))
-    cert_groups = []
-    for item in cert_objects:
-        cert_groups.append(item.group)  # get all groups
-    cert_groups = list(set(cert_groups))  # get unique groups
-    area_cert = geo.Area(dict_areas['certificates'])
-    cert_title_set = {
-            'anchor': 'north west',
-            'x': box_left.width,
-            'y': area_cert.pos_y,
-            'inner_xsep': 8,
-            'inner_ysep': 0,
-            'text_width': 8,
-            'font_size': area_cert.head_font_size,
-            'case': area_cert.head_case,
-            'yshift': area_cert.head_vspace,
-            }
-    cert_set = {
-            'name': 'Certificates',
-            'anchor': area_cert.anchor,
-            'x': area_cert.pos_x,
-            'y': area_cert.pos_y,
-            'font_size': area_cert.body_font_size,
-            'column_styles': ['cell5', 'cell6'],
-            }
-    items = []
-    for group in cert_groups:
-        items.append([group.replace('&', '\&')])
-        for obj in cert_objects:
-            if obj.group == group:
-                if area_cert.hyperlinks is True:
-                    items.append(['\\href{{{}}}{{{}}}'.format(obj.name, obj.url)])
-                else:
-                    items.append([obj.name])
-    cert = geo.Table(cert_set, items).assemble()
-    cert.insert(0, geo.Textbox(cert_title_set, area_cert.title).create())
+#    # Certificates
+#    dict_cert = config_data['certificates']
+#    cert_objects = []
+#    for item in dict_cert.values():
+#        cert_objects.append(cv.CertificateItem(item))
+#    cert_groups = []
+#    for item in cert_objects:
+#        cert_groups.append(item.group)  # get all groups
+#    cert_groups = list(set(cert_groups))  # get unique groups
+#    area_cert = geo.Area(dict_areas['certificates'])
+#    cert_title_set = {
+#            'anchor': 'north west',
+#            'x': box_left.width,
+#            'y': area_cert.pos_y,
+#            'inner_xsep': 8,
+#            'inner_ysep': 0,
+#            'text_width': 8,
+#            'font_size': area_cert.head_font_size,
+#            'case': area_cert.head_case,
+#            'yshift': area_cert.head_vspace,
+#            }
+#    cert_set = {
+#            'name': 'Certificates',
+#            'anchor': area_cert.anchor,
+#            'x': area_cert.pos_x,
+#            'y': area_cert.pos_y,
+#            'font_size': area_cert.body_font_size,
+#            'column_styles': ['cell5', 'cell6'],
+#            }
+#    items = []
+#    for group in cert_groups:
+#        items.append([group.replace('&', '\&')])
+#        for obj in cert_objects:
+#            if obj.group == group:
+#                if area_cert.hyperlinks is True:
+#                    items.append(['\\href{{{}}}{{{}}}'.format(obj.name, obj.url)])
+#                else:
+#                    items.append([obj.name])
+#    cert = geo.Table(cert_set, items).assemble()
+#    cert.insert(0, geo.Textbox(cert_title_set, area_cert.title).create())
 
     # Metadata
     dict_comp = config_data['company']
@@ -802,12 +830,12 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
                     f.write('\t\t\t' + skill + '\n')
                 for k in know:
                     f.write('\t\t\t' + k + '\n')
-                for c in cert:
-                    f.write('\t\t\t' + c + '\n')
+#                for c in cert:
+#                    f.write('\t\t\t' + c + '\n')
                 closing = ''
                 below = '{} {}'.format(dict_pers['first_name'], dict_pers['family_name'])
                 name = 'closing2'
-                signature = geo.Signature(name, cvl.border_left+4, cvl.border_bottom+4, 1.3, closing, below, dict_pers['signature'])
+                signature = geo.Signature(name, cvl.border_left+3.1, cvl.border_bottom+2.5, 1.3, closing, below, dict_pers['signature'])
                 f.write('\t\t\t' + signature.create())
 #                f.write('\t' + '\\node [anchor=north west, text width=10cm, yshift={}cm] at (textbox.south west) {{{}\\\\\\includegraphics[height=1.3cm]{{{}}}\\\\{} {}}};'.format(letter.closing_y_shift, closing, signature, dict_pers['first_name'], dict_pers['family_name']))
                 f.write('\t\t' + r'\end{pgfonlayer}' + '\n')
