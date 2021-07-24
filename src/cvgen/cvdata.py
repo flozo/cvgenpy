@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import json
+from datetime import datetime
 
 class Personal(object):
     def __init__(self, dict_personal):
@@ -53,6 +54,9 @@ class Company(Address):
 
 
 class Metadata(object):
+    """
+    Definition of PDF metadata.
+    """
     def __init__(self, first_name, family_name, title, city, country, email, company, position, version):
         self.first_name = first_name
         self.family_name = family_name
@@ -64,7 +68,25 @@ class Metadata(object):
         self.position = position
         self.version = version
 
+    def generate(self):
+        """
+        Generate LaTeX code with PDF metadata for hypersetup.
+        """
+        l = [
+                '\t' + 'pdftitle={{Bewerbung bei {} als {}}},'.format(self.company, self.position),
+                '\t' + r'pdfsubject={Bewerbung},',
+                '\t' + 'pdfauthor={{{} {}}},'.format(self.first_name, self.family_name),
+                '\t' + 'pdfauthortitle={{{}}},'.format(self.title),
+                '\t' + 'pdfcaptionwriter={{{} {}}},'.format(self.first_name, self.family_name),
+                '\t' + 'pdfdate={{{}}},'.format(datetime.today().strftime('%Y-%m-%d')),
+                '\t' + 'pdfproducer={{cvgen {} by flozo}},'.format(self.version),
+                '\t' + 'pdfcontactcity={{{}}},'.format(self.city),
+                '\t' + 'pdfcontactcountry={{{}}},'.format(self.country),
+                '\t' + 'pdfcontactemail={{{}}},'.format(self.email),
+                ]
+        return l
 
+                
 class SkillItem(object):
     def __init__(self, dict_skill):
         self.name = dict_skill['name']
