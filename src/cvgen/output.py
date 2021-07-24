@@ -556,7 +556,7 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
             'label': '\\textcolor{Blues-K}{\\Large\\textopenbullet}',
             'labelsep': '0.5em',
             'leftmargin': '1.2em',
-            'topsep': '0.3em',
+            'topsep': '0.1em',
             'itemindent': '0.0em',
             'itemsep': '-0.2em',
             }
@@ -571,8 +571,19 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
             items.append(['{}\\,--\\,{}'.format(edu_item.start_date, edu_item.end_date), '{}\\\\{}'.format(edu_item.school_name, description), edu_item.role])
         else:
             items.append([edu_item.date, '{}\\\\{}'.format(edu_item.school_name, description), edu_item.graduation])
-    edu = geo.Table(edu_set, items).assemble()
+    items_page_1 = items[:2]   # restrict to first 2 elements (first page)
+    items_page_2 = items[2:]
+    edu = geo.Table(edu_set, items_page_1).assemble()
     edu.insert(0, geo.Textbox(edu_title_set, area_edu.title).create())
+    edu2_set = {
+            'name': 'Education',
+            'anchor': area_edu.anchor,
+            'x': area_edu.pos_x,
+            'y': 27,
+            'font_size': area_edu.body_font_size,
+            'column_styles': ['cell1', 'cell2', 'cell7'],
+            }
+    edu2 = geo.Table(edu2_set, items_page_2).assemble()
 
     # Skills
     dict_skill_layout = config_geo['cv']['skills']['layout']
@@ -856,18 +867,17 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
                 f.write('\t\t' + '\\fill[fill=none] (0, 0) rectangle ({}, {});\n'.format(cvl.width, cvl.height))
                 for t in title:
                     f.write('\t\t\t' + t + '\n')
+                for edu_item in edu2:
+                    f.write('\t\t\t' + edu_item + '\n')
                 for skill in skills:
                     f.write('\t\t\t' + skill + '\n')
                 for k in know:
                     f.write('\t\t\t' + k + '\n')
-#                for c in cert:
-#                    f.write('\t\t\t' + c + '\n')
                 closing = ''
                 below = '{} {}'.format(dict_pers['first_name'], dict_pers['family_name'])
                 name = 'closing2'
-                signature = geo.Signature(name, cvl.border_left+3.1, cvl.border_bottom+2.5, 1.3, closing, below, dict_pers['signature'])
+                signature = geo.Signature(name, cvl.border_left+3.1, cvl.border_bottom+2.2, 1.3, closing, below, dict_pers['signature'])
                 f.write('\t\t\t' + signature.create())
-#                f.write('\t' + '\\node [anchor=north west, text width=10cm, yshift={}cm] at (textbox.south west) {{{}\\\\\\includegraphics[height=1.3cm]{{{}}}\\\\{} {}}};'.format(letter.closing_y_shift, closing, signature, dict_pers['first_name'], dict_pers['family_name']))
                 f.write('\t\t' + r'\end{pgfonlayer}' + '\n')
                 for l in cvl.latex_foot():
                     f.write('\t' + l + '\n')
