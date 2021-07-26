@@ -65,6 +65,8 @@ def check_config_file(config_file):
         if create_config_dir == 'Y':
             if 'cvdata' in config_file:
                 cv.write_config(config_file)
+            elif 'company' in config_file:
+                generic_company(config_file)
             elif 'geo' in config_file:
                 geo.write_config(config_file)
             elif 'enclosure' in config_file:
@@ -262,6 +264,26 @@ def generic_cell_styles(config_file):
             }
     with open(config_file, 'w') as f:
         json.dump(cell_styles, f, indent=4)
+
+
+def generic_company(config_file):
+    """
+    Define generic company data
+    """
+    company_data = {
+            "name": "Company",
+            "attention": "James Jones",
+            "street": "Street name",
+            "house": "987b",
+            "postal_code": "67890",
+            "city": "City",
+            "country": "Country",
+            "position": "Position",
+            "color_main": "blue",
+            "color_accent": "yellow"
+            }
+    with open(config_file, 'w') as f:
+        json.dump(company_data, f, indent=4)
 
 
 def mergepdfs(pdflist, target):                                                                                                                                                                                                               

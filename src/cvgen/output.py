@@ -8,6 +8,9 @@ from PyPDF2 import PdfFileMerger
 
 
 def mergepdfs(pdflist, target):
+    """
+    Merge all PDFs
+    """
     merger = PdfFileMerger()
     for pdf in pdflist:
         merger.append(partfile)
@@ -57,7 +60,7 @@ def declare_layers():
     return l
 
 
-def assemble_letter(dict_letter, letter_text, dict_pers, dict_cont, dict_comp, icons, encl, dict_set, draft):
+def assemble_letter(dict_letter, letter_text, dict_pers, dict_cont, company, icons, encl, dict_set, draft):
     """
     Assemble LaTeX code for letter
     """
@@ -124,7 +127,7 @@ def assemble_letter(dict_letter, letter_text, dict_pers, dict_cont, dict_comp, i
             '\t' + '\\node [anchor=south west, text width=9cm, align=center, font=\\scriptsize] at ({}, {}) {{{}}};'.format(letter.address_x, letter.backaddress_y, backaddress.oneline('8pt', '$\\bullet$'))
             ]
         l = l + l3
-    recipient = cv.Company(dict_comp).address()
+    recipient = company.address()
     # Recipient address
     l.append('\t' + r'% |- Recipient address')
     l.append('\t\\node [anchor=north west, minimum width={0}cm, minimum height=2.73cm, text width={0}cm, align=left] at ({1}, {2}) {{{3}}};'.format(letter.address_width, letter.border_left, letter.backaddress_y, recipient))
@@ -164,7 +167,7 @@ def assemble_letter(dict_letter, letter_text, dict_pers, dict_cont, dict_comp, i
     l4.append('\t\t\t\\node {{{}}}; & \\node {{{}}};\\\\'.format(contact.phone, icons['phone']))
     clickable = True
     if clickable is True:
-        email_subject = 'Ihre Bewerbung bei {}'.format(dict_comp['name'])
+        email_subject = 'Ihre Bewerbung bei {}'.format(company.name)
         email = fn.make_link_email(contact.email, '', email_subject)
         l4.append('\t\t\t\\node {{{0}}}; & \\node {{{1}}};\\\\'.format(email, icons['mail']))
 #        l4.append('\t\t\t\\node {{\\href{{mailto:{0}?subject={1}}}{{{0}}}}}; & \\node {{{2}}};\\\\'.format(contact.email, email_subject, icons['mail']))
@@ -178,7 +181,7 @@ def assemble_letter(dict_letter, letter_text, dict_pers, dict_cont, dict_comp, i
     l4.append('\t' + r'% |- Date field')
     l4.append('\t' + '\\node [anchor=south east] at ({}, {}) {{{}}};'.format(letter.width-letter.border_right, letter.folding_mark_1_y, date))
     # Subject field
-    subject = 'Bewerbung als {}'.format(dict_comp['position'])
+    subject = 'Bewerbung als {}'.format(company.position)
     l4.append('\t' + r'% |- Subject field')
     l4.append('\t' + '\\node [anchor=south west] at ({}, {}) {{\\bf {}}};'.format(letter.border_left, letter.subject_y, subject))
     l = l + l4
@@ -207,7 +210,7 @@ def assemble_letter(dict_letter, letter_text, dict_pers, dict_cont, dict_comp, i
     return l
  
 
-def assemble_latex(outfile, version_str, config_file_geo, config_file_data, config_file_encl, text, microtype, include_meta, encl, draft, enclosure_latex, config_file_preamble, config_file_cell_styles):
+def assemble_latex(outfile, version_str, config_file_geo, config_file_data, config_file_encl, text, microtype, include_meta, encl, draft, enclosure_latex, config_file_preamble, config_file_cell_styles, config_file_company):
     """
     Read out config values, create objects, and assemble LaTeX code
     """
@@ -255,12 +258,12 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
 
     # Read config files
     config_data = fn.read_config(config_file_data)
+    config_company = fn.read_config(config_file_company)
     config_geo = fn.read_config(config_file_geo)
     config_preamble = fn.read_config(config_file_preamble)
     config_cell_styles = fn.read_config(config_file_cell_styles)
     dict_layout = config_geo['cv']['layout']
     dict_letter = config_geo['letter']
-    dict_comp = config_data['company']
     dict_box = config_geo['cv']['boxes']
     dict_box_top = dict_box['box_top']
     dict_box_bottom = dict_box['box_bottom']
@@ -276,6 +279,7 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
     box_bottom = geo.Box(color=dict_box_bottom['color'], width=cvl.width, height=dict_box_bottom['size'])
     box_left = geo.Box(color=dict_box_left['color'], width=dict_box_left['size'], height=cvl.height)
     box_right = geo.Box(color=dict_box_right['color'], width=dict_box_right['size'], height=cvl.height)
+    company = cv.Company(config_company)
 
     # General settings
     dict_set = config_geo['general']
@@ -418,7 +422,7 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
             'font_size': area_contact.body_font_size,
             'column_styles': ['cell3', 'cell4'],
             }
-    email_subject = 'Ihre Bewerbung bei {}'.format(dict_comp['name'])
+    email_subject = 'Ihre Bewerbung bei {}'.format(company.name)
     email = fn.make_link_email(contact.email, '', email_subject)
     items = [
             [icons['address'], address],
@@ -754,8 +758,6 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
 #    cert.insert(0, geo.Textbox(cert_title_set, area_cert.title).create())
 
     # Metadata
-    dict_comp = config_data['company']
-    company = cv.Company(dict_comp)
     meta_set = {
             'first_name': person.first_name,
             'family_name': person.family_name,
@@ -800,7 +802,7 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
             f.write('\t' + line + '\n')
         if structure['letter'] is True:
             # Write letter
-            for line in assemble_letter(dict_letter, text, dict_pers, dict_contact, dict_comp, icons, encl, dict_set, draft):
+            for line in assemble_letter(dict_letter, text, dict_pers, dict_contact, company, icons, encl, dict_set, draft):
                 f.write('\t' + line + '\n')
         if structure['cv'] is True:
             # Write CV

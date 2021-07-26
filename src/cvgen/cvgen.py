@@ -55,12 +55,14 @@ def main():
     config_dir = os.path.expanduser('~/.config/cvgen')
     fn.check_config_dir(config_dir)
     config_file_data = os.path.join(config_dir, 'cvdata.json')
+    config_file_company = os.path.join(config_dir, 'company.json')
     config_file_geo = os.path.join(config_dir, 'cvgeometry.json')
     config_file_enclosure = os.path.join(config_dir, 'enclosure.json')
     config_file_letter = os.path.join(config_dir, 'letter.txt')
     config_file_preamble = os.path.join(config_dir, 'LaTeX_preamble.json')
     config_file_cell_styles = os.path.join(config_dir, 'LaTeX_cell_styles.json')
     fn.check_config_file(config_file_data)
+    fn.check_config_file(config_file_company)
     fn.check_config_file(config_file_geo)
     fn.check_config_file(config_file_enclosure)
     fn.check_config_file(config_file_letter)
@@ -87,7 +89,7 @@ def main():
     if draft is True:
         print('[output] Option --draft is active.')
 #            print('[output] Option --draft is active. Ignoring contradicting setting in cvgeometry.json: "draft": false')
-    out.assemble_latex(outfile, version_str, config_file_geo, config_file_data, config_encl, text, args.microtype, args.metadata, encl, draft, args.encl_latex, config_file_preamble, config_file_cell_styles)
+    out.assemble_latex(outfile, version_str, config_file_geo, config_file_data, config_encl, text, args.microtype, args.metadata, encl, draft, args.encl_latex, config_file_preamble, config_file_cell_styles, config_file_company)
     # Messages and execution of pdfLaTeX/mupdf
     if verbosity >= 1:
         print('[output] LaTeX file {} created.'.format(outfile))

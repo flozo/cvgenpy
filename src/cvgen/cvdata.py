@@ -223,18 +223,6 @@ def write_config(config_dir):
                     'ORCID': 'orcid',
                     },
                },
-            'company': {
-                'name': 'Company',
-                'attention': 'James Jones',
-                'street': 'Street name',
-                'house': '987b',
-                'postal_code': '67890',
-                'city': 'City',
-                'country': 'Country',
-                'position': 'Position',
-                'color_main': 'blue',
-                'color_accent': 'yellow',
-                },
             'skills': {
                 'skill1': {
                     'name': 'Python',
