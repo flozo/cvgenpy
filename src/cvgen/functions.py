@@ -71,6 +71,8 @@ def check_config_file(config_file):
                 generic_enclosure(config_file)
             elif 'letter' in config_file:
                 cv.write_letter(config_file)
+            elif 'preamble' in config_file:
+                generic_preamble(config_file)
             else:
                 print('[config] Config file name undefined.')
             print('[config] Generic config file {} created.'.format(config_file))
@@ -93,6 +95,41 @@ def generic_enclosure(config_file):
             }
     with open(config_file, 'w') as f:
         json.dump(settings_dict, f, indent=4)
+
+
+def generic_preamble(config_file):
+    """
+    Define generic LaTeX preamble
+    """
+    documentclass = {
+            'standalone': '12pt, tikz, multi, crop',
+            }
+    packages = {
+            'inputenc': 'utf8',
+            'fontenc': 'T1',
+            'babel': 'german',
+            'hyperxmp': '',
+            'FiraSans' : 'sfdefault, scaled=1.0098',
+            'newtxsf': '',
+            'fontawesome5': '',
+            'csquotes': 'german=quotes',
+            'enumitem': '',
+            'microtype': 'activate={true, nocompatibility}, final, tracking=true, kerning=true, spacing=true, factor=1100, stretch=8, shrink=8',
+            'tikz': '',
+            'hyperref': '',
+            }
+    settings = {
+            'usetikzlibrary': 'positioning, math, colorbrewer, backgrounds, matrix',
+            'standaloneenv': 'tikzpicture',
+            'hypersetup': 'colorlinks=true, urlcolor=Blues-K',
+            }
+    preamble = {
+            'documentclass': documentclass,
+            'packages': packages,
+            'settings': settings,
+            }
+    with open(config_file, 'w') as f:
+        json.dump(preamble, f, indent=4)
 
 
 def mergepdfs(pdflist, target):                                                                                                                                                                                                               

@@ -4,6 +4,53 @@ import json
 from PyPDF2 import PdfFileReader
 
 
+class Preamble:
+    """
+    Define LaTeX preamble
+    """
+    def __init__(self, documentclass, packages, settings, metadata):
+       self.documentclass = documentclass
+       self.packages = packages
+       self.settings = settings
+       self.metadata = metadata
+
+    def generate(self):
+        """
+        Generate LaTeX code for preamble
+        """
+        # Generate code for documentclass
+        dc = list(self.documentclass.items())[0]
+        l = ['\\documentclass[{classoptions}]{{{classname}}}'.format(classoptions=dc[1], classname=dc[0])]
+        # Generate code for packages
+        for key, value in self.packages.items():
+            if value != '':
+                l.append('\\usepackage[{packageoptions}]{{{packagename}}}'.format(packageoptions=value, packagename=key))
+            else:
+                l.append('\\usepackage{{{packagename}}}'.format(packagename=key))
+        # Generate code for package settings
+        for key, value in self.settings.items():
+            # Special treatment for hypersetup if metadata has to be included:
+            if key == 'hypersetup' and self.metadata is not None:
+                l = l + self.include_meta()
+            else:
+                l.append('\\{name}{{{arguments}}}'.format(name=key, arguments=value))
+        return l
+
+    def include_meta(self):
+        """
+        Include metadata to hypersetup in preamble
+        """
+        # Store non-meta data hypersetup settings in variable
+        hypersetup = self.settings['hypersetup'].split(',')
+        # Rewrite LaTeX code for hypersetup including meta and non-meta data
+        l = ['\\hypersetup{']
+        for item in hypersetup:
+            l.append('\t' + item.replace(' ', '') + ',')
+        l = l + self.metadata
+        l.append('\t}')
+        return l
+
+
 class Sepline:
     """
     Define separation line.

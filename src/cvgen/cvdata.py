@@ -3,6 +3,7 @@
 import json
 from datetime import datetime
 
+
 class Personal(object):
     def __init__(self, dict_personal):
         self.first_name = dict_personal['first_name']
