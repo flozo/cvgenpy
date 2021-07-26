@@ -15,24 +15,14 @@ def mergepdfs(pdflist, target):
     merger.close()
 
 
-def tikzset():
+def tikzset(config_cell_styles):
     """
     Define styles
     """
-    l = [
-        r'\tikzset{',
-        '\t' + geo.Cell('cell1', 16, 10, 'right', 2.0, 0.5, 4.0, 0.25).set_style(),
-        '\t' + geo.Cell('cell2', 2, 10, 'left', 1.5, 0.5, 9.5, 0.25).set_style(),
-        '\t' + geo.Cell('cell3', 16, 4, 'center', 0.6, 0.5, 0.4, 0.25).set_style(),
-        '\t' + geo.Cell('cell4', 2, 4, 'left', 1.0, 0.5, 7.8, 0.25).set_style(),
-        '\t' + geo.Cell('cell5', 0, 6, 'left', 0.6, 0.5, 4.5, 0.25).set_style(),
-        '\t' + geo.Cell('cell6', 0, 6, 'right', 1.0, 0.5, 2.0, 0.25).set_style(),
-        '\t' + geo.Cell('cell7', 8, 10, 'left', 1.0, 0.5, 5.0, 0.25).set_style(),
-        '\t' + geo.Cell('cell8', 8, 6, 'right', 0.6, 0.5, 7.8, 0.25).set_style(),
-        '\t' + geo.Cell('cell9', 0, 6, 'center', 0.4, 0.5, 0.4, 0.25).set_style(),
-        '\t' + geo.Cell('cell10', 16, 4, 'right', 2.0, 0.5, 4.0, 0.25).set_style(),
-        '\t' + geo.Cell('cell11', 2, 4, 'left', 1.5, 0.5, 9.5, 0.25).set_style(),
-        '\t' + geo.Cell('cell12', 2, 4, 'left', 1.5, 0.5, 4.5, 0.25).set_style(),
+    l = ['\\tikzset{']
+    for key, value in config_cell_styles.items():
+        l.append('\t' + geo.Cell(**value).set_style())
+    l2 = [
         '\t' + r'circfull/.style={draw=none, fill=Blues-K},',
         '\t' + r'circopen/.style={draw=none, fill=Greys-G},',
         '\t' + r'pics/skillmax/.style n args={3}{code={',
@@ -50,6 +40,7 @@ def tikzset():
         '\t' + r'},',
         r'}',
         ]
+    l = l + l2
     return l
 
 
@@ -216,7 +207,7 @@ def assemble_letter(dict_letter, letter_text, dict_pers, dict_cont, dict_comp, i
     return l
  
 
-def assemble_latex(outfile, version_str, config_file_geo, config_file_data, config_file_encl, text, microtype, include_meta, encl, draft, enclosure_latex, config_file_preamble):
+def assemble_latex(outfile, version_str, config_file_geo, config_file_data, config_file_encl, text, microtype, include_meta, encl, draft, enclosure_latex, config_file_preamble, config_file_cell_styles):
     """
     Read out config values, create objects, and assemble LaTeX code
     """
@@ -266,6 +257,7 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
     config_data = fn.read_config(config_file_data)
     config_geo = fn.read_config(config_file_geo)
     config_preamble = fn.read_config(config_file_preamble)
+    config_cell_styles = fn.read_config(config_file_cell_styles)
     dict_layout = config_geo['cv']['layout']
     dict_letter = config_geo['letter']
     dict_comp = config_data['company']
@@ -801,7 +793,7 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
             f.write('\t\t' + line + '\n')
         f.write('\t' + r'}' + '\n')
         # Write style definitions
-        for line in tikzset():
+        for line in tikzset(config_cell_styles):
             f.write('\t' + line + '\n')
         # Write layer declaration
         for line in declare_layers():

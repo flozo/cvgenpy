@@ -59,18 +59,19 @@ def main():
     config_file_enclosure = os.path.join(config_dir, 'enclosure.json')
     config_file_letter = os.path.join(config_dir, 'letter.txt')
     config_file_preamble = os.path.join(config_dir, 'LaTeX_preamble.json')
+    config_file_cell_styles = os.path.join(config_dir, 'LaTeX_cell_styles.json')
     fn.check_config_file(config_file_data)
     fn.check_config_file(config_file_geo)
     fn.check_config_file(config_file_enclosure)
     fn.check_config_file(config_file_letter)
     fn.check_config_file(config_file_preamble)
+    fn.check_config_file(config_file_cell_styles)
     text = fn.read_text(os.path.join(config_dir, 'letter.txt'))  
     text = fn.format_text(text)
 
     config_data = fn.read_config(config_file_data)
     config_geo = fn.read_config(config_file_geo)
     config_encl = fn.read_config(config_file_enclosure)
-#    config_preamb = fn.read_config(config_file_preamble)
 
     # Check file extension
     outfile = str(args.outfile)
@@ -86,7 +87,7 @@ def main():
     if draft is True:
         print('[output] Option --draft is active.')
 #            print('[output] Option --draft is active. Ignoring contradicting setting in cvgeometry.json: "draft": false')
-    out.assemble_latex(outfile, version_str, config_file_geo, config_file_data, config_encl, text, args.microtype, args.metadata, encl, draft, args.encl_latex, config_file_preamble)
+    out.assemble_latex(outfile, version_str, config_file_geo, config_file_data, config_encl, text, args.microtype, args.metadata, encl, draft, args.encl_latex, config_file_preamble, config_file_cell_styles)
     # Messages and execution of pdfLaTeX/mupdf
     if verbosity >= 1:
         print('[output] LaTeX file {} created.'.format(outfile))

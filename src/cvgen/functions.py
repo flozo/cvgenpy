@@ -73,6 +73,8 @@ def check_config_file(config_file):
                 cv.write_letter(config_file)
             elif 'preamble' in config_file:
                 generic_preamble(config_file)
+            elif 'cell_styles' in config_file:
+                generic_cell_styles(config_file)
             else:
                 print('[config] Config file name undefined.')
             print('[config] Generic config file {} created.'.format(config_file))
@@ -130,6 +132,136 @@ def generic_preamble(config_file):
             }
     with open(config_file, 'w') as f:
         json.dump(preamble, f, indent=4)
+
+
+def generic_cell_styles(config_file):
+    """
+    Define generic TikZ cell styles
+    """
+    cell_styles = {
+            'cell1': {
+                'name': 'cell1',
+                'xsep': 16,
+                'ysep': 10,
+                'align': 'right',
+                'minimum_width': 2.0,
+                'minimum_height': 0.5,
+                'text_width': 4.0,
+                'text_height': 0.25,
+                },
+            'cell2': {
+                'name': 'cell2',
+                'xsep': 2,
+                'ysep': 10,
+                'align': 'left',
+                'minimum_width': 1.5,
+                'minimum_height': 0.5,
+                'text_width': 9.5,
+                'text_height': 0.25,
+                },
+            'cell3': {
+                'name': 'cell3',
+                'xsep': 16,
+                'ysep': 4,
+                'align': 'center',
+                'minimum_width': 0.6,
+                'minimum_height': 0.5,
+                'text_width': 0.4,
+                'text_height': 0.25,
+                },
+            'cell4': {
+                'name': 'cell4',
+                'xsep': 2,
+                'ysep': 4,
+                'align': 'left',
+                'minimum_width': 1.0,
+                'minimum_height': 0.5,
+                'text_width': 7.8,
+                'text_height': 0.25,
+                },
+            'cell5': {
+                'name': 'cell5',
+                'xsep': 0,
+                'ysep': 6,
+                'align': 'left',
+                'minimum_width': 0.6,
+                'minimum_height': 0.5,
+                'text_width': 4.5,
+                'text_height': 0.25,
+                },
+            'cell6': {
+                'name': 'cell6',
+                'xsep': 0,
+                'ysep': 6,
+                'align': 'right',
+                'minimum_width': 1.0,
+                'minimum_height': 0.5,
+                'text_width': 2.0,
+                'text_height': 0.25,
+                },
+            'cell7': {
+                'name': 'cell7',
+                'xsep': 8,
+                'ysep': 10,
+                'align': 'left',
+                'minimum_width': 1.0,
+                'minimum_height': 0.5,
+                'text_width': 5.0,
+                'text_height': 0.25,
+                },
+            'cell8': {
+                'name': 'cell8',
+                'xsep': 8,
+                'ysep': 6,
+                'align': 'right',
+                'minimum_width': 0.6,
+                'minimum_height': 0.5,
+                'text_width': 7.8,
+                'text_height': 0.25,
+                },
+            'cell9': {
+                'name': 'cell9',
+                'xsep': 0,
+                'ysep': 6,
+                'align': 'center',
+                'minimum_width': 0.4,
+                'minimum_height': 0.5,
+                'text_width': 0.4,
+                'text_height': 0.25,
+                },
+            'cell10': {
+                'name': 'cell10',
+                'xsep': 16,
+                'ysep': 4,
+                'align': 'right',
+                'minimum_width': 2.0,
+                'minimum_height': 0.5,
+                'text_width': 4.0,
+                'text_height': 0.25,
+                },
+            'cell11': {
+                'name': 'cell11',
+                'xsep': 2,
+                'ysep': 4,
+                'align': 'left',
+                'minimum_width': 1.5,
+                'minimum_height': 0.5,
+                'text_width': 9.5,
+                'text_height': 0.25,
+                },
+            'cell12': {
+                'name': 'cell12',
+                'xsep': 2,
+                'ysep': 4,
+                'align': 'left',
+                'minimum_width': 1.5,
+                'minimum_height': 0.5,
+                'text_width': 4.5,
+                'text_height': 0.25,
+                },
+            }
+    with open(config_file, 'w') as f:
+        json.dump(cell_styles, f, indent=4)
 
 
 def mergepdfs(pdflist, target):                                                                                                                                                                                                               
