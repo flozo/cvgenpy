@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-import json
 from PyPDF2 import PdfFileReader
 
 
@@ -13,6 +12,7 @@ class Preamble:
        self.packages = packages
        self.settings = settings
        self.metadata = metadata
+
 
     def generate(self):
         """
@@ -35,6 +35,7 @@ class Preamble:
             else:
                 l.append('\\{name}{{{arguments}}}'.format(name=key, arguments=value))
         return l
+
 
     def include_meta(self):
         """
@@ -111,7 +112,7 @@ class Page:
             args['width'] = self.width
         sepline = Sepline(args)
         return '\\draw [draw={}, line width={}cm] ({}, {}) -- +({}, 0);'.format(sepline.color, sepline.thickness, sepline.x, sepline.y, sepline.width)
- 
+
     def add_title(self, text, fontsize, align, color, yshift):
         """
         Add page title.
@@ -191,7 +192,7 @@ class Letter(Page):
         self.folding_mark_2_y = letter['folding_mark_2_y']
         self.folding_mark_2_width = letter['folding_mark_2_width']
         self.folding_mark_2_thickness = letter['folding_mark_2_thickness']
-        
+
 
 class Address(object):
     """
@@ -336,7 +337,7 @@ class Enclosure:
         for key, value in self.files.items():
             doc = doc + Document(key, value).include()
         return doc
- 
+
 
 class PhotoArea(object):
     """
@@ -403,7 +404,7 @@ class Cell:
         """
         Assemble TikZ style
         """
-        return '{}/.style={{{}, draw={}, inner xsep={}pt, inner ysep={}pt, align={}, minimum width={}cm, minimum height={}cm, text width={}cm, text height={}cm}},'.format(self.name, self.shape, self.draw, self.inner_xsep, self.inner_ysep, self.align, self.minimum_width, self.minimum_height, self.text_width, self.text_height) 
+        return '{}/.style={{{}, draw={}, inner xsep={}pt, inner ysep={}pt, align={}, minimum width={}cm, minimum height={}cm, text width={}cm, text height={}cm}},'.format(self.name, self.shape, self.draw, self.inner_xsep, self.inner_ysep, self.align, self.minimum_width, self.minimum_height, self.text_width, self.text_height)
 
 
 class Textbox:
@@ -418,8 +419,8 @@ class Textbox:
         self.inner_ysep = settings['inner_ysep']
         self.font_size = settings['font_size']
         self.case = settings['case']
-        self.text_width = settings['text_width'] 
-        self.align = settings['align'] 
+        self.text_width = settings['text_width']
+        self.align = settings['align']
         self.yshift = settings['yshift']
         self.color = settings['color']
         if self.case == 'upper':
@@ -554,332 +555,4 @@ class SkillLayout(object):
         self.number = dict_skill_layout['circle_number']
         self.distance = dict_skill_layout['circle_distance']
         self.show_circles = dict_skill_layout['show_circles']
-
-
-def write_config(config_dir):
-    """
-    Create geometry config file with generic settings.
-    Settings are defined as nested dictionary and parsed to a JSON file.
-    """
-    settings_dict = {
-            'general': {
-                'date_format': '%d.%m.%Y',
-                },
-            'structure': {
-                'title_page': False,
-                'letter': True,
-                'cv': True,
-                'appendices': False,
-                },
-            'title': {
-                'width': 21.0,
-                'height': 29.7,
-                'show_photo': False,
-                'show_name': True,
-                'show_address': True,
-                'show_phone_number': True,
-                'show_email_address': True,
-                'language': 'en',
-                },
-            'letter': {
-                'width': 21.0,
-                'height': 29.7,
-                'border_top': 2.0,
-                'border_bottom': 2.0,
-                'border_left': 2.5,
-                'border_right': 2.0,
-                'language': 'en',
-                'address_x': 2.0,
-                'address_y': 20.7,
-                'address_width': 9.0,
-                'address_height': 4.5,
-                'backaddress_y': 23.43,
-                'backaddress_sepline_thickness': 0.5,
-                'backaddress_sepchar': 'bullet',
-                'backaddress_fontsize': 'scriptsize',
-                'sender_x': 11.0,
-                'sender_y': 20.7,
-                'sender_width': 20.7,
-                'sender_height': 20.7,
-                'subject_y': 18.5,
-                'text_y': 18.0,
-                'closing_y_shift': 5.0,
-                'enclosure_y_shift': -1.0,
-                'perforation_mark_x': 0.1,
-                'perforation_mark_y': 14.85,
-                'perforation_mark_width': 0.5,
-                'perforation_mark_thickness': 0.3,
-                'folding_mark_1_x': 0.1,
-                'folding_mark_1_y': 19.2,
-                'folding_mark_1_width': 0.25,
-                'folding_mark_1_thickness': 0.3,
-                'folding_mark_2_x': 0.1,
-                'folding_mark_2_y': 8.7,
-                'folding_mark_2_width': 0.25,
-                'folding_mark_2_thickness': 0.3,
-                'background_color': 'none',
-                'draft': False,
-                'draft_highlight_color': 'Greys-D',
-                },
-            'icons': {
-                'address': r'\faIcon{map-marker-alt}',
-                'phone': r'\faIcon{phone-alt}',
-                'mail': r'\faIcon{envelope}',
-                'github': r'\faIcon{github}',
-                'xing': r'\faIcon{xing-square}',
-                'linkedin': r'\faIcon{linkedin}',
-                'orcid': r'\faIcon{orcid}',
-                },
-            'cv': {
-                'layout': {
-                    'width': 21.0,
-                    'height': 29.7,
-                    'border_top': 2.0,
-                    'border_bottom': 2.0,
-                    'border_left': 2.5,
-                    'border_right': 2.0,
-                    'pages': 2,
-                    'background_color': 'none',
-                    'box_top': False,
-                    'box_bottom': False,
-                    'box_left': True,
-                    'box_right': False,
-                    'include_photo': True,
-                    'title_on_every_page': False,
-                    'table_style': True,
-                    'language': 'en',
-                    'draft': False,
-                    'draft_highlight_color': 'Greys-D',
-                    },
-                'areas': {
-                    'title': {
-                        'title': 'Curriculum vitae',
-                        'pos_x': 8.0,
-                        'pos_y': 29,
-                        'anchor': 'north west',
-                        'head_vspace': 0.3,
-                        'head_sepline': True,
-                        'head_case': 'mixed',
-                        'head_font_size': 'LARGE',
-                        'body_vspace': 1,
-                        'body_indent': 2,
-                        'body_font_size': 'large',
-                        'color': 'black',
-                        'icon_color': 'black',
-                        'length': 20,
-                        'style': 'oneline',
-                        'icon': '/home/user/Icon1.pdf',
-                        'show_area': True,
-                        'show_icon': False,
-                        'hyperlinks': False,
-                        'hide_items': [],
-                        },
-                    'personal': {
-                        'title': 'About me',
-                        'pos_x': 6.25,
-                        'pos_y': 27,
-                        'anchor': 'north west',
-                        'head_vspace': 0.3,
-                        'head_sepline': False,
-                        'head_case': 'upper',
-                        'head_font_size': 'large',
-                        'body_vspace': 1,
-                        'body_indent': 2,
-                        'body_font_size': 'normalsize',
-                        'color': 'black',
-                        'icon_color': 'black',
-                        'length': 9.5,
-                        'style': 'oneline',
-                        'icon': '/home/user/Icon1.pdf',
-                        'show_area': True,
-                        'show_icon': False,
-                        'hyperlinks': False,
-                        'hide_items': [],
-                        },
-                    'photo': {
-                        'pos_x': 16,
-                        'pos_y': 27,
-                        'anchor': 'north west',
-                        'width': 4.0,
-                        'height': 6.0,
-                        'border': True,
-                        'border_width': 0.5,
-                        'border_color': 'Greys-L',
-                        },
-                    'contact': {
-                        'title': 'Contact',
-                        'pos_x': 5.15,
-                        'pos_y': 24,
-                        'anchor': 'north west',
-                        'head_vspace': 0.5,
-                        'head_sepline': False,
-                        'head_case': 'upper',
-                        'head_font_size': 'large',
-                        'body_vspace': 1,
-                        'body_vspace': 1,
-                        'body_indent': 2,
-                        'body_font_size': 'normalsize',
-                        'color': 'black',
-                        'icon_color': 'Blues-K',
-                        'length': 10,
-                        'style': 'table',
-                        'icon': '/home/user/Icon2.pdf',
-                        'show_area': True,
-                        'show_icon': False,
-                        'hyperlinks': True,
-                        'hide_items': ['Webpage', 'Xing', 'phone', 'country', 'GitHub'],
-                        },
-                    'career': {
-                        'title': 'Career',
-                        'pos_x': 2.2,
-                        'pos_y': 18,
-                        'anchor': 'north west',
-                        'head_vspace': 0.5,
-                        'head_sepline': False,
-                        'head_case': 'upper',
-                        'head_font_size': 'large',
-                        'body_vspace': 1,
-                        'body_vspace': 1,
-                        'body_indent': 2,
-                        'body_font_size': 'normalsize',
-                        'color': 'black',
-                        'icon_color': 'black',
-                        'length': 10,
-                        'style': 'table',
-                        'icon': '/home/user/Icon3.pdf',
-                        'show_area': True,
-                        'show_icon': False,
-                        'hyperlinks': False,
-                        'hide_items': [],
-                        },
-                    'education': {
-                        'title': 'Education',
-                        'pos_x': 2.2,
-                        'pos_y': 10,
-                        'anchor': 'north west',
-                        'head_vspace': 0.5,
-                        'head_sepline': False,
-                        'head_case': 'upper',
-                        'head_font_size': 'large',
-                        'body_vspace': 1,
-                        'body_vspace': 1,
-                        'body_indent': 2,
-                        'body_font_size': 'normalsize',
-                        'color': 'black',
-                        'icon_color': 'black',
-                        'length': 10,
-                        'style': 'table',
-                        'icon': '/home/user/Icon4.pdf',
-                        'show_area': True,
-                        'show_icon': False,
-                        'hyperlinks': False,
-                        'hide_items': [],
-                        },
-                    'skills': {
-                        'title': 'Skill profile',
-                        'pos_x': 2.2,
-                        'pos_y': 22.5,
-                        'anchor': 'north west',
-                        'head_vspace': 0.5,
-                        'head_sepline': False,
-                        'head_case': 'upper',
-                        'head_font_size': 'large',
-                        'body_vspace': 1,
-                        'body_vspace': 1,
-                        'body_indent': 2,
-                        'body_font_size': 'normalsize',
-                        'color': 'black',
-                        'icon_color': 'black',
-                        'length': 10,
-                        'style': 'table',
-                        'icon': '/home/user/Icon5.pdf',
-                        'show_area': True,
-                        'show_icon': False,
-                        'hyperlinks': False,
-                        'hide_items': [],
-                        },
-                    'knowledge': {
-                        'title': 'Knowledge',
-                        'pos_x': 2.2,
-                        'pos_y': 15.8,
-                        'anchor': 'north west',
-                        'head_vspace': 0.5,
-                        'head_sepline': False,
-                        'head_case': 'upper',
-                        'head_font_size': 'large',
-                        'body_vspace': 1,
-                        'body_vspace': 1,
-                        'body_indent': 2,
-                        'body_font_size': 'normalsize',
-                        'color': 'black',
-                        'icon_color': 'black',
-                        'length': 10,
-                        'style': 'list',
-                        'icon': '/home/user/Icon6.pdf',
-                        'show_area': True,
-                        'show_icon': False,
-                        'hyperlinks': False,
-                        'hide_items': [],
-                        },
-                    'certificates': {
-                        'title': 'Certificates',
-                        'pos_x': 6.0,
-                        'pos_y': 9.7,
-                        'anchor': 'north west',
-                        'head_vspace': 0.5,
-                        'head_sepline': False,
-                        'head_case': 'upper',
-                        'head_font_size': 'large',
-                        'body_vspace': 1,
-                        'body_vspace': 1,
-                        'body_indent': 2,
-                        'body_font_size': 'normalsize',
-                        'color': 'black',
-                        'icon_color': 'black',
-                        'length': 10,
-                        'style': 'list',
-                        'icon': '/home/user/Icon6.pdf',
-                        'show_area': True,
-                        'show_icon': False,
-                        'hyperlinks': True,
-                        'hide_items': [],
-                        },
-                    },
-                'boxes': {
-                    'box_top': {
-                        'size': 15,
-                        'color': 'Greys-J',
-                        },
-                    'box_bottom': {
-                        'size': 15,
-                        'color': 'Greys-J',
-                        },
-                    'box_left': {
-                        'size': 6.0,
-                        'color': 'Greys-C',
-                        },
-                    'box_right': {
-                        'size': 15,
-                        'color': 'Greys-J',
-                        },
-                    },
-                'skills': {
-                    'layout': {
-                        'show_circles': False,
-                        'circle_number': 5,
-                        'circle_distance': 0.35,
-                        'group_color': 'Blues-K',
-                        },
-                    'circle': {
-                        'radius': 1.6,
-                        'fillcolor': 'Blues-K',
-                        'opencolor': 'Greys-G',
-                        'linecolor': 'black',
-                        'showline': False,
-                        },
-                   },
-                },
-            }
-    with open(config_dir, 'w') as f:
-        json.dump(settings_dict, f, indent=4)
 

@@ -83,8 +83,8 @@ def main():
     # Collect names of enclosed documents
     encl = ['Lebenslauf']
 #    encl = ['Curriculum vitae']
-    for app in config_data['Appendix'].values():
-        encl.append(app['name'])
+    for enclosure in config_encl.keys():
+        encl.append(enclosure)
     draft = args.draft
     if draft is True:
         print('[output] Option --draft is active.')

@@ -4,6 +4,7 @@ import json
 import os
 import cvdata as cv
 import geometry as geo
+import defaults
 from PyPDF2 import PdfFileMerger
 
 
@@ -54,6 +55,14 @@ def check_config_dir(config_dir):
             print('[config] No config directory created.')
 
 
+def write_config(config_file, settings_dict):
+    """
+    Write config file
+    """
+    with open(config_file, 'w') as f:
+        json.dump(settings_dict, f, indent=4)
+
+
 def check_config_file(config_file):
     """
     Check if config files exist. If not, ask for creating
@@ -64,15 +73,15 @@ def check_config_file(config_file):
         create_config_dir = input('[config] Create generic config file {} ? (Y/n): '.format(config_file))
         if create_config_dir == 'Y':
             if 'cvdata' in config_file:
-                cv.write_config(config_file)
+                write_config(config_file, defaults.personal_data_config())
             elif 'company' in config_file:
                 generic_company(config_file)
             elif 'geo' in config_file:
-                geo.write_config(config_file)
+                write_config(config_file, defaults.geometry_config())
             elif 'enclosure' in config_file:
                 generic_enclosure(config_file)
             elif 'letter' in config_file:
-                cv.write_letter(config_file)
+                defaults.write_letter(config_file)
             elif 'preamble' in config_file:
                 generic_preamble(config_file)
             elif 'cell_styles' in config_file:
