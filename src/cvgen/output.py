@@ -771,8 +771,15 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
             }
 
     # Insert variables into letter text
+    variables = {
+            '{company}': company.name,
+            '{position}': company.position,
+            '{tag_number}': company.tag_number,
+            '{salary_expectation}': company.salary_expectation,
+            '{earliest_join_date}': company.earliest_join_date,
+            }
     for count, line in enumerate(text):
-        text[count] = line.replace('{Company}', company.name).replace('{Position}', company.position)
+        text[count] = fn.replace_strings(variables, line)
     
     # Generate LaTeX preamble with or without metadata
     if include_meta is True:

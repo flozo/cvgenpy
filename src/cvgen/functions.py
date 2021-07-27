@@ -279,8 +279,11 @@ def generic_company(config_file):
             "city": "City",
             "country": "Country",
             "position": "Position",
+            "tag_number": "Tag no. 12345-67890",
+            "salary_expectation": "1,000,000 EUR",
+            "earliest_join_date": "1st of September",
             "color_main": "blue",
-            "color_accent": "yellow"
+            "color_accent": "yellow",
             }
     with open(config_file, 'w') as f:
         json.dump(company_data, f, indent=4)
@@ -330,4 +333,12 @@ def makelist(string):
         return string[1:-1].split(';')
     else:
         return string
+
+def replace_strings(translation_dict, string):
+    """
+    Replace all occurences of keys in translation_dict in string by values
+    """
+    for key, value in translation_dict.items():
+        string = string.replace(key, value)
+    return string
 

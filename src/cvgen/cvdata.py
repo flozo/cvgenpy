@@ -44,6 +44,9 @@ class Company(Address):
         self.name = company['name']
         self.attention = company['attention']
         self.position = company['position']
+        self.tag_number = company['tag_number']
+        self.salary_expectation = company['salary_expectation']
+        self.earliest_join_date = company['earliest_join_date']
         self.color_main = company['color_main']
         self.color_accent = company['color_accent']
 
@@ -423,7 +426,13 @@ def write_letter(config_dir):
     """
     Create generic letter text with lorem ipsum.
     """
-    text = """### Use {Company}, {Position}, {Name} to include variables:
+    text = """
+### Write your letter text below this #-commented header.
+###
+### You can include variables using braces {variable_name}.
+###
+### The following variables are available:
+### {company}, {position}, {tag_number}, {salary_expectation}, {earliest_join_date}
 ###
 ### Letter text: 
 Dear Sir or Madam,
@@ -436,6 +445,4 @@ Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lo
 """
     with open(config_dir, 'w') as f:
         f.write(text)
-#        json.dump(text, f, indent=4)
 
-           

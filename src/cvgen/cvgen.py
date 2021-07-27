@@ -10,8 +10,8 @@ import output as out
 import os
 
 # Version
-version_num = '0.28'
-version_dat = '2021-07-26'
+version_num = '0.29'
+version_dat = '2021-07-27'
 version_str = '{} ({})'.format(version_num, version_dat)
 
 def main():
@@ -100,7 +100,7 @@ def main():
             print('[output] Executing pdfLaTeX: {} ...'.format(cmd))
         # redirect pdfLaTeX output to log file to enable true quiet mode
         if verbosity == -1:
-            cmd = cmd + '> ~/.config/cvgen/pdfLaTeX_last_output.log'
+            cmd = '{} > {}/pdfLaTeX_last_output.log'.format(cmd, config_dir)
         os.system(cmd)
         if verbosity >= 1:
             print('[output] ... done!')
