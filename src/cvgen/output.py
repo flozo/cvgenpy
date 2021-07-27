@@ -181,7 +181,10 @@ def assemble_letter(dict_letter, letter_text, dict_pers, dict_cont, company, ico
     l4.append('\t' + r'% |- Date field')
     l4.append('\t' + '\\node [anchor=south east] at ({}, {}) {{{}}};'.format(letter.width-letter.border_right, letter.folding_mark_1_y, date))
     # Subject field
-    subject = 'Bewerbung als {}'.format(company.position)
+    if company.tag_number == '':
+        subject = 'Bewerbung als {}'.format(company.position)
+    else:
+        subject = 'Bewerbung als {} ({})'.format(company.position, company.tag_number)
     l4.append('\t' + r'% |- Subject field')
     l4.append('\t' + '\\node [anchor=south west] at ({}, {}) {{\\bf {}}};'.format(letter.border_left, letter.subject_y, subject))
     l = l + l4
