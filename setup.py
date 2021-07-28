@@ -17,10 +17,10 @@ setup(
         description = 'A program for generating a curriculum vitae.',
         long_description = long_description,
         long_description_content_type = 'text/markdown',
-#        url = 'https://github.com/flozo/Reponame',
+        url = 'https://github.com/flozo/cvgen',
         author = 'flozo',
         author_email = 'github.mail@flozo.de',
-# Classifiers from https://pypi.org/classifiers/
+        # Classifiers from https://pypi.org/classifiers/
         classifiers = [
             'Development Status :: 2 - Pre-Alpha',
             'Environment :: Console',
