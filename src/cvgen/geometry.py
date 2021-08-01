@@ -14,15 +14,24 @@ class Preamble:
        self.metadata = metadata
 
 
-    def generate(self):
+    def generate(self, language):
         """
         Generate LaTeX code for preamble
         """
         # Generate code for documentclass
         dc = list(self.documentclass.items())[0]
         l = ['\\documentclass[{classoptions}]{{{classname}}}'.format(classoptions=dc[1], classname=dc[0])]
+        if language == 'en':
+            newlang = 'english'
+        elif language == 'de':
+            newlang = 'german'
         # Generate code for packages
         for key, value in self.packages.items():
+            # Overwrite JSON language settings with command-line option
+            if key == 'babel':
+                oldlang = value
+                value = newlang
+                print('[language] Overwriting settings ({}) for package {}, due to option --language={}'.format(oldlang, key, language))
             if value != '':
                 l.append('\\usepackage[{packageoptions}]{{{packagename}}}'.format(packageoptions=value, packagename=key))
             else:
@@ -291,7 +300,11 @@ class Signature:
             namestr = ''
         else:
             namestr = '({}) '.format(self.name)
-        return '\\node {}[anchor=north west, text width=10cm] at ({}, {}) {{{}\\\\\\includegraphics[height={}cm]{{{}}}\\\\{}}};'.format(namestr, self.x, self.y, self.text_above, self.height, self.filename, self.text_below)
+        if self.text_above == '':
+            above_str = ''
+        else:
+            above_str = '{}\\\\'.format(self.text_above)
+        return '\\node {}[anchor=north west, text width=10cm] at ({}, {}) {{{}\\includegraphics[height={}cm]{{{}}}\\\\{}}};'.format(namestr, self.x, self.y, above_str, self.height, self.filename, self.text_below)
 
 
 class Document:

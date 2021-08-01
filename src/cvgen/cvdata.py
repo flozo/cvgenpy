@@ -82,7 +82,7 @@ class Metadata(object):
                 '\t' + 'pdfauthortitle={{{}}},'.format(self.title),
                 '\t' + 'pdfcaptionwriter={{{} {}}},'.format(self.first_name, self.family_name),
                 '\t' + 'pdfdate={{{}}},'.format(datetime.today().strftime('%Y-%m-%d')),
-                '\t' + 'pdfproducer={{cvgen {} by flozo}},'.format(self.version),
+                '\t' + 'pdfproducer={{cvgen {} by flozo; visit https://github.com/flozo/cvgen}},'.format(self.version),
                 '\t' + 'pdfcontactcity={{{}}},'.format(self.city),
                 '\t' + 'pdfcontactcountry={{{}}},'.format(self.country),
                 '\t' + 'pdfcontactemail={{{}}},'.format(self.email),

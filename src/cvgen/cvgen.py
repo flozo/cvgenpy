@@ -10,8 +10,8 @@ import output as out
 import os
 
 # Version
-version_num = '0.29'
-version_dat = '2021-07-27'
+version_num = '0.30'
+version_dat = '2021-08-01'
 version_str = '{} ({})'.format(version_num, version_dat)
 
 def main():
@@ -26,6 +26,8 @@ def main():
                         help=('disable terminal output (terminates all verbosity)'))
     parser.add_argument('-l', '--latex', action='store_true',
                         help='execute pdflatex after creating *.tex file')
+    parser.add_argument('-L', '--language', choices=('de', 'en'), default='en',
+                        help='set language (English=en, German=de)')
     parser.add_argument('-M', '--microtype', action='store_true',
                         help='use microtype package for fine tuning of type set')
     parser.add_argument('-d', '--draft', action='store_true',
@@ -81,15 +83,17 @@ def main():
         outfile = outfile + '.tex'
     outfile = os.path.abspath(outfile)
     # Collect names of enclosed documents
-    encl = ['Lebenslauf']
-#    encl = ['Curriculum vitae']
+    if args.language == 'en':
+        encl = ['Curriculum vitae']
+    elif args.language == 'de':
+        encl = ['Lebenslauf']
     for enclosure in config_encl.keys():
         encl.append(enclosure)
     draft = args.draft
     if draft is True:
         print('[output] Option --draft is active.')
 #            print('[output] Option --draft is active. Ignoring contradicting setting in cvgeometry.json: "draft": false')
-    out.assemble_latex(outfile, version_str, config_file_geo, config_file_data, config_encl, text, args.microtype, args.metadata, encl, draft, args.encl_latex, config_file_preamble, config_file_cell_styles, config_file_company)
+    out.assemble_latex(outfile, version_str, config_file_geo, config_file_data, config_encl, text, args.microtype, args.metadata, encl, draft, args.encl_latex, config_file_preamble, config_file_cell_styles, config_file_company, args.language)
     # Messages and execution of pdfLaTeX/mupdf
     if verbosity >= 1:
         print('[output] LaTeX file {} created.'.format(outfile))

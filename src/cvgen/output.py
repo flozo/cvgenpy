@@ -60,11 +60,25 @@ def declare_layers():
     return l
 
 
-def assemble_letter(dict_letter, letter_text, dict_pers, dict_cont, company, icons, encl, dict_set, draft):
+def assemble_letter(dict_letter, letter_text, dict_pers, dict_cont, company, icons, encl, dict_set, draft, language):
     """
     Assemble LaTeX code for letter
     """
     letter = geo.Letter(dict_letter)
+    # Language-dependent settings
+    if language == 'en':
+        subject_str = 'Application as'
+        closing_str = 'Yours sincerely'
+        enclosure_str = 'Enclosed:'
+    elif language == 'de':
+        subject_str = 'Bewerbung als'
+        closing_str = 'Mit freundlichen Grüßen,'
+        enclosure_str = 'Anlagen:'
+    else:
+        subject_str = 'Application as'
+        closing_str = 'Yours sincerely'
+        enclosure_str = 'Enclosed'
+        print('[error] Language not supported')
     # Layout
     l = [
         r'% === LETTER ===',
@@ -182,9 +196,9 @@ def assemble_letter(dict_letter, letter_text, dict_pers, dict_cont, company, ico
     l4.append('\t' + '\\node [anchor=south east] at ({}, {}) {{{}}};'.format(letter.width-letter.border_right, letter.folding_mark_1_y, date))
     # Subject field
     if company.tag_number == '':
-        subject = 'Bewerbung als {}'.format(company.position)
+        subject = '{} {}'.format(subject_str, company.position)
     else:
-        subject = 'Bewerbung als {} ({})'.format(company.position, company.tag_number)
+        subject = '{} {} ({})'.format(subject_str, company.position, company.tag_number)
     l4.append('\t' + r'% |- Subject field')
     l4.append('\t' + '\\node [anchor=south west] at ({}, {}) {{\\bf {}}};'.format(letter.border_left, letter.subject_y, subject))
     l = l + l4
@@ -196,24 +210,24 @@ def assemble_letter(dict_letter, letter_text, dict_pers, dict_cont, company, ico
     l.append('\t' + r'};')
     # Closing and signature
     l.append('\t' + r'% |- Closing and signature')
-    closing = 'Mit freundlichen Grüßen,'
+#    closing = 'Mit freundlichen Grüßen,'
     below = '{} {}'.format(dict_pers['first_name'], dict_pers['family_name'])
     name = 'closing'
-    signature = geo.Signature(name, letter.border_left, letter.border_bottom+letter.closing_y_shift, 1.3, closing, below, dict_pers['signature'])
+    signature = geo.Signature(name, letter.border_left, letter.border_bottom+letter.closing_y_shift, 1.3, closing_str, below, dict_pers['signature'])
     l.append(signature.create())
 #    l.append('\t' + '\\node (closing) [anchor=north west, text width=10cm, yshift={}cm] at (textbox.south west) {{{}\\\\\\includegraphics[height=1.3cm]{{{}}}\\\\{} {}}};'.format(letter.closing_y_shift, closing, signature, dict_pers['first_name'], dict_pers['family_name']))
     # Enclosure
     l.append('\t' + r'% |- Enclosure')
-    enclosure = 'Anlagen:'
+#    enclosure = 'Anlagen:'
     for item in encl:
-        enclosure = '{} {},'.format(enclosure, item)
-    enclosure = enclosure[:-1]
-    l.append('\t\\node [anchor=north west, text width={}cm, yshift={}cm] at (closing.south west) {{{}}};'.format(letter.text_width, letter.enclosure_y_shift, enclosure))
+        enclosure_str = '{} {},'.format(enclosure_str, item)
+    enclosure_str = enclosure_str[:-1]
+    l.append('\t\\node [anchor=north west, text width={}cm, yshift={}cm] at (closing.south west) {{{}}};'.format(letter.text_width, letter.enclosure_y_shift, enclosure_str))
     l.append(r'\end{tikzpicture}')
     return l
  
 
-def assemble_latex(outfile, version_str, config_file_geo, config_file_data, config_file_encl, text, microtype, include_meta, encl, draft, enclosure_latex, config_file_preamble, config_file_cell_styles, config_file_company):
+def assemble_latex(outfile, version_str, config_file_geo, config_file_data, config_file_encl, text, microtype, include_meta, encl, draft, enclosure_latex, config_file_preamble, config_file_cell_styles, config_file_company, language):
     """
     Read out config values, create objects, and assemble LaTeX code
     """
@@ -283,6 +297,13 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
     box_left = geo.Box(color=dict_box_left['color'], width=dict_box_left['size'], height=cvl.height)
     box_right = geo.Box(color=dict_box_right['color'], width=dict_box_right['size'], height=cvl.height)
     company = cv.Company(config_company)
+    if language == 'en':
+        languages_str = 'Languages'
+        licenses_str = 'Licenses'
+    elif language == 'de':
+        languages_str = 'Sprachen'
+        licenses_str = 'Führerscheine'
+
 
     # General settings
     dict_set = config_geo['general']
@@ -329,9 +350,9 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
     pers.append(geo.Textbox(personal_title_set, area_personal.title).create())
     pers.append('% |- Items:')
     if area_personal.style == 'oneline':
-        about_str = geo.Personal(dict_pers).oneline(cv_lang)
+        about_str = geo.Personal(dict_pers).oneline(language)
     elif area_personal.style == 'twoline':
-        about_str = geo.Personal(dict_pers).twoline(cv_lang)
+        about_str = geo.Personal(dict_pers).twoline(language)
     pers.append(geo.Textbox(personal_body_set, about_str).create())
 
     # Assemble title
@@ -345,7 +366,7 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
             'inner_xsep': 8,
             'inner_ysep': 4,
             'font_size': area_title.head_font_size,
-            'text_width': 3.5,
+            'text_width': 5.3,
             'align': 'right',
             'case': area_title.head_case,
             'yshift': area_title.head_vspace,
@@ -425,7 +446,13 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
             'font_size': area_contact.body_font_size,
             'column_styles': ['cell3', 'cell4'],
             }
-    email_subject = 'Ihre Bewerbung bei {}'.format(company.name)
+    language_corr = 'de'
+    if language_corr == 'en':
+        email_subject = 'Your application at {}'.format(company.name)
+    elif language_corr == 'de':
+        email_subject = 'Ihre Bewerbung bei {}'.format(company.name)
+    else:
+        print('[error] Language not supported.')
     email = fn.make_link_email(contact.email, '', email_subject)
     items = [
             [icons['address'], address],
@@ -691,7 +718,7 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
 #        items.append([group.replace('&', '\&'), row])
     first = True
     for obj in know_objects:
-        if obj.group == 'Sprachen':
+        if obj.group == languages_str:
             if first is True:
                 items.append([obj.group, obj.name, obj.description])
                 first = False
@@ -710,7 +737,7 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
             }
     first = True
     for obj in know_objects:
-        if obj.group == 'Führerscheine':
+        if obj.group == licenses_str:
             if first is True:
                 items.append([obj.group, obj.name])
                 first = False
@@ -789,7 +816,7 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
         meta = cv.Metadata(**meta_set).generate()
     else:
         meta = None
-    preamb = geo.Preamble(config_preamble['documentclass'], config_preamble['packages'], config_preamble['settings'], meta).generate()
+    preamb = geo.Preamble(config_preamble['documentclass'], config_preamble['packages'], config_preamble['settings'], meta).generate(language)
  
     # Write to file
     with open(outfile, 'w', encoding='UTF-8') as f:
@@ -812,7 +839,7 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
             f.write('\t' + line + '\n')
         if structure['letter'] is True:
             # Write letter
-            for line in assemble_letter(dict_letter, text, dict_pers, dict_contact, company, icons, encl, dict_set, draft):
+            for line in assemble_letter(dict_letter, text, dict_pers, dict_contact, company, icons, encl, dict_set, draft, language):
                 f.write('\t' + line + '\n')
         if structure['cv'] is True:
             # Write CV
@@ -854,12 +881,11 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
                 closing = ''
                 below = '{} {}'.format(dict_pers['first_name'], dict_pers['family_name'])
                 name = 'closing2'
-                signature = geo.Signature(name, cvl.border_left+3.1, cvl.border_bottom+2.2, 1.3, closing, below, dict_pers['signature'])
-                f.write('\t\t\t' + signature.create())
+                signature = geo.Signature(name, cvl.border_left+3.1, cvl.border_bottom+1.4, 1.3, closing, below, dict_pers['signature'])
+                f.write('\t\t\t' + signature.create() + '\n')
                 f.write('\t\t' + r'\end{pgfonlayer}' + '\n')
                 for l in cvl.latex_foot():
                     f.write('\t' + l + '\n')
-            print(config_file_encl)
             if enclosure_latex is True:
                 enclosure = geo.Enclosure(config_file_encl).include()
                 for l in enclosure:
