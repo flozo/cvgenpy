@@ -47,19 +47,6 @@ def tikzset(config_cell_styles):
     return l
 
 
-def declare_layers():
-    """
-    Define pgf layers
-    """
-    l = [
-        r'\pgfdeclarelayer{background}', 
-        r'\pgfdeclarelayer{forebackground}', 
-        r'\pgfdeclarelayer{foreground}', 
-        r'\pgfsetlayers{background, forebackground, main, foreground}',
-        ]
-    return l
-
-
 def assemble_letter(dict_letter, letter_text, dict_pers, dict_cont, company, icons, encl, dict_set, draft, language):
     """
     Assemble LaTeX code for letter
@@ -227,7 +214,7 @@ def assemble_letter(dict_letter, letter_text, dict_pers, dict_cont, company, ico
     return l
  
 
-def assemble_latex(outfile, version_str, config_file_geo, config_file_data, config_file_encl, text, microtype, include_meta, encl, draft, enclosure_latex, config_file_preamble, config_file_cell_styles, config_file_company, language):
+def assemble_latex(outfile, version_str, config_file_geo, config_file_data, config_file_encl, text, microtype, include_meta, encl, draft, enclosure_latex, config_file_preamble, config_file_cell_styles, config_file_company, language, config_file_layers):
     """
     Read out config values, create objects, and assemble LaTeX code
     """
@@ -279,6 +266,7 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
     config_geo = fn.read_config(config_file_geo)
     config_preamble = fn.read_config(config_file_preamble)
     config_cell_styles = fn.read_config(config_file_cell_styles)
+    config_layers = fn.read_config(config_file_layers)
     dict_layout = config_geo['cv']['layout']
     dict_letter = config_geo['letter']
     dict_box = config_geo['cv']['boxes']
@@ -835,7 +823,7 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
         for line in tikzset(config_cell_styles):
             f.write('\t' + line + '\n')
         # Write layer declaration
-        for line in declare_layers():
+        for line in fn.parse_layers(config_layers):
             f.write('\t' + line + '\n')
         if structure['letter'] is True:
             # Write letter

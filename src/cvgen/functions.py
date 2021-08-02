@@ -6,6 +6,7 @@ import cvdata as cv
 import geometry as geo
 import defaults
 from PyPDF2 import PdfFileMerger
+from operator import itemgetter
 
 
 def read_text(textfile):
@@ -86,6 +87,8 @@ def check_config_file(config_file):
                 write_config(config_file, defaults.generic_preamble())
             elif 'cell_styles' in config_file:
                 write_config(config_file, defaults.generic_cell_styles())
+            elif 'layers' in config_file:
+                write_config(config_file, defaults.generic_layers())
             else:
                 print('[config] Config file name undefined.')
             print('[config] Generic config file {} created.'.format(config_file))
@@ -138,6 +141,7 @@ def makelist(string):
     else:
         return string
 
+
 def replace_strings(translation_dict, string):
     """
     Replace all occurences of keys in translation_dict in string by values
@@ -145,4 +149,31 @@ def replace_strings(translation_dict, string):
     for key, value in translation_dict.items():
         string = string.replace(key, value)
     return string
+
+
+def parse_layers(layers_dict):
+    """
+    Create TikZ layer declarations from layer dictionary
+    """
+    l = []
+    for key, value in layers_dict.items():
+        # Create list with layer position and name
+        l.append([value['position'], value['name']])
+    # Add main layer
+    l.append([0, 'main'])
+    # Sort by position
+    l.sort(key=itemgetter(0))
+    # Create layer order
+    set_layers = '\\pgfsetlayers{'
+    for layer in l:
+        set_layers = set_layers + layer[1] + ', '
+    set_layers = set_layers[:-2] + '}'
+    # Create declare-layers commands
+    latex = []
+    for layer in l:
+        # Exclude 'main' from layer declaration
+        if 'main' not in layer:
+            latex.append('\\pgfdeclarelayer{{{}}}'.format(layer[1]))
+    latex.append(set_layers)
+    return latex
 

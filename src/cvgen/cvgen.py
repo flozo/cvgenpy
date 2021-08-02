@@ -10,8 +10,8 @@ import output as out
 import os
 
 # Version
-version_num = '0.30'
-version_dat = '2021-08-01'
+version_num = '0.31'
+version_dat = '2021-08-02'
 version_str = '{} ({})'.format(version_num, version_dat)
 
 def main():
@@ -63,6 +63,7 @@ def main():
     config_file_letter = os.path.join(config_dir, 'letter.txt')
     config_file_preamble = os.path.join(config_dir, 'LaTeX_preamble.json')
     config_file_cell_styles = os.path.join(config_dir, 'LaTeX_cell_styles.json')
+    config_file_layers = os.path.join(config_dir, 'LaTeX_layers.json')
     fn.check_config_file(config_file_data)
     fn.check_config_file(config_file_company)
     fn.check_config_file(config_file_geo)
@@ -70,6 +71,7 @@ def main():
     fn.check_config_file(config_file_letter)
     fn.check_config_file(config_file_preamble)
     fn.check_config_file(config_file_cell_styles)
+    fn.check_config_file(config_file_layers)
     text = fn.read_text(os.path.join(config_dir, 'letter.txt'))  
     text = fn.format_text(text)
 
@@ -93,7 +95,7 @@ def main():
     if draft is True:
         print('[output] Option --draft is active.')
 #            print('[output] Option --draft is active. Ignoring contradicting setting in cvgeometry.json: "draft": false')
-    out.assemble_latex(outfile, version_str, config_file_geo, config_file_data, config_encl, text, args.microtype, args.metadata, encl, draft, args.encl_latex, config_file_preamble, config_file_cell_styles, config_file_company, args.language)
+    out.assemble_latex(outfile, version_str, config_file_geo, config_file_data, config_encl, text, args.microtype, args.metadata, encl, draft, args.encl_latex, config_file_preamble, config_file_cell_styles, config_file_company, args.language, config_file_layers)
     # Messages and execution of pdfLaTeX/mupdf
     if verbosity >= 1:
         print('[output] LaTeX file {} created.'.format(outfile))

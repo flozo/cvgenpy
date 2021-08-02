@@ -753,3 +753,24 @@ def generic_cell_styles():
             }
     return cell_styles
 
+
+def generic_layers():
+    """
+    Define generic TikZ layers. Default layer "main" has position 0.
+    """
+    layers_dict = {
+            'layer1': {
+                'name': 'background',
+                'position': -2,
+                },
+            'layer2': {
+                'name': 'forebackground',
+                'position': -1,
+                },
+            'layer3': {
+                'name': 'foreground',
+                'position': 1,
+                },
+            }
+    return layers_dict
+
