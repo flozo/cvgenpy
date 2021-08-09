@@ -10,8 +10,8 @@ import output as out
 import os
 
 # Version
-version_num = '0.31'
-version_dat = '2021-08-02'
+version_num = '0.32'
+version_dat = '2021-08-09'
 version_str = '{} ({})'.format(version_num, version_dat)
 
 def main():
@@ -64,6 +64,7 @@ def main():
     config_file_preamble = os.path.join(config_dir, 'LaTeX_preamble.json')
     config_file_cell_styles = os.path.join(config_dir, 'LaTeX_cell_styles.json')
     config_file_layers = os.path.join(config_dir, 'LaTeX_layers.json')
+    config_file_skills = os.path.join(config_dir, 'skills.json')
     fn.check_config_file(config_file_data)
     fn.check_config_file(config_file_company)
     fn.check_config_file(config_file_geo)
@@ -72,6 +73,7 @@ def main():
     fn.check_config_file(config_file_preamble)
     fn.check_config_file(config_file_cell_styles)
     fn.check_config_file(config_file_layers)
+    fn.check_config_file(config_file_skills)
     text = fn.read_text(os.path.join(config_dir, 'letter.txt'))  
     text = fn.format_text(text)
 

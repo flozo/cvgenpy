@@ -25,25 +25,32 @@ def tikzset(config_cell_styles):
     l = ['\\tikzset{']
     for key, value in config_cell_styles.items():
         l.append('\t' + geo.Cell(**value).set_style())
-    l2 = [
-        '\t' + r'circfull/.style={draw=none, fill=Blues-K},',
-        '\t' + r'circopen/.style={draw=none, fill=Greys-G},',
-        '\t' + r'pics/skillmax/.style n args={3}{code={',
-        '\t\t' + r'\foreach \x in {1, ..., #1} {\filldraw[circfull] (#2*\x, 0) circle [radius=#3 mm];};',
-        '\t\t' + r'}',
-        '\t' + r'},',
-        '\t' + r'pics/skillmin/.style n args={3}{code={',
-        '\t\t' + r'\foreach \x in {1, ..., #1} {\filldraw[circopen] (#2*\x, 0) circle [radius=#3 mm];};',
-        '\t\t' + r'}',
-        '\t' + r'},',
-        '\t' + r'pics/skill/.style n args={5}{code={',
-        '\t\t' + r'\foreach \x in {1, ..., #1} {\filldraw[circfull] (#4*\x, 0) circle [radius=#5 mm];};',
-        '\t\t' + r'\foreach \x in {#2, ..., #3} {\filldraw[circopen] (#4*\x, 0) circle [radius=#5 mm];};',
-        '\t\t' + r'}',
-        '\t' + r'},',
-        r'}',
-        ]
-    l = l + l2
+    skillcirc_set = {
+            'total': 5,
+            'distance': 0.4,
+            'radius': 0.3,
+            'fillcolor': 'Blues-K',
+            'opencolor': 'Greys-G',
+            'linecolor': '',
+            }
+    l = l + geo.SkillCircles(**skillcirc_set).define()
+#l2 = [
+#        '\t' + r'circfull/.style={draw=none, fill=Blues-K},',
+#        '\t' + r'circopen/.style={draw=none, fill=Greys-G},',
+#        '\t' + r'pics/skillmax/.style n args={3}{code={',
+#        '\t\t' + r'\foreach \x in {1, ..., #1} {\filldraw[circfull] (#2*\x, 0) circle [radius=#3 mm];};',
+#        '\t\t' + r'}',
+#        '\t' + r'},',
+#        '\t' + r'pics/skillmin/.style n args={3}{code={',
+#        '\t\t' + r'\foreach \x in {1, ..., #1} {\filldraw[circopen] (#2*\x, 0) circle [radius=#3 mm];};',
+#        '\t\t' + r'}',
+#        '\t' + r'},',
+#        '\t' + r'pics/skill/.style n args={5}{code={',
+#        '\t\t' + r'\foreach \x in {1, ..., #1} {\filldraw[circfull] (#4*\x, 0) circle [radius=#5 mm];};',
+#        '\t\t' + r'\foreach \x in {#2, ..., #3} {\filldraw[circopen] (#4*\x, 0) circle [radius=#5 mm];};',
+#        '\t\t' + r'}',
+#        '\t' + r'},',
+    l.append('}')
     return l
 
 
@@ -51,6 +58,8 @@ def assemble_letter(dict_letter, letter_text, dict_pers, dict_cont, company, ico
     """
     Assemble LaTeX code for letter
     """
+#    for key, value in dict_letter.items():
+#        dict_letter[key] = fn.cm_add(value)
     letter = geo.Letter(dict_letter)
     # Language-dependent settings
     if language == 'en':
@@ -570,9 +579,10 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
     dict_skill_layout = config_geo['cv']['skills']['layout']
     dict_skill_circle = config_geo['cv']['skills']['circle']
     dict_skills = config_data['skills']
+    print(dict_skills)
     skill_items = []
     for skill_item in dict_skills.values():
-        skill_items.append(cv.SkillItem(skill_item['category'], skill_item['elements']))
+        skill_items.append(cv.SkillItem(skill_item['category'], skill_item['elements'], skill_item['level']))
 #     for item in dict_skills.values():
 #        skill_objects.append(cv.SkillItem(item))
 #    skill_groups = []
@@ -612,58 +622,32 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
             'itemsep': '-0.2em',
             }
 
-#    if skill_layout.show_circles is True:
-#        skill_set = {
-#                'name': 'Skills',
- #               'anchor': area_skills.anchor,
- #               'x': area_skills.pos_x,
-#                'y': area_skills.pos_y,
-#                'font_size': area_skills.body_font_size,
-#                'column_styles': ['cell5', 'cell6'],
-#                 }
-#        skill_circle = geo.SkillCircle(dict_skill_circle)
-#        num = skill_layout.number
-#        dist = skill_layout.distance
-#        rad = skill_circle.radius
-#        for group in skill_groups:
-#            items.append([group.replace('&', '\&'), ''])
-#            for obj in skill_objects:
-#                if obj.group == group:
-#                    if obj.level == num:
-#                        items.append([obj.name, '\\tikz{{\\pic {{skillmax={{{}}}{{{}}}{{{}}}}};}}'.format(num, dist, rad)])
-#                    elif obj.level == 0:
-#                        items.append([obj.name, '\\tikz{{\\pic {{skillmin={{{}}}{{{}}}{{{}}}}};}}'.format(num, dist, rad)])
-#                    else:
-#                        items.append([obj.name, '\\tikz{{\\pic {{skill={{{}}}{{{}}}{{{}}}{{{}}}{{{}}}}};}}'.format(obj.level, obj.level+1, num, dist, rad)])
-#                    if item.description != '':
-#                        items.append([])
-#                        skills.append('\t\t\\node (d{}) {{}}; & \\node {{}};\\\\'.format(desc))
-#                        descr.append('\\node [cell7, anchor=north west, font=\{}] at (d{}.north west) {{({})}};'.format(bsize, desc, item.description))
-#                        desc += 1
-#    else:
-#                 desc = fn.makelist(obj.name)
-#                if isinstance(desc, list):
-#                    row = geo.Itemize(**item_set, items=desc).generate()
-#                    break
-#else:
-#                    description = desc
-#        for group in skill_groups:
-#            row = ''
-#            for obj in skill_objects:
-#                if obj.group == group:
-#                    row = row + obj.name + ', '
-#            row = row[:-2]
-#            items.append([group.replace('&', '\&'), row])
-
-    for skill_item in skill_items:
-        desc = fn.makelist(skill_item.elements)
-        if isinstance(desc, list):
-            description = geo.Itemize(**item_set, items=desc).generate()
-        else:
-            description = desc
-        items.append([skill_item.category, description])
-    skills = geo.Table(skill_set, items).assemble()
-    skills.insert(0, geo.Textbox(skill_title_set, area_skills.title).create())
+    if skill_layout.show_circles is True:
+        for skill_item in skill_items:
+            desc = fn.makelist(skill_item.elements)
+            if isinstance(desc, list):
+                description = geo.Itemize(**item_set, items=desc).generate()
+            else:
+                elements = desc.split(',')
+                levels = skill_item.level.split(',')
+                for i, element in enumerate(elements):
+                    if i == 0:
+                        items.append([skill_item.category, element, levels[i]])
+                    else:
+                        items.append(['', element, levels[i]])
+            items.append([skill_item.category, description])
+        skills = geo.Table(skill_set, items).assemble()
+        skills.insert(0, geo.Textbox(skill_title_set, area_skills.title).create())
+    else:
+        for skill_item in skill_items:
+            desc = fn.makelist(skill_item.elements)
+            if isinstance(desc, list):
+                description = geo.Itemize(**item_set, items=desc).generate()
+            else:
+                description = desc
+            items.append([skill_item.category, description])
+        skills = geo.Table(skill_set, items).assemble()
+        skills.insert(0, geo.Textbox(skill_title_set, area_skills.title).create())
 
     # Knowledge
     dict_know = config_data['knowledge']

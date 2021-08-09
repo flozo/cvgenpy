@@ -91,13 +91,29 @@ class Metadata(object):
 
 
 class SkillItem(object):
-    def __init__(self, category, elements):
+    def __init__(self, category, elements, level):
         self.category = category
         self.elements = elements
+        self.level = level
 #        self.name = dict_skill['name']
 #        self.description = dict_skill['description']
 #        self.level = dict_skill['level']
 #        self.group = dict_skill['group']
+
+
+class SkillItem2:
+    """
+    Define skill item.
+    """
+    def __init__(self, name, category, level, maxlevel, description, style):
+        self.name = name
+        self.category = category
+        self.level = level
+        self.maxlevel = maxlevel
+        self.description = description
+        self.style = style
+        if style == '':
+            self.style = 'none'
 
 
 class SkillGroup(object):

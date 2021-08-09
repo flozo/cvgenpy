@@ -89,6 +89,9 @@ def check_config_file(config_file):
                 write_config(config_file, defaults.generic_cell_styles())
             elif 'layers' in config_file:
                 write_config(config_file, defaults.generic_layers())
+            elif 'skills' in config_file:
+                print('No defaults for skills.')
+#                write_config(config_file, defaults.generic_layers())
             else:
                 print('[config] Config file name undefined.')
             print('[config] Generic config file {} created.'.format(config_file))
@@ -144,7 +147,7 @@ def makelist(string):
 
 def replace_strings(translation_dict, string):
     """
-    Replace all occurences of keys in translation_dict in string by values
+    Replace all occurences of keys in translation_dict in string by values.
     """
     for key, value in translation_dict.items():
         string = string.replace(key, value)
@@ -153,7 +156,7 @@ def replace_strings(translation_dict, string):
 
 def parse_layers(layers_dict):
     """
-    Create TikZ layer declarations from layer dictionary
+    Create TikZ layer declarations from layer dictionary.
     """
     l = []
     for key, value in layers_dict.items():
@@ -176,4 +179,24 @@ def parse_layers(layers_dict):
             latex.append('\\pgfdeclarelayer{{{}}}'.format(layer[1]))
     latex.append(set_layers)
     return latex
+
+
+def make_skill_circles(level, total):
+    """
+    Generate skill-circle row.
+    """
+    if level == total:
+        return '\\tikz{{\\pic {{skillmax}};}}'
+    elif level == 0:
+        return '\\tikz{{\\pic {{skillmin}};}}'
+    else:
+        return '\\tikz{{\\pic {{skill{}{}}};}}'.format(level, level+1)
+
+
+#def cm_add(number):
+#    """
+#    Add unit cm if number is without unit.
+#    """
+#    if str(number).replace('-', '', 1).replace('.', '', 1).isdigit():
+#        return str(number) + 'cm'
 

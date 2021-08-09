@@ -548,16 +548,42 @@ class Box(object):
         self.height = height
 
 
-class SkillCircle(object):
+class SkillCircles(object):
     """
-    Definition of a skill circle.
+    Definition of skill circles.
     """
-    def __init__(self, dict_skill_circle):
-        self.radius = dict_skill_circle['radius']
-        self.fillcolor = dict_skill_circle['fillcolor']
-        self.opencolor = dict_skill_circle['opencolor']
-        self.linecolor = dict_skill_circle['linecolor']
-        self.showline = dict_skill_circle['showline']
+    def __init__(self, total, distance, radius, fillcolor, opencolor, linecolor):
+        self.total = total
+        self.distance = distance
+        self.radius = radius
+        self.fillcolor = fillcolor
+        self.opencolor = opencolor
+        if linecolor == '':
+            self.linecolor = 'none'
+        else:
+            self.linecolor = linecolor
+
+    def define(self):
+        """
+        Generate settings for skill circles.
+        """
+        l = []
+        l.append('circfull/.style={{draw={}, fill={}}},'.format(self.linecolor, self.fillcolor))
+        l.append('circopen/.style={{draw={}, fill={}}},'.format(self.linecolor, self.opencolor))
+        l.append('pics/skillmax/.style={code={')
+        l.append('\t\\foreach \\x in {{1, ..., {}}}{{\\filldraw[circfull] ({}*\\x, 0 circle [radius={}cm];}};'.format(self.total, self.distance, self.radius))
+        l.append('\t}')
+        l.append('},')
+        l.append('pics/skillmin/.style={code={')
+        l.append('\t\\foreach \\x in {{1, ..., {}}}{{\\filldraw[circopen] ({}*\\x, 0 circle [radius={}cm];}};'.format(self.total, self.distance, self.radius))
+        l.append('\t}')
+        l.append('},')
+        l.append('pics/skill/.style 2 args={#1, #2}{code={')
+        l.append('\t\\foreach \\x in {{1, ..., #1}}{{\\filldraw[circfull] ({}*\\x, 0 circle [radius={}cm];}};'.format(self.distance, self.radius))
+        l.append('\t\\foreach \\x in {{#2, ..., {}}}{{\\filldraw[circopen] ({}*\\x, 0 circle [radius={}cm];}};'.format(self.total, self.distance, self.radius))
+        l.append('\t}')
+        l.append('},')
+        return l
 
 
 class SkillLayout(object):
