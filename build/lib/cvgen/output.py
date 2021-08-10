@@ -579,21 +579,28 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
     # Skills
     dict_skills2 = fn.read_config(config_file_skills)
     df_skills = pd.DataFrame.from_dict(dict_skills2, orient='index')
-    df_skills['level'] = df_skills['level'].astype(str)
     skill_level_style = 'circles'
-#    skills = df_skills[['group', 'name']]
+    skills = df_skills[['group', 'name']]
 #    skills = df_skills[['group', 'name', 'level']]
-#    skills.reset_index(drop=True, inplace=True)
-#    items = skills.values.tolist()
-    print(df_skills)
+    skills.reset_index(drop=True, inplace=True)
+    items = skills.values.tolist()
 
+    print(df_skills)
     
     skill_groups = df_skills['group'].drop_duplicates()
-    grouped = df_skills.groupby(['group'], as_index=True).agg({'name': ', '.join, 'level': ', '.join})
-    grouped = grouped.reindex(skill_groups).reset_index()
-    items = grouped.values.tolist()
+#    print(index)
+#    skill_groups = df_skills.drop_duplicates(subset='group', keep='first')
+    grouped = df_skills.groupby('group')
+    items = []
+    for group in grouped:
+        print(group[1]['name'].to_list())
+        row = geo.List(group[1]['name'].to_list(), separator=', ', orientation='row').generate()
+        print(row)
+        items.append([group[0], row])
     print(items)
-    
+
+#        row = geo.List(group['name'].to_list(), separator=', ', orientation='row').generate()
+#        print(row)
 
 
 #    row = []

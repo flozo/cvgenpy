@@ -612,13 +612,21 @@ class List:
         """
         string = ''
         if self.orientation == 'row':
+            # Concatenate items with separators in between
             sep = self.separator
+#            for item in self.items:
+#                string = string + '{}{}'.format(item, self.separator)
+            # Remove last separator
+#            string = string[:-len(self.separator)]
         elif self.orientation == 'column':
-            # Insert LaTeX linebreak for column
             sep = '{}\\\\'.format(self.separator)
+#            string = self.separator + ''.join(self.items)
+#            for item in self.items:
+#                string = string + '{}{}\\\\'.format(item, self.separator)
+            # Remove last linebreak
+#            string = string[:-3]
         else:
             print('[error] Unknown list orientation. Choose between \"row\" and  \"column\".')
-        # Join items with separators in between
         string = sep.join(self.items)
         return string
 
