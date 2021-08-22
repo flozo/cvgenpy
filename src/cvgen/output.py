@@ -14,7 +14,7 @@ def mergepdfs(pdflist, target):
     """Merge all PDFs."""
     merger = PdfFileMerger()
     for pdf in pdflist:
-        merger.append(partfile)
+        merger.append(pdf)
     merger.write(target)
     merger.close()
 
