@@ -610,6 +610,7 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
 
     # Get unique groups
     skill_groups = df_skills['group'].drop_duplicates()
+    skill_groups = skill_groups[:-1]
     # Create list of group dataframes and keep order
     grouped = df_skills.groupby(['group'], as_index=True, sort=False)
     groups = [grouped.get_group(x) for x in grouped.groups]
@@ -645,14 +646,14 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
 #         grouped = df_skills.groupby(['group'], as_index=True).agg({'name': '\\\\'.join, 'circles': '\\\\'.join})
 #     else:
 #         print('[error] Level style unknown. Choose between \"numeric\", \"circles\", and \"none\".')
-
-    grouped = fn.make_table(df_skills, section_header_style, item_style, item_separator)
-#    print(grouped)
+    df_skills2 = df_skills[(df_skills['group'] != 'Zertifikate')]
+    grouped = df_skills2.groupby(['group'], as_index=True).agg({'name': item_separator.join})
+    # grouped = fn.make_table(df_skills, section_header_style, item_style, item_separator)
 
     # Restore initial group order
-    # grouped = grouped.reindex(skill_groups).reset_index()
+    grouped = grouped.reindex(skill_groups).reset_index()
     items = grouped.values.tolist()
-#    print(items)
+    print(items)
     
     area_skills = geo.Area(dict_areas['skills'])
     skill_title_set = {
@@ -689,22 +690,35 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
         'itemsep': '-0.2em',
         }
 
-    skills = []
-    skills.append(geo.Textbox(skill_title_set, area_skills.title).create())
-    last_group = ''
-    for i, group in enumerate(groups):
-        group_name = group['group'][0]
-        items = group[['name']].values.tolist()
-        # items = group[['name', 'circles']].values.tolist()
-        skill_set['name'] = group_name
-        if last_group != '':
-            skill_set['at'] = last_group + '.south west'
-            skill_title_set['at'] = last_group + '.south west'
-            skill_title_set['case'] = ''
-        skills.append(geo.Textbox(skill_title_set, group_name).create())
-        skills = skills + geo.Table(skill_set, items).assemble()
-        last_group = group_name
-    print(skills)
+    # skills = []
+    # skills.append(geo.Textbox(skill_title_set, area_skills.title).create())
+    # last_group = ''
+    # for i, group in enumerate(groups):
+    #     group_name = group['group'][0]
+    #     items = group[['name']].values.tolist()
+    #     # items = group[['name', 'circles']].values.tolist()
+    #     skill_set['name'] = group_name
+    #     if last_group != '':
+    #         skill_set['at'] = last_group + '.south west'
+    #         skill_title_set['at'] = last_group + '.south west'
+    #         skill_title_set['case'] = ''
+    #     skills.append(geo.Textbox(skill_title_set, group_name).create())
+    #     skills = skills + geo.Table(skill_set, items).assemble()
+    #     last_group = group_name
+    # print(skills)
+
+    # skills = geo.Table(skill_set, items).assemble()
+
+    df_skills3 = df_skills[(df_skills['group'] == 'Zertifikate')]
+    df_skills3 = fn.make_section_header_left(df_skills3)
+    print(df_skills3)
+    grouped = df_skills3[['group', 'name']]
+    items.append(['', ''])
+    print(items)
+    items = items + grouped.values.tolist()
+    # skill_set['at'] = '{}.{}'.format(skill_set['name'], 'south')
+    skills = geo.Table(skill_set, items).assemble()
+    skills.insert(0, geo.Textbox(skill_title_set, area_skills.title).create())
 
 
 #    row = []
@@ -848,46 +862,51 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
     know = know + geo.Table(know_set, items).assemble()
     know.insert(0, geo.Textbox(know_title_set, area_know.title).create())
 
-#    # Certificates
-#    dict_cert = config_data['certificates']
-#    cert_objects = []
-#    for item in dict_cert.values():
-#        cert_objects.append(cv.CertificateItem(item))
-#    cert_groups = []
-#    for item in cert_objects:
-#        cert_groups.append(item.group)  # get all groups
-#    cert_groups = list(set(cert_groups))  # get unique groups
-#    area_cert = geo.Area(dict_areas['certificates'])
-#    cert_title_set = {
-#            'anchor': 'north west',
-#            'x': box_left.width,
-#            'y': area_cert.pos_y,
-#            'inner_xsep': 8,
-#            'inner_ysep': 0,
-#            'text_width': 8,
-#            'font_size': area_cert.head_font_size,
-#            'case': area_cert.head_case,
-#            'yshift': area_cert.head_vspace,
-#            }
-#    cert_set = {
-#            'name': 'Certificates',
-#            'anchor': area_cert.anchor,
-#            'x': area_cert.pos_x,
-#            'y': area_cert.pos_y,
-#            'font_size': area_cert.body_font_size,
-#            'column_styles': ['cell5', 'cell6'],
-#            }
-#    items = []
-#    for group in cert_groups:
-#        items.append([group.replace('&', '\&')])
-#        for obj in cert_objects:
-#            if obj.group == group:
-#                if area_cert.hyperlinks is True:
-#                    items.append(['\\href{{{}}}{{{}}}'.format(obj.name, obj.url)])
-#                else:
-#                    items.append([obj.name])
-#    cert = geo.Table(cert_set, items).assemble()
-#    cert.insert(0, geo.Textbox(cert_title_set, area_cert.title).create())
+    # # Certificates
+    # dict_cert = config_data['certificates']
+    # cert_objects = []
+    # for item in dict_cert.values():
+    #     cert_objects.append(cv.CertificateItem(item))
+    # cert_groups = []
+    # for item in cert_objects:
+    #     cert_groups.append(item.group)  # get all groups
+    # cert_groups = list(set(cert_groups))  # get unique groups
+    # area_cert = geo.Area(dict_areas['certificates'])
+    # cert_title_set = {
+    #     'name': 'cert_title',
+    #     'anchor': 'north west',
+    #     'x': box_left.width,
+    #     'y': area_cert.pos_y,
+    #     'at': '',
+    #     'inner_xsep': 8,
+    #     'inner_ysep': 0,
+    #     'text_width': 8,
+    #     'align': 'left',
+    #     'font_size': area_cert.head_font_size,
+    #     'case': area_cert.head_case,
+    #     'yshift': area_cert.head_vspace,
+    #     'color': area_cert.color,
+    #     }
+    # cert_set = {
+    #     'name': 'Certificates',
+    #     'anchor': area_cert.anchor,
+    #     'x': area_cert.pos_x,
+    #     'y': area_cert.pos_y,
+    #     'at': '',
+    #     'font_size': area_cert.body_font_size,
+    #     'column_styles': ['cell5', 'cell6'],
+    #     }
+    # items = []
+    # for group in cert_groups:
+    #     items.append([group.replace('&', '\&')])
+    #     for obj in cert_objects:
+    #         if obj.group == group:
+    #             if area_cert.hyperlinks is True:
+    #                 items.append(['\\href{{{}}}{{{}}}'.format(obj.name, obj.url)])
+    #             else:
+    #                 items.append([obj.name])
+    # cert = geo.Table(cert_set, items).assemble()
+    # cert.insert(0, geo.Textbox(cert_title_set, area_cert.title).create())
 
     # Metadata
     meta_set = {
