@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
+"""Collection of functions."""
 
 import json
 import os
-import cvdata as cv
-import geometry as geo
 import defaults
 import pandas as pd
 from PyPDF2 import PdfFileMerger
@@ -11,18 +10,14 @@ from operator import itemgetter
 
 
 def read_text(textfile):
-    """
-    Read text file and write content into variable.
-    """
+    """Read text file and write content into variable."""
     with open(textfile, 'r', encoding='utf-8') as f:
         rawtext = f.read()
     return rawtext
 
 
 def format_text(rawtext):
-    """
-    Convert rawtext lines to list elements and linebreaks to LaTeX linebreaks.
-    """
+    """Convert rawtext lines to list and linebreaks to LaTeX linebreaks."""
     text = rawtext.split('\n')
     # Remove comment lines
     text = [line for line in text if '#' not in line[:1]]
@@ -34,18 +29,14 @@ def format_text(rawtext):
 
 
 def read_config(config_file):
-    """
-    Read JSON config file and write content into nested dictionary.
-    """
+    """Read JSON config file and write content into nested dictionary."""
     with open(config_file, 'r') as f:
         config = json.load(f)
     return config
 
 
 def check_config_dir(config_dir):
-    """
-    Check if config directory exists. If not, ask for creating one.
-    """
+    """Check if config directory exists. If not, ask for creating one."""
     if not os.path.isdir(config_dir):
         print('[config] Config directory {} not found.'.format(config_dir))
         create_config_dir = input('[config] Create config directory {} ? (Y/n): '.format(config_dir))
@@ -57,17 +48,16 @@ def check_config_dir(config_dir):
 
 
 def write_config(config_file, settings_dict):
-    """
-    Write config file
-    """
+    """Write config file."""
     with open(config_file, 'w') as f:
         json.dump(settings_dict, f, indent=4)
 
 
 def check_config_file(config_file):
     """
-    Check if config files exist. If not, ask for creating
-    config files with generic settings.
+    Check if config files exist.
+
+    If not, ask for creating config files with generic settings.
     """
     if not os.path.isfile(config_file):
         print('[config] Config file {} not found.'.format(config_file))
@@ -100,9 +90,7 @@ def check_config_file(config_file):
 
 
 def mergepdfs(pdflist, target):
-    """
-    Concatenate all PDFs.
-    """
+    """Concatenate all PDFs."""
     merger = PdfFileMerger()
     for pdf in pdflist:
         merger.append(pdf)
@@ -111,9 +99,7 @@ def mergepdfs(pdflist, target):
 
 
 def make_link_url(url, shorten_http, shorten_www, label):
-    """
-    Create clickable link from URL.
-    """
+    """Create clickable link from URL."""
     if label == '':
         label = url
         if shorten_http is True:
@@ -124,21 +110,18 @@ def make_link_url(url, shorten_http, shorten_www, label):
 
 
 def make_link_email(address, label, subject):
-    """
-    Create clickable link from email address with optional subject.
-    """
+    """Create clickable link from email address with optional subject."""
     if label == '':
         label = address
     if subject == '':
         return '\\href{{mailto:{0}}}{{{1}}}'.format(address, label)
     else:
-        return '\\href{{mailto:{0}?subject={1}}}{{{2}}}'.format(address, subject, label)
+        return '\\href{{mailto:{0}?subject={1}}}{{{2}}}'.format(address,
+                                                                subject, label)
 
 
 def makelist(string):
-    """
-    Convert string to list if first and last character are [ and ], respectively.
-    """
+    """Convert string to list if first and last character are [ and ]."""
     if len(string) > 0 and string[0] == '[' and string[-1] == ']':
         return string[1:-1].split(';')
     else:
@@ -146,18 +129,14 @@ def makelist(string):
 
 
 def replace_strings(translation_dict, string):
-    """
-    Replace all occurences of keys in translation_dict in string by values.
-    """
+    """Replace occurences of keys in translation_dict in string by values."""
     for key, value in translation_dict.items():
         string = string.replace(key, value)
     return string
 
 
 def parse_layers(layers_dict):
-    """
-    Create TikZ layer declarations from layer dictionary.
-    """
+    """Create TikZ layer declarations from layer dictionary."""
     l = []
     for key, value in layers_dict.items():
         # Create list with layer position and name
@@ -182,9 +161,7 @@ def parse_layers(layers_dict):
 
 
 def make_skill_circles(level, maxlevel):
-    """
-    Generate skill-circle row.
-    """
+    """Generate skill-circle row."""
     if level == maxlevel:
         return '\\tikz{\\pic {skillmax};}'
     elif level == 0:
@@ -194,9 +171,7 @@ def make_skill_circles(level, maxlevel):
 
 
 def make_level_numeric(level, maxlevel):
-    """
-    Generate numeric skill level string.
-    """
+    """Generate numeric skill level string."""
     return '{}/{}'.format(level, maxlevel)
 
 

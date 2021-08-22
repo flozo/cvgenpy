@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-
-import json
+"""Collection of default values."""
 
 
 def personal_data_config():
     """
     Create config file with generic settings.
+
     Settings are defined as nested dictionary and parsed to a JSON file.
     """
     settings_dict = {
@@ -203,9 +203,7 @@ def personal_data_config():
 
 
 def generic_company():
-    """
-    Define generic company data
-    """
+    """Define generic company data."""
     company_data = {
             "name": "Company",
             "attention": "James Jones",
@@ -225,9 +223,7 @@ def generic_company():
 
 
 def write_letter(config_dir):
-    """
-    Create generic letter text with lorem ipsum.
-    """
+    """Create generic letter text with lorem ipsum."""
     text = """### Write your letter text below this #-commented header.
 ###
 ### You can include variables using braces {variable_name}.
@@ -251,6 +247,7 @@ Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lo
 def geometry_config():
     """
     Create geometry config file with generic settings.
+
     Settings are defined as nested dictionary and parsed to a JSON file.
     """
     settings_dict = {
@@ -419,7 +416,8 @@ def geometry_config():
                         'show_area': True,
                         'show_icon': False,
                         'hyperlinks': True,
-                        'hide_items': ['Webpage', 'Xing', 'phone', 'country', 'GitHub'],
+                        'hide_items': ['Webpage', 'Xing', 'phone', 'country',
+                                       'GitHub'],
                         },
                     'career': {
                         'title': 'Career',
@@ -576,9 +574,7 @@ def geometry_config():
 
 
 def generic_enclosure():
-    """
-    Define generic enclosure list.
-    """
+    """Define generic enclosure list."""
     settings_dict = {
             'name': '/home/user/Document.pdf',
             'reference_letter': '/home/user/Reference_letter.pdf',
@@ -592,9 +588,7 @@ def generic_enclosure():
 
 
 def generic_preamble():
-    """
-    Define generic LaTeX preamble
-    """
+    """Define generic LaTeX preamble."""
     documentclass = {
             'standalone': '12pt, tikz, multi, crop',
             }
@@ -626,9 +620,7 @@ def generic_preamble():
 
 
 def generic_cell_styles():
-    """
-    Define generic TikZ cell styles
-    """
+    """Define generic TikZ cell styles."""
     cell_styles = {
             'cell1': {
                 'name': 'cell1',
@@ -755,9 +747,7 @@ def generic_cell_styles():
 
 
 def generic_layers():
-    """
-    Define generic TikZ layers. Default layer "main" has position 0.
-    """
+    """Define generic TikZ layers. Default layer "main" has position 0."""
     layers_dict = {
             'layer1': {
                 'name': 'background',

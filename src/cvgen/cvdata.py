@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
+"""Define content-related classes."""
 
 from datetime import datetime
 
 
 class Personal(object):
+    """Define personal properties."""
+
     def __init__(self, dict_personal):
         self.first_name = dict_personal['first_name']
         self.second_name = dict_personal['second_name']
@@ -20,6 +23,8 @@ class Personal(object):
 
 
 class Address:
+    """Define address class."""
+
     def __init__(self, address):
         self.street = address['street']
         self.house = address['house']
@@ -29,6 +34,8 @@ class Address:
 
 
 class Contact(Address):
+    """Define contact class."""
+
     def __init__(self, contact):
         super().__init__(contact)
         self.phone = contact['phone']
@@ -38,6 +45,8 @@ class Contact(Address):
 
 
 class Company(Address):
+    """Define company class."""
+
     def __init__(self, company):
         super().__init__(company)
         self.name = company['name']
@@ -50,17 +59,25 @@ class Company(Address):
         self.color_accent = company['color_accent']
 
     def address(self):
+        """Generate LaTeX code for address information."""
         if self.attention == '':
-            return '{}\\\\{} {}\\\\{} {}'.format(self.name, self.street, self.house, self.postalcode, self.city)
+            return '{}\\\\{} {}\\\\{} {}'.format(self.name, self.street,
+                                                 self.house, self.postalcode,
+                                                 self.city)
         else:
-            return '{}\\\\{}\\\\{} {}\\\\{} {}'.format(self.name, self.attention, self.street, self.house, self.postalcode, self.city)
+            return '{}\\\\{}\\\\{} {}\\\\{} {}'.format(self.name,
+                                                       self.attention,
+                                                       self.street,
+                                                       self.house,
+                                                       self.postalcode,
+                                                       self.city)
 
 
 class Metadata(object):
-    """
-    Definition of PDF metadata.
-    """
-    def __init__(self, first_name, family_name, title, city, country, email, company, position, version):
+    """Definition of PDF metadata."""
+
+    def __init__(self, first_name, family_name, title, city, country, email,
+                 company, position, version):
         self.first_name = first_name
         self.family_name = family_name
         self.title = title
@@ -72,21 +89,19 @@ class Metadata(object):
         self.version = version
 
     def generate(self):
-        """
-        Generate LaTeX code with PDF metadata for hypersetup.
-        """
+        """Generate LaTeX code with PDF metadata for hypersetup."""
         l = [
-                '\t' + 'pdftitle={{Bewerbung bei {} als {}}},'.format(self.company, self.position),
-                '\t' + r'pdfsubject={Bewerbung},',
-                '\t' + 'pdfauthor={{{} {}}},'.format(self.first_name, self.family_name),
-                '\t' + 'pdfauthortitle={{{}}},'.format(self.title),
-                '\t' + 'pdfcaptionwriter={{{} {}}},'.format(self.first_name, self.family_name),
-                '\t' + 'pdfdate={{{}}},'.format(datetime.today().strftime('%Y-%m-%d')),
-                '\t' + 'pdfproducer={{cvgen {} by flozo; visit https://github.com/flozo/cvgen}},'.format(self.version),
-                '\t' + 'pdfcontactcity={{{}}},'.format(self.city),
-                '\t' + 'pdfcontactcountry={{{}}},'.format(self.country),
-                '\t' + 'pdfcontactemail={{{}}},'.format(self.email),
-                ]
+            '\t' + 'pdftitle={{Bewerbung bei {} als {}}},'.format(self.company, self.position),
+            '\t' + r'pdfsubject={Bewerbung},',
+            '\t' + 'pdfauthor={{{} {}}},'.format(self.first_name, self.family_name),
+            '\t' + 'pdfauthortitle={{{}}},'.format(self.title),
+            '\t' + 'pdfcaptionwriter={{{} {}}},'.format(self.first_name, self.family_name),
+            '\t' + 'pdfdate={{{}}},'.format(datetime.today().strftime('%Y-%m-%d')),
+            '\t' + 'pdfproducer={{cvgen {} by flozo; visit https://github.com/flozo/cvgen}},'.format(self.version),
+            '\t' + 'pdfcontactcity={{{}}},'.format(self.city),
+            '\t' + 'pdfcontactcountry={{{}}},'.format(self.country),
+            '\t' + 'pdfcontactemail={{{}}},'.format(self.email),
+            ]
         return l
 
 
@@ -102,9 +117,8 @@ class SkillItem(object):
 
 
 class SkillItem2:
-    """
-    Define skill item.
-    """
+    """Define skill item."""
+
     def __init__(self, name, group, level, maxlevel, description, style):
         self.name = name
         self.group = group
@@ -137,10 +151,10 @@ class CertificateItem(object):
 
 
 class TimelineItem(object):
-    """
-    Generic timeline item
-    """
-    def __init__(self, date, institution_name, institution_type, location, role, description):
+    """Generic timeline item."""
+
+    def __init__(self, date, institution_name, institution_type, location,
+                 role, description):
         self.date = date
         self.institution_name = institution_name
         self.institution_type = institution_type
@@ -150,12 +164,13 @@ class TimelineItem(object):
 
 
 class PeriodItem(TimelineItem):
-    """
-    Defines a timeline period by extending TimelineItem by start_date
-    """
-    def __init__(self, start_date, end_date, institution_name, institution_type, location, role, description):
+    """Defines a timeline period by extending TimelineItem by start_date."""
+
+    def __init__(self, start_date, end_date, institution_name,
+                 institution_type, location, role, description):
         self.start_date
-        super().__init__(end_date, institution_name, institution_type, location, role, description)
+        super().__init__(end_date, institution_name, institution_type,
+                         location, role, description)
 
 
 class EduPeriodItem(PeriodItem):
@@ -167,7 +182,9 @@ class EduPeriodItem(PeriodItem):
         self.location = dict_edu['location']
         self.role = dict_edu['role']
         self.description = dict_edu['description']
-        super().__init__(self.start_date, self.end_date, self.school_name, self.school_type, self.location, self.role, self.description)
+        super().__init__(self.start_date, self.end_date, self.school_name,
+                         self.school_type, self.location, self.role,
+                         self.description)
 
 
 class EduEventItem(TimelineItem):
@@ -181,7 +198,8 @@ class EduEventItem(TimelineItem):
         self.thesis_title = dict_edu['thesis_title']
         self.role = None
         self.description = dict_edu['description']
-        super().__init__(self.date, self.school_name, self.school_type, self.location, self.role, self.description)
+        super().__init__(self.date, self.school_name, self.school_type,
+                         self.location, self.role, self.description)
 
 
 class CareerItem(PeriodItem):
@@ -193,5 +211,6 @@ class CareerItem(PeriodItem):
         self.location = dict_career['location']
         self.role = dict_career['role']
         self.description = dict_career['description']
-        super().__init__(self.start_date, self.end_date, self.company_name, self.company_type, self.location, self.role, self.description)
-
+        super().__init__(self.start_date, self.end_date, self.company_name,
+                         self.company_type, self.location, self.role,
+                         self.description)

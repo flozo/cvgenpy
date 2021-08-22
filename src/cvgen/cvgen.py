@@ -3,22 +3,22 @@
 # Import modules
 
 import argparse
-#from cvgen import cvdata as cv
-#from cvgen import geometry as geo
 import functions as fn
 import output as out
 import os
 
 # Version
-version_num = '0.34'
-version_dat = '2021-08-11'
+version_num = '0.35'
+version_dat = '2021-08-22'
 version_str = '{} ({})'.format(version_num, version_dat)
 
+
 def main():
+    """Define argument parsers, check configuration, and call functions."""
     # Define argument parsers and subparsers
     parser = argparse.ArgumentParser(description='A program for generating CVs in LaTeX. Written by flozo.')
 
-    parser.add_argument('-V', '--version', action='version', version='%(prog)s '+ version_str)
+    parser.add_argument('-V', '--version', action='version', version='%(prog)s ' + version_str)
     parser.add_argument('-v', '--verbose', action='count', default=0,
                         help='verbosity level (-v, -vv, -vvv): '
                         'default = single-line output, v = multi-line, vv = detailed, vvv = array output')
@@ -77,8 +77,6 @@ def main():
     text = fn.read_text(os.path.join(config_dir, 'letter.txt'))
     text = fn.format_text(text)
 
-    config_data = fn.read_config(config_file_data)
-    config_geo = fn.read_config(config_file_geo)
     config_encl = fn.read_config(config_file_enclosure)
 
     # Check file extension

@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
-"""
-Setup module for cvgen
-"""
+"""Setup module for cvgen."""
 
 from setuptools import setup, find_packages
 import pathlib
@@ -13,7 +11,7 @@ long_description = (here/'README.md').read_text(encoding='utf-8')
 
 setup(
         name='cvgen',
-        version='0.34',
+        version='0.35',
         description='A program for generating a curriculum vitae.',
         long_description=long_description,
         long_description_content_type='text/markdown',

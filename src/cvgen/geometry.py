@@ -1,22 +1,20 @@
 #!/usr/bin/env python3
+"""Define style-related classes."""
 
 from PyPDF2 import PdfFileReader
 
 
 class Preamble:
-    """
-    Define LaTeX preamble
-    """
+    """Define LaTeX preamble."""
+
     def __init__(self, documentclass, packages, settings, metadata):
-       self.documentclass = documentclass
-       self.packages = packages
-       self.settings = settings
-       self.metadata = metadata
+        self.documentclass = documentclass
+        self.packages = packages
+        self.settings = settings
+        self.metadata = metadata
 
     def generate(self, language):
-        """
-        Generate LaTeX code for preamble
-        """
+        """Generate LaTeX code for preamble."""
         # Generate code for documentclass
         dc = list(self.documentclass.items())[0]
         l = ['\\documentclass[{classoptions}]{{{classname}}}'.format(classoptions=dc[1], classname=dc[0])]
@@ -60,9 +58,8 @@ class Preamble:
 
 
 class Sepline:
-    """
-    Define separation line.
-    """
+    """Define separation line."""
+
     def __init__(self, sepline):
         self.x = sepline['x']
         self.y = sepline['y']
@@ -72,9 +69,8 @@ class Sepline:
 
 
 class Page:
-    """
-    Define general page properties.
-    """
+    """Define general page properties."""
+
     def __init__(self, name, settings):
         self.name = name
         self.width = settings['width']
@@ -91,9 +87,7 @@ class Page:
         self.language = settings['language']
 
     def add_headsepline(self, thickness, color, fullwidth):
-        """
-        Add header separation line.
-        """
+        """Generate LaTeX code for header separation line."""
         args = {'x': self.border_left,
                 'y': self.height-self.border_top,
                 'width': self.text_width,
@@ -106,9 +100,7 @@ class Page:
         return '\\draw [draw={}, line width={}cm] ({}, {}) -- +({}, 0);'.format(sepline.color, sepline.thickness, sepline.x, sepline.y, sepline.width)
 
     def add_footsepline(self, thickness, color, fullwidth):
-        """
-        Add footer separation line.
-        """
+        """Generate LaTeX code for footer separation line."""
         args = {'x': self.border_left,
                 'y': self.border_bottom,
                 'width': self.text_width,
@@ -121,37 +113,30 @@ class Page:
         return '\\draw [draw={}, line width={}cm] ({}, {}) -- +({}, 0);'.format(sepline.color, sepline.thickness, sepline.x, sepline.y, sepline.width)
 
     def add_title(self, text, fontsize, align, color, yshift):
-        """
-        Add page title.
-        """
+        """Add page title."""
         return '\\node [anchor=south west, text width={}cm, align={}, font=\\{}, color={}, yshift={}cm] at ({}, {}) {{{}}};'.format(self.text_width, align, fontsize, color, yshift, self.border_left, self.height-self.border_top, text)
 
     def latex_head(self):
-        """
-        LaTeX code for a tikzpicture head.
-        """
+        """Generate LaTeX code for a tikzpicture head."""
         l = [
-                '% {}'.format(self.name.upper()),
-                '\\begin{tikzpicture}[',
-                '\t' + 'inner xsep=0pt,',
-                '\t' + 'inner ysep=0pt,',
-                '\t' + 'trim left=0pt,',
-                '\t' + 'trim right={\\paperw cm},',
-                '\t' + ']',
-                ]
+            '% {}'.format(self.name.upper()),
+            '\\begin{tikzpicture}[',
+            '\t' + 'inner xsep=0pt,',
+            '\t' + 'inner ysep=0pt,',
+            '\t' + 'trim left=0pt,',
+            '\t' + 'trim right={\\paperw cm},',
+            '\t' + ']',
+            ]
         return l
 
     def latex_foot(self):
-        """
-        LaTeX code for a tikzpicture foot.
-        """
+        """Generate LaTeX code for a tikzpicture foot."""
         return ['\\end{tikzpicture}']
 
 
 class CV(Page):
-    """
-    Define specific CV properties.
-    """
+    """Define specific CV properties."""
+
     def __init__(self, layout):
         name = 'Curriculum vitae'
         super().__init__(name, layout)
@@ -165,9 +150,8 @@ class CV(Page):
 
 
 class Letter(Page):
-    """
-    Define specific letter properties.
-    """
+    """Define specific letter properties."""
+
     def __init__(self, letter):
         name = 'Letter'
         super().__init__(name, letter)
@@ -202,9 +186,8 @@ class Letter(Page):
 
 
 class Address(object):
-    """
-    Define address properties.
-    """
+    """Define address properties."""
+
     def __init__(self, dict_address):
         self.street = dict_address['street']
         self.house = dict_address['house']
@@ -213,22 +196,19 @@ class Address(object):
         self.country = dict_address['country']
 
     def oneline(self):
-        """
-        Write address as single-line LaTeX output.
-        """
-        return '{} {}, {} {}'.format(self.street, self.house, self.postal_code, self.city)
+        """Write address as single-line LaTeX output."""
+        return '{} {}, {} {}'.format(self.street, self.house, self.postal_code,
+                                     self.city)
 
     def twoline(self):
-        """
-        Write address as two-line LaTeX output.
-        """
-        return '{} {}\\\\{} {}'.format(self.street, self.house, self.postal_code, self.city)
+        """Write address as two-line LaTeX output."""
+        return '{} {}\\\\{} {}'.format(self.street, self.house,
+                                       self.postal_code, self.city)
 
 
 class Backaddress(object):
-    """
-    Define backaddress properties.
-    """
+    """Define backaddress properties."""
+
     def __init__(self, dict_pers, dict_address):
         self.first_name = dict_pers['first_name']
         self.family_name = dict_pers['family_name']
@@ -239,16 +219,13 @@ class Backaddress(object):
         self.country = dict_address['country']
 
     def oneline(self, space='1.5cm', separator='$\\bullet$'):
-        """
-        Write backaddress as single-line LaTeX output.
-        """
+        """Write backaddress as single-line LaTeX output."""
         return '{0} {1}\\hspace{{{6}}}{7}\\hspace{{{6}}}{2} {3}\\hspace{{{6}}}{7}\\hspace{{{6}}}{4} {5}'.format(self.first_name, self.family_name, self.street, self.house, self.postal_code, self.city, space, separator)
 
 
 class Personal(object):
-    """
-    Define personal properties.
-    """
+    """Define personal properties."""
+
     def __init__(self, dict_pers):
         self.birth_date = dict_pers['birth_date']
         self.birth_location_city = dict_pers['birth_location_city']
@@ -257,9 +234,7 @@ class Personal(object):
         self.children = dict_pers['children']
 
     def oneline(self, lang):
-        """
-        Write personal data as single-line LaTeX output.
-        """
+        """Write personal data as single-line LaTeX output."""
         if lang == 'en':
             about_str = 'Born {} in {}, {}, {}, {} children'.format(self.birth_date, self.birth_location_city, self.citizenship, self.marital_status, self.children)
         if lang == 'de':
@@ -267,9 +242,7 @@ class Personal(object):
         return about_str
 
     def twoline(self, lang):
-        """
-        Write personal data as two-line LaTeX output.
-        """
+        """Write personal data as two-line LaTeX output."""
         if lang == 'en':
             about_str = 'Born {} in {},\\\\{}, {}, {} children'.format(self.birth_date, self.birth_location_city, self.citizenship, self.marital_status, self.children)
         if lang == 'de':
@@ -278,9 +251,8 @@ class Personal(object):
 
 
 class Signature:
-    """
-    Define signature properties.
-    """
+    """Define signature properties."""
+
     def __init__(self, name, x, y, height, text_above, text_below, filename):
         self.name = name
         self.x = x
@@ -291,9 +263,7 @@ class Signature:
         self.filename = filename
 
     def create(self):
-        """
-        Generate LaTeX output for signature.
-        """
+        """Generate LaTeX output for signature."""
         if self.name == '':
             namestr = ''
         else:
@@ -306,25 +276,20 @@ class Signature:
 
 
 class Document:
-    """
-    Define enclosure document
-    """
+    """Define enclosure document."""
+
     def __init__(self, name, filename):
         self.name = name
         self.filename = filename
 
     def pagecount(self):
-        """
-        Count total page number of PDF document
-        """
+        """Count total page number of PDF document."""
         with open(self.filename, 'rb') as pdf_file:
             pages = PdfFileReader(pdf_file).numPages
         return pages
 
     def include(self):
-        """
-        Generate LaTeX code for including document
-        """
+        """Generate LaTeX code for including document."""
         l = []
         for page in range(self.pagecount()):
             l.append('\\begin{tikzpicture}')
@@ -334,16 +299,13 @@ class Document:
 
 
 class Enclosure:
-    """
-    Define entire enclosure
-    """
+    """Define entire enclosure."""
+
     def __init__(self, dict_files):
         self.files = dict_files
 
     def include(self):
-        """
-        Generate LaTeX code to include all documents
-        """
+        """Generate LaTeX code to include all documents."""
         doc = []
         for key, value in self.files.items():
             doc = doc + Document(key, value).include()
@@ -351,9 +313,8 @@ class Enclosure:
 
 
 class PhotoArea(object):
-    """
-    Definition of photo area.
-    """
+    """Definition of photo area."""
+
     def __init__(self, dict_photo):
         self.pos_x = dict_photo['pos_x']
         self.pos_y = dict_photo['pos_y']
@@ -366,9 +327,8 @@ class PhotoArea(object):
 
 
 class Area(object):
-    """
-    General area definition.
-    """
+    """General area definition."""
+
     def __init__(self, dict_area):
         self.title = dict_area['title']
         self.pos_x = dict_area['pos_x']
@@ -396,10 +356,10 @@ class Area(object):
 
 
 class Cell:
-    """
-    Definitions for a table cell
-    """
-    def __init__(self, name, xsep, ysep, align, minimum_width, minimum_height, text_width, text_height):
+    """Definitions for a table cell."""
+
+    def __init__(self, name, xsep, ysep, align, minimum_width, minimum_height,
+                 text_width, text_height):
         self.name = name
         self.shape = 'rectangle'
         self.draw = 'none'
@@ -412,16 +372,13 @@ class Cell:
         self.text_height = text_height
 
     def set_style(self):
-        """
-        Assemble TikZ style
-        """
+        """Assemble TikZ style."""
         return '{}/.style={{{}, draw={}, inner xsep={}pt, inner ysep={}pt, align={}, minimum width={}cm, minimum height={}cm, text width={}cm, text height={}cm}},'.format(self.name, self.shape, self.draw, self.inner_xsep, self.inner_ysep, self.align, self.minimum_width, self.minimum_height, self.text_width, self.text_height)
 
 
 class Textbox:
-    """
-    General textbox definition
-    """
+    """General textbox definition."""
+
     def __init__(self, settings, text):
         self.name = settings['name']
         self.anchor = settings['anchor']
@@ -446,16 +403,13 @@ class Textbox:
             self.at = '{}, {}'.format(self.x, self.y)
 
     def create(self):
-        """
-        Generate LaTeX code for textbox
-        """
+        """Generate LaTeX code for textbox."""
         return '\\node ({0}) [anchor={1}, inner xsep={2}pt, inner ysep={3}, font=\\{4}, yshift={5}cm, text width={6}cm, align={7}, color={8}] at ({9}) {{{10}}};'.format(self.name, self.anchor, self.inner_xsep, self.inner_ysep, self.font_size, self.yshift, self.text_width, self.align, self.color, self.at, self.text)
 
 
 class Table:
-    """
-    Definitions for a table (matrix of nodes)
-    """
+    """Definitions for a table (matrix of nodes)."""
+
     def __init__(self, settings, items):
         self.name = settings['name']
         self.anchor = settings['anchor']
@@ -467,9 +421,7 @@ class Table:
         self.items = items
 
     def head(self):
-        """
-        Assemble table header using table properties and column styles
-        """
+        """Assemble table header using table properties and column styles."""
         if self.at != '':
             at_str = self.at
         else:
@@ -482,14 +434,13 @@ class Table:
                 '\t' + 'matrix of nodes,',
                 ]
         for i, style in enumerate(self.column_styles):
-            l.append('\t' + 'column {}/.style={{nodes={{{}}}}},'.format(i+1, style))
+            l.append('\t' + 'column {}/.style={{nodes={{{}}}}},'.format(i+1,
+                                                                        style))
         l.append('\t]{')
         return l
 
     def add_row(self, entries):
-        """
-        Add single row to a table
-        """
+        """Add single row to a table."""
         row = '\t'
         for entry in entries:
             row = row + '\\node {{{}}}; & '.format(entry)
@@ -498,15 +449,11 @@ class Table:
         return row
 
     def foot(self):
-        """
-        Footer line
-        """
+        """Footer line."""
         return '\t};'
 
     def assemble(self):
-        """
-        Assemble complete table
-        """
+        """Assemble complete table."""
         table = self.head()
         for item in self.items:
             table.append(self.add_row(item))
@@ -515,10 +462,10 @@ class Table:
 
 
 class Itemize:
-    """
-    Define itemize environment
-    """
-    def __init__(self, label, labelsep, leftmargin, topsep, itemindent, itemsep, items):
+    """Define itemize environment."""
+
+    def __init__(self, label, labelsep, leftmargin, topsep, itemindent,
+                 itemsep, items):
         self.label = label
         self.labelsep = labelsep
         self.leftmargin = leftmargin
@@ -528,9 +475,7 @@ class Itemize:
         self.items = items
 
     def generate(self):
-        """
-        Generate LaTeX code for itemize environment
-        """
+        """Generate LaTeX code for itemize environment."""
         l = [
                 '\\begin{itemize}[',
                 '\t' + 'topsep={},'.format(self.topsep),
@@ -549,9 +494,8 @@ class Itemize:
 
 
 class Box(object):
-    """
-    General box definition.
-    """
+    """General box definition."""
+
     def __init__(self, color, width, height):
         self.color = color
         self.width = width
@@ -559,10 +503,10 @@ class Box(object):
 
 
 class SkillCircles(object):
-    """
-    Definition of skill circles.
-    """
-    def __init__(self, total, distance, radius, fillcolor, opencolor, linecolor):
+    """Definition of skill circles."""
+
+    def __init__(self, total, distance, radius, fillcolor, opencolor,
+                 linecolor):
         self.total = total
         self.distance = distance
         self.radius = radius
@@ -574,9 +518,7 @@ class SkillCircles(object):
             self.linecolor = linecolor
 
     def define(self):
-        """
-        Generate settings for skill circles.
-        """
+        """Generate settings for skill circles."""
         l = []
         l.append('circfull/.style={{draw={}, fill={}}},'.format(self.linecolor, self.fillcolor))
         l.append('circopen/.style={{draw={}, fill={}}},'.format(self.linecolor, self.opencolor))
@@ -597,9 +539,8 @@ class SkillCircles(object):
 
 
 class SkillLayout(object):
-    """
-    Definition of skill layout.
-    """
+    """Definition of skill layout."""
+
     def __init__(self, dict_skill_layout):
         self.number = dict_skill_layout['circle_number']
         self.distance = dict_skill_layout['circle_distance']
@@ -607,18 +548,15 @@ class SkillLayout(object):
 
 
 class List:
-    """
-    Definition of a list
-    """
+    """Definition of a list."""
+
     def __init__(self, items, separator, orientation):
         self.items = items
         self.separator = separator
         self.orientation = orientation
 
     def generate(self):
-        """
-        Generate LaTeX code for row-type or column-type list.
-        """
+        """Generate LaTeX code for row-type or column-type list."""
         if self.orientation == 'row':
             sep = self.separator
         elif self.orientation == 'column':

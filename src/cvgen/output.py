@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+"""Functions for generating the output file."""
 
 import cvdata as cv
 import geometry as geo
@@ -10,9 +11,7 @@ from PyPDF2 import PdfFileMerger
 
 
 def mergepdfs(pdflist, target):
-    """
-    Merge all PDFs
-    """
+    """Merge all PDFs."""
     merger = PdfFileMerger()
     for pdf in pdflist:
         merger.append(partfile)
@@ -21,9 +20,7 @@ def mergepdfs(pdflist, target):
 
 
 def tikzset(config_cell_styles):
-    """
-    Define styles
-    """
+    """Define styles."""
     l = ['\\tikzset{']
     for key, value in config_cell_styles.items():
         l.append('\t' + geo.Cell(**value).set_style())
@@ -56,10 +53,9 @@ def tikzset(config_cell_styles):
     return l
 
 
-def assemble_letter(dict_letter, letter_text, dict_pers, dict_cont, company, icons, encl, dict_set, draft, language):
-    """
-    Assemble LaTeX code for letter
-    """
+def assemble_letter(dict_letter, letter_text, dict_pers, dict_cont, company,
+                    icons, encl, dict_set, draft, language):
+    """Assemble LaTeX code for letter."""
 #    for key, value in dict_letter.items():
 #        dict_letter[key] = fn.cm_add(value)
     letter = geo.Letter(dict_letter)
@@ -223,17 +219,13 @@ def assemble_letter(dict_letter, letter_text, dict_pers, dict_cont, company, ico
     l.append('\t\\node [anchor=north west, text width={}cm, yshift={}cm] at (closing.south west) {{{}}};'.format(letter.text_width, letter.enclosure_y_shift, enclosure_str))
     l.append(r'\end{tikzpicture}')
     return l
- 
+
 
 def assemble_latex(outfile, version_str, config_file_geo, config_file_data, config_file_encl, text, microtype, include_meta, encl, draft, enclosure_latex, config_file_preamble, config_file_cell_styles, config_file_company, language, config_file_layers, config_file_skills):
-    """
-    Read out config values, create objects, and assemble LaTeX code
-    """
+    """Read out config values, create objects, and assemble LaTeX code."""
 
     def declare_variables():
-        """
-        Define variables for geometry data
-        """
+        """Define variables for geometry data."""
         l = [
             r'\paperw = {}; % paper width'.format(cvl.width),
             r'\paperh = {}; % paper height'.format(cvl.height),
@@ -248,14 +240,11 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
             l.append(r'\boxbh = {}; % box bottom height'.format(box_bottom.height))
         return l
 
-
     def draw_background():
-        """
-        Draw background and boxes
-        """
+        """Draw background and boxes."""
         l = [
             '\t\t' + r'\begin{pgfonlayer}{background}',
-            '\t\t\t' + '\\fill[fill={}] (0, 0) rectangle (\\paperw, \paperh);'.format(cvl.background_color),
+            '\t\t\t' + '\\fill[fill={}] (0, 0) rectangle (\\paperw, \\paperh);'.format(cvl.background_color),
             '\t\t' + r'\end{pgfonlayer}',
             '\t\t' + r'\begin{pgfonlayer}{forebackground}',
             ]
@@ -269,7 +258,6 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
             l.append('\t\t\t' + '\\fill[fill={}] (0, 0) rectangle (\\paperw, \\boxbh); % box bottom'.format(box_bottom.color))
         l.append('\t\t' + r'\end{pgfonlayer}')
         return l
-
 
     # Read config files
     config_data = fn.read_config(config_file_data)
@@ -288,13 +276,15 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
     dict_areas = config_geo['cv']['areas']
     structure = config_geo['structure']
     cvl = geo.CV(dict_layout)
-    cv_lang = cvl.language
     cv_pages = cvl.pages
-    background_box = geo.Box(color=dict_layout['background_color'], width=dict_layout['width'], height=dict_layout['height'])
-    box_top = geo.Box(color=dict_box_top['color'], width=cvl.width, height=dict_box_top['size'])
-    box_bottom = geo.Box(color=dict_box_bottom['color'], width=cvl.width, height=dict_box_bottom['size'])
-    box_left = geo.Box(color=dict_box_left['color'], width=dict_box_left['size'], height=cvl.height)
-    box_right = geo.Box(color=dict_box_right['color'], width=dict_box_right['size'], height=cvl.height)
+    box_top = geo.Box(color=dict_box_top['color'], width=cvl.width,
+                      height=dict_box_top['size'])
+    box_bottom = geo.Box(color=dict_box_bottom['color'], width=cvl.width,
+                         height=dict_box_bottom['size'])
+    box_left = geo.Box(color=dict_box_left['color'],
+                       width=dict_box_left['size'], height=cvl.height)
+    box_right = geo.Box(color=dict_box_right['color'],
+                        width=dict_box_right['size'], height=cvl.height)
     company = cv.Company(config_company)
     if language == 'en':
         languages_str = 'Languages'
@@ -314,7 +304,6 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
     dict_pers = config_data['Personal']
     person = cv.Personal(dict_pers)
     area_personal = geo.Area(dict_areas['personal'])
-    bsize = area_personal.body_font_size
     personal_title_set = {
         'name': 'personal_title',
         'anchor': area_personal.anchor,
@@ -383,7 +372,8 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
     # Headline
     fullwidth = True
     size = 'Large'
-    headline = '{}~{}~{}'.format(person.title, person.first_name, person.family_name)
+    headline = '{}~{}~{}'.format(person.title, person.first_name,
+                                 person.family_name)
 #    title = []
     title.append('\t' + r'% |- Headline')
     title.append('\t' + cvl.add_title(headline, size, 'right', 'black', 0.1))
@@ -409,7 +399,6 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
     thickness = 0.1
     anchor = 'north east'
     width = area_photo.width
-    height = area_photo.height
     if area_photo.border is True:
         border_color = area_photo.border_color
     else:
@@ -605,27 +594,25 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
     # Convert values of 'level' and 'maxlevel' to strings
     df_skills['level'] = df_skills['level'].astype(str)
     df_skills['maxlevel'] = df_skills['maxlevel'].astype(str)
-    skill_level_style = 'circles'
-    # print(df_skills)
 
     # Get unique groups
     skill_groups = df_skills['group'].drop_duplicates()
     skill_groups = skill_groups[:-1]
     # Create list of group dataframes and keep order
     grouped = df_skills.groupby(['group'], as_index=True, sort=False)
-    groups = [grouped.get_group(x) for x in grouped.groups]
+    # groups = [grouped.get_group(x) for x in grouped.groups]
     # print(groups)
 #    for i, group in enumerate(skill_groups):
 #        groups.append(df_skills.groupby(['group'], as_index=False))
 #        print(groups[i].groups)
 
-    section_header_style = 'left'
-    item_style = 'onerow'
+    # section_header_style = 'left'
+    # item_style = 'onerow'
     item_separator = ', '
 
     # print(groups[0])
     # for group in groups:
-        
+
     #     if section_header_style == 'left':
     #         first_row = group.drop_duplicates(subset=['group'], keep='first')
     #         body = group.drop(index=group.index[0], axis=0)
@@ -654,7 +641,7 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
     grouped = grouped.reindex(skill_groups).reset_index()
     items = grouped.values.tolist()
     print(items)
-    
+
     area_skills = geo.Area(dict_areas['skills'])
     skill_title_set = {
         'name': 'skill_title',
@@ -937,7 +924,9 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
         meta = cv.Metadata(**meta_set).generate()
     else:
         meta = None
-    preamb = geo.Preamble(config_preamble['documentclass'], config_preamble['packages'], config_preamble['settings'], meta).generate(language)
+    preamb = geo.Preamble(config_preamble['documentclass'],
+                          config_preamble['packages'],
+                          config_preamble['settings'], meta).generate(language)
 
     # Write to file
     with open(outfile, 'w', encoding='UTF-8') as f:
