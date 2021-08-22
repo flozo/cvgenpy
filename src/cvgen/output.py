@@ -3,6 +3,7 @@
 import cvdata as cv
 import geometry as geo
 import functions as fn
+import numpy as np
 import pandas as pd
 from datetime import datetime
 from PyPDF2 import PdfFileMerger
@@ -35,7 +36,7 @@ def tikzset(config_cell_styles):
             'linecolor': '',
             }
     l = l + geo.SkillCircles(**skillcirc_set).define()
-#l2 = [
+#    l2 = [
 #        '\t' + r'circfull/.style={draw=none, fill=Blues-K},',
 #        '\t' + r'circopen/.style={draw=none, fill=Greys-G},',
 #        '\t' + r'pics/skillmax/.style n args={3}{code={',
@@ -302,7 +303,6 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
         languages_str = 'Sprachen'
         licenses_str = 'Führerscheine'
 
-
     # General settings
     dict_set = config_geo['general']
 
@@ -316,35 +316,39 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
     area_personal = geo.Area(dict_areas['personal'])
     bsize = area_personal.body_font_size
     personal_title_set = {
-            'anchor': area_personal.anchor,
-            'x': box_left.width,
-            'y': area_personal.pos_y,
-            'inner_xsep': 8,
-            'inner_ysep': 0,
-            'text_width': 8,
-            'align': 'left',
-            'font_size': area_personal.head_font_size,
-            'case': area_personal.head_case,
-            'yshift': area_personal.head_vspace,
-            'color': area_personal.color,
-            }
+        'name': 'personal_title',
+        'anchor': area_personal.anchor,
+        'x': box_left.width,
+        'y': area_personal.pos_y,
+        'at': '',
+        'inner_xsep': 8,
+        'inner_ysep': 0,
+        'text_width': 8,
+        'align': 'left',
+        'font_size': area_personal.head_font_size,
+        'case': area_personal.head_case,
+        'yshift': area_personal.head_vspace,
+        'color': area_personal.color,
+        }
     personal_body_set = {
-            'anchor': area_personal.anchor,
-            'x': box_left.width,
-            'y': area_personal.pos_y,
-            'inner_xsep': 8,
-            'inner_ysep': 0,
-            'text_width': 8,
-            'align': 'left',
-            'font_size': area_personal.body_font_size,
-            'case': 'mixed',
-            'yshift': -0.6,
-            'color': area_personal.color,
-            }
+        'name': 'personal_body',
+        'anchor': area_personal.anchor,
+        'x': box_left.width,
+        'y': area_personal.pos_y,
+        'at': '',
+        'inner_xsep': 8,
+        'inner_ysep': 0,
+        'text_width': 8,
+        'align': 'left',
+        'font_size': area_personal.body_font_size,
+        'case': 'mixed',
+        'yshift': -0.6,
+        'color': area_personal.color,
+        }
     pers = [
-            '% PERSONAL AREA',
-            '% |- Title:',
-            ]
+        '% PERSONAL AREA',
+        '% |- Title:',
+        ]
     pers.append(geo.Textbox(personal_title_set, area_personal.title).create())
     pers.append('% |- Items:')
     if area_personal.style == 'oneline':
@@ -358,22 +362,24 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
     y = cvl.height-cvl.border_top
     area_title = geo.Area(dict_areas['title'])
     titlebox_title_set = {
-            'anchor': area_title.anchor,
-            'x': area_title.pos_x,
-            'y': y,
-            'inner_xsep': 8,
-            'inner_ysep': 4,
-            'font_size': area_title.head_font_size,
-            'text_width': 5.3,
-            'align': 'right',
-            'case': area_title.head_case,
-            'yshift': area_title.head_vspace,
-            'color': area_title.color,
-            }
+        'name': 'titlebox_title',
+        'anchor': area_title.anchor,
+        'x': area_title.pos_x,
+        'y': y,
+        'at': '',
+        'inner_xsep': 8,
+        'inner_ysep': 4,
+        'font_size': area_title.head_font_size,
+        'text_width': 5.3,
+        'align': 'right',
+        'case': area_title.head_case,
+        'yshift': area_title.head_vspace,
+        'color': area_title.color,
+        }
     titlebox = geo.Textbox(titlebox_title_set, area_title.title).create()
     title = []
     title.append(titlebox)
-    
+
     # Headline
     fullwidth = True
     size = 'Large'
@@ -424,26 +430,29 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
     address_data = geo.Address(dict_contact)
     address = address_data.twoline()
     contact_title_set = {
-            'anchor': area_contact.anchor,
-            'x': box_left.width,
-            'y': area_contact.pos_y,
-            'inner_xsep': 8,
-            'inner_ysep': 0,
-            'font_size': area_contact.head_font_size,
-            'text_width': 8,
-            'align': 'left',
-            'case': area_contact.head_case,
-            'yshift': area_contact.head_vspace,
-            'color': area_contact.color,
-            }
+        'name': 'contact_title',
+        'anchor': area_contact.anchor,
+        'x': box_left.width,
+        'y': area_contact.pos_y,
+        'at': '',
+        'inner_xsep': 8,
+        'inner_ysep': 0,
+        'font_size': area_contact.head_font_size,
+        'text_width': 8,
+        'align': 'left',
+        'case': area_contact.head_case,
+        'yshift': area_contact.head_vspace,
+        'color': area_contact.color,
+        }
     contact_set = {
-            'name': 'Contact',
-            'anchor': area_contact.anchor,
-            'x': area_contact.pos_x,
-            'y': area_contact.pos_y,
-            'font_size': area_contact.body_font_size,
-            'column_styles': ['cell3', 'cell4'],
-            }
+        'name': 'Contact',
+        'anchor': area_contact.anchor,
+        'x': area_contact.pos_x,
+        'y': area_contact.pos_y,
+        'at': '',
+        'font_size': area_contact.body_font_size,
+        'column_styles': ['cell3', 'cell4'],
+        }
     language_corr = 'de'
     if language_corr == 'en':
         email_subject = 'Your application at {}'.format(company.name)
@@ -474,34 +483,37 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
         car_items.append(cv.CareerItem(car_item))
     area_career = geo.Area(dict_areas['career'])
     career_title_set = {
-            'anchor': area_career.anchor,
-            'x': box_left.width,
-            'y': area_career.pos_y,
-            'inner_xsep': 8,
-            'inner_ysep': 0,
-            'font_size': area_career.head_font_size,
-            'text_width': 8,
-            'align': 'left',
-            'case': area_career.head_case,
-            'yshift': area_career.head_vspace,
-            'color': area_career.color,
-            }
+        'name': 'career_title',
+        'anchor': area_career.anchor,
+        'x': box_left.width,
+        'y': area_career.pos_y,
+        'at': '',
+        'inner_xsep': 8,
+        'inner_ysep': 0,
+        'font_size': area_career.head_font_size,
+        'text_width': 8,
+        'align': 'left',
+        'case': area_career.head_case,
+        'yshift': area_career.head_vspace,
+        'color': area_career.color,
+        }
     career_set = {
-            'name': 'Career',
-            'anchor': area_career.anchor,
-            'x': area_career.pos_x,
-            'y': area_career.pos_y,
-            'font_size': area_career.body_font_size,
-            'column_styles': ['cell1', 'cell2', 'cell7'],
-            }
+        'name': 'Career',
+        'anchor': area_career.anchor,
+        'x': area_career.pos_x,
+        'y': area_career.pos_y,
+        'at': '',
+        'font_size': area_career.body_font_size,
+        'column_styles': ['cell1', 'cell2', 'cell7'],
+        }
     item_set = {
-            'label': '\\textcolor{Blues-K}{\\Large\\textopenbullet}',
-            'labelsep': '0.5em',
-            'leftmargin': '1.2em',
-            'topsep': '0.7em',
-            'itemindent': '0.0em',
-            'itemsep': '-0.2em',
-            }
+        'label': '\\textcolor{Blues-K}{\\Large\\textopenbullet}',
+        'labelsep': '0.5em',
+        'leftmargin': '1.2em',
+        'topsep': '0.7em',
+        'itemindent': '0.0em',
+        'itemsep': '-0.2em',
+        }
     items = []
     for car_item in reversed(car_items):
         desc = fn.makelist(car_item.description)
@@ -523,34 +535,37 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
             edu_items.append(cv.EduEventItem(edu_item))
     area_edu = geo.Area(dict_areas['education'])
     edu_title_set = {
-            'anchor': 'north west',
-            'x': box_left.width,
-            'y': area_edu.pos_y,
-            'inner_xsep': 8,
-            'inner_ysep': 0,
-            'text_width': 8,
-            'align': 'left',
-            'font_size': area_edu.head_font_size,
-            'case': area_edu.head_case,
-            'yshift': area_edu.head_vspace,
-            'color': area_edu.color,
-            }
+        'name': 'edu_title',
+        'anchor': 'north west',
+        'x': box_left.width,
+        'y': area_edu.pos_y,
+        'at': '',
+        'inner_xsep': 8,
+        'inner_ysep': 0,
+        'text_width': 8,
+        'align': 'left',
+        'font_size': area_edu.head_font_size,
+        'case': area_edu.head_case,
+        'yshift': area_edu.head_vspace,
+        'color': area_edu.color,
+        }
     edu_set = {
-            'name': 'Education',
-            'anchor': area_edu.anchor,
-            'x': area_edu.pos_x,
-            'y': area_edu.pos_y,
-            'font_size': area_edu.body_font_size,
-            'column_styles': ['cell1', 'cell2', 'cell7'],
-            }
+        'name': 'Education',
+        'anchor': area_edu.anchor,
+        'x': area_edu.pos_x,
+        'y': area_edu.pos_y,
+        'at': '',
+        'font_size': area_edu.body_font_size,
+        'column_styles': ['cell1', 'cell2', 'cell7'],
+        }
     item_set = {
-            'label': '\\textcolor{Blues-K}{\\Large\\textopenbullet}',
-            'labelsep': '0.5em',
-            'leftmargin': '1.2em',
-            'topsep': '0.1em',
-            'itemindent': '0.0em',
-            'itemsep': '-0.2em',
-            }
+        'label': '\\textcolor{Blues-K}{\\Large\\textopenbullet}',
+        'labelsep': '0.5em',
+        'leftmargin': '1.2em',
+        'topsep': '0.1em',
+        'itemindent': '0.0em',
+        'itemsep': '-0.2em',
+        }
     items = []
     for edu_item in reversed(edu_items):
         desc = fn.makelist(edu_item.description)
@@ -571,6 +586,7 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
             'anchor': area_edu.anchor,
             'x': area_edu.pos_x,
             'y': 27,
+            'at': '',
             'font_size': area_edu.body_font_size,
             'column_styles': ['cell1', 'cell2', 'cell7'],
             }
@@ -579,21 +595,116 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
     # Skills
     dict_skills2 = fn.read_config(config_file_skills)
     df_skills = pd.DataFrame.from_dict(dict_skills2, orient='index')
+    # Vectorize function fn.make_level_numeric
+    num = np.vectorize(fn.make_level_numeric)
+    df_skills['level_numeric'] = num(df_skills['level'], df_skills['maxlevel'])
+    # Vectorize function fn.make_skill_circles
+    circ = np.vectorize(fn.make_skill_circles)
+    # Add column 'circles' with LaTeX code for circles
+    df_skills['circles'] = circ(df_skills['level'], df_skills['maxlevel'])
+    # Convert values of 'level' and 'maxlevel' to strings
     df_skills['level'] = df_skills['level'].astype(str)
+    df_skills['maxlevel'] = df_skills['maxlevel'].astype(str)
     skill_level_style = 'circles'
-#    skills = df_skills[['group', 'name']]
-#    skills = df_skills[['group', 'name', 'level']]
-#    skills.reset_index(drop=True, inplace=True)
-#    items = skills.values.tolist()
-    print(df_skills)
+    # print(df_skills)
 
-    
+    # Get unique groups
     skill_groups = df_skills['group'].drop_duplicates()
-    grouped = df_skills.groupby(['group'], as_index=True).agg({'name': ', '.join, 'level': ', '.join})
-    grouped = grouped.reindex(skill_groups).reset_index()
+    # Create list of group dataframes and keep order
+    grouped = df_skills.groupby(['group'], as_index=True, sort=False)
+    groups = [grouped.get_group(x) for x in grouped.groups]
+    # print(groups)
+#    for i, group in enumerate(skill_groups):
+#        groups.append(df_skills.groupby(['group'], as_index=False))
+#        print(groups[i].groups)
+
+    section_header_style = 'left'
+    item_style = 'onerow'
+    item_separator = ', '
+
+    # print(groups[0])
+    # for group in groups:
+        
+    #     if section_header_style == 'left':
+    #         first_row = group.drop_duplicates(subset=['group'], keep='first')
+    #         body = group.drop(index=group.index[0], axis=0)
+    #         body['group'] = ''
+    #         new = pd.concat([first_row, body])
+    #         print(new)
+
+#     # Group by groups and join corresponding names and levels to single line
+#     separator = ', '
+# #    level_style = 'numeric'
+#     level_style = 'circles'
+#     if level_style == 'numeric':
+#         grouped = df_skills.groupby(['group'], as_index=True).agg({'name': separator.join, 'level_numeric': separator.join})
+#     elif level_style == 'none':
+#         grouped = df_skills.groupby(['group'], as_index=True).agg({'name': separator.join})
+#     elif level_style == 'circles':
+        
+#         grouped = df_skills.groupby(['group'], as_index=True).agg({'name': '\\\\'.join, 'circles': '\\\\'.join})
+#     else:
+#         print('[error] Level style unknown. Choose between \"numeric\", \"circles\", and \"none\".')
+
+    grouped = fn.make_table(df_skills, section_header_style, item_style, item_separator)
+#    print(grouped)
+
+    # Restore initial group order
+    # grouped = grouped.reindex(skill_groups).reset_index()
     items = grouped.values.tolist()
-    print(items)
+#    print(items)
     
+    area_skills = geo.Area(dict_areas['skills'])
+    skill_title_set = {
+        'name': 'skill_title',
+        'anchor': area_skills.anchor,
+        'x': box_left.width,
+        'y': area_skills.pos_y,
+        'at': '',
+        'inner_xsep': 8,
+        'inner_ysep': 0,
+        'text_width': 8,
+        'align': 'left',
+        'font_size': area_skills.head_font_size,
+        'case': area_skills.head_case,
+        'yshift': area_skills.head_vspace,
+        'color': area_skills.color,
+        }
+    skill_set = {
+        'name': 'Skills',
+        'anchor': area_skills.anchor,
+        'x': area_skills.pos_x,
+        'y': area_skills.pos_y,
+        'at': '',
+        'font_size': area_skills.body_font_size,
+        'column_styles': ['cell10', 'cell11'],
+        # 'column_styles': ['cell10', 'cell11', 'cell11'],
+        }
+    item_set = {
+        'label': '',
+        'labelsep': '0.5em',
+        'leftmargin': '0.0em',
+        'topsep': '0.0em',
+        'itemindent': '0.0em',
+        'itemsep': '-0.2em',
+        }
+
+    skills = []
+    skills.append(geo.Textbox(skill_title_set, area_skills.title).create())
+    last_group = ''
+    for i, group in enumerate(groups):
+        group_name = group['group'][0]
+        items = group[['name']].values.tolist()
+        # items = group[['name', 'circles']].values.tolist()
+        skill_set['name'] = group_name
+        if last_group != '':
+            skill_set['at'] = last_group + '.south west'
+            skill_title_set['at'] = last_group + '.south west'
+            skill_title_set['case'] = ''
+        skills.append(geo.Textbox(skill_title_set, group_name).create())
+        skills = skills + geo.Table(skill_set, items).assemble()
+        last_group = group_name
+    print(skills)
 
 
 #    row = []
@@ -631,37 +742,7 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
 #    skill_groups = list(set(skill_groups))  # get unique skill groups
 
 #    skill_layout = geo.SkillLayout(dict_skill_layout)
-    area_skills = geo.Area(dict_areas['skills'])
-    skill_title_set = {
-            'anchor': area_skills.anchor,
-            'x': box_left.width,
-            'y': area_skills.pos_y,
-            'inner_xsep': 8,
-            'inner_ysep': 0,
-            'text_width': 8,
-            'align': 'left',
-            'font_size': area_skills.head_font_size,
-            'case': area_skills.head_case,
-            'yshift': area_skills.head_vspace,
-            'color': area_skills.color,
-            }
-    skill_set = {
-            'name': 'Skills',
-            'anchor': area_skills.anchor,
-            'x': area_skills.pos_x,
-            'y': area_skills.pos_y,
-            'font_size': area_skills.body_font_size,
-            'column_styles': ['cell10', 'cell11'],
-#            'column_styles': ['cell10', 'cell11', 'cell11'],
-            }
-    item_set = {
-            'label': '',
-            'labelsep': '0.5em',
-            'leftmargin': '0.0em',
-            'topsep': '0.0em',
-            'itemindent': '0.0em',
-            'itemsep': '-0.2em',
-            }
+
 
 #    if skill_layout.show_circles is True:
 #        for skill_item in skill_items:
@@ -691,9 +772,8 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
 #        skills.insert(0, geo.Textbox(skill_title_set, area_skills.title).create())
 #    print(items)
 
-    skills = geo.Table(skill_set, items).assemble()
-    skills.insert(0, geo.Textbox(skill_title_set, area_skills.title).create())
-
+    # skills = geo.Table(skill_set, items).assemble()
+    # skills.insert(0, geo.Textbox(skill_title_set, area_skills.title).create())
 
     # Knowledge
     dict_know = config_data['knowledge']
@@ -706,26 +786,29 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
     know_groups = list(set(know_groups))  # get unique groups
     area_know = geo.Area(dict_areas['knowledge'])
     know_title_set = {
-            'anchor': 'north west',
-            'x': box_left.width,
-            'y': area_know.pos_y,
-            'inner_xsep': 8,
-            'inner_ysep': 0,
-            'text_width': 8,
-            'align': 'left',
-            'font_size': area_know.head_font_size,
-            'case': area_know.head_case,
-            'yshift': area_know.head_vspace,
-            'color': area_know.color,
-            }
+        'name': 'know_title',
+        'anchor': 'north west',
+        'x': box_left.width,
+        'y': area_know.pos_y,
+        'at': '',
+        'inner_xsep': 8,
+        'inner_ysep': 0,
+        'text_width': 8,
+        'align': 'left',
+        'font_size': area_know.head_font_size,
+        'case': area_know.head_case,
+        'yshift': area_know.head_vspace,
+        'color': area_know.color,
+        }
     know_set = {
-            'name': 'Knowledge',
-            'anchor': area_know.anchor,
-            'x': area_know.pos_x,
-            'y': area_know.pos_y,
-            'font_size': area_know.body_font_size,
-            'column_styles': ['cell10', 'cell12', 'cell12'],
-            }
+        'name': 'Knowledge',
+        'anchor': area_know.anchor,
+        'x': area_know.pos_x,
+        'y': area_know.pos_y,
+        'at': '',
+        'font_size': area_know.body_font_size,
+        'column_styles': ['cell10', 'cell12', 'cell12'],
+        }
     items = []
 #    for group in know_groups:
 #        row = ''
@@ -746,13 +829,14 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
     know = geo.Table(know_set, items).assemble()
     items = []
     know_set = {
-            'name': 'Knowledge',
-            'anchor': area_know.anchor,
-            'x': area_know.pos_x,
-            'y': area_know.pos_y-2.0,
-            'font_size': area_know.body_font_size,
-            'column_styles': ['cell10', 'cell11', 'cell12'],
-            }
+        'name': 'Knowledge',
+        'anchor': area_know.anchor,
+        'x': area_know.pos_x,
+        'y': area_know.pos_y-2.0,
+        'at': '',
+        'font_size': area_know.body_font_size,
+        'column_styles': ['cell10', 'cell11', 'cell12'],
+        }
     first = True
     for obj in know_objects:
         if obj.group == licenses_str:
@@ -828,14 +912,14 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
             }
     for count, line in enumerate(text):
         text[count] = fn.replace_strings(variables, line)
-    
+
     # Generate LaTeX preamble with or without metadata
     if include_meta is True:
         meta = cv.Metadata(**meta_set).generate()
     else:
         meta = None
     preamb = geo.Preamble(config_preamble['documentclass'], config_preamble['packages'], config_preamble['settings'], meta).generate(language)
- 
+
     # Write to file
     with open(outfile, 'w', encoding='UTF-8') as f:
         # Write comment with program and version info
@@ -909,4 +993,3 @@ def assemble_latex(outfile, version_str, config_file_geo, config_file_data, conf
                 for l in enclosure:
                     f.write('\t' + l + '\n')
         f.write(r'\end{document}' + '\n')
-

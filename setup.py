@@ -12,16 +12,16 @@ here = pathlib.Path(__file__).parent.resolve()
 long_description = (here/'README.md').read_text(encoding='utf-8')
 
 setup(
-        name = 'cvgen',
-        version = '0.33',
-        description = 'A program for generating a curriculum vitae.',
-        long_description = long_description,
-        long_description_content_type = 'text/markdown',
-        url = 'https://github.com/flozo/cvgen',
-        author = 'flozo',
-        author_email = 'github.mail@flozo.de',
+        name='cvgen',
+        version='0.34',
+        description='A program for generating a curriculum vitae.',
+        long_description=long_description,
+        long_description_content_type='text/markdown',
+        url='https://github.com/flozo/cvgen',
+        author='flozo',
+        author_email='github.mail@flozo.de',
         # Classifiers from https://pypi.org/classifiers/
-        classifiers = [
+        classifiers=[
             'Development Status :: 2 - Pre-Alpha',
             'Environment :: Console',
             'Intended Audience :: End Users/Desktop',
@@ -37,9 +37,8 @@ setup(
             'Topic :: Text Processing :: Markup',
             'Topic :: Text Processing :: Markup :: LaTeX',
             ],
-        keywords = 'curriculum vitae, LaTeX, markup',
-        package_dir = {'':'src'},
-        packages = find_packages(where='src'),
-        install_requires = ['argparse'],
+        keywords='curriculum vitae, LaTeX, markup',
+        package_dir={'': 'src'},
+        packages=find_packages(where='src'),
+        install_requires=['argparse'],
     )
-

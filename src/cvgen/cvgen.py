@@ -3,15 +3,15 @@
 # Import modules
 
 import argparse
-import cvdata as cv
-import geometry as geo
+#from cvgen import cvdata as cv
+#from cvgen import geometry as geo
 import functions as fn
 import output as out
 import os
 
 # Version
-version_num = '0.33'
-version_dat = '2021-08-10'
+version_num = '0.34'
+version_dat = '2021-08-11'
 version_str = '{} ({})'.format(version_num, version_dat)
 
 def main():
@@ -39,9 +39,9 @@ def main():
     # Make -e and -E mutually exclusive
     group = parser.add_mutually_exclusive_group()
     group.add_argument('-e', '--enclosure-latex', dest='encl_latex', action='store_true',
-                        help='include enclosure using LaTeX')
+                       help='include enclosure using LaTeX')
     group.add_argument('-E', '--enclosure-python', dest='encl_python', action='store_true',
-                        help='include enclosure using Python')
+                       help='include enclosure using Python')
     parser.add_argument('outfile', nargs='?', help='write to file')
 
     args = parser.parse_args()
@@ -74,7 +74,7 @@ def main():
     fn.check_config_file(config_file_cell_styles)
     fn.check_config_file(config_file_layers)
     fn.check_config_file(config_file_skills)
-    text = fn.read_text(os.path.join(config_dir, 'letter.txt'))  
+    text = fn.read_text(os.path.join(config_dir, 'letter.txt'))
     text = fn.format_text(text)
 
     config_data = fn.read_config(config_file_data)
@@ -133,4 +133,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-

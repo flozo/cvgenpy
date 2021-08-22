@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
-#
 
-import cvgen.geometry as geo
+from cvgen import geometry as geo
 
 
 def test_generate():
@@ -10,4 +9,3 @@ def test_generate():
     list_column_comma = geo.List(items, separator=',', orientation='column')
     assert list_row_comma.generate() == 'item1, item2, item3, item4'
     assert list_column_comma.generate() == 'item1,\\\\item2,\\\\item3,\\\\item4'
-

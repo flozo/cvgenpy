@@ -423,9 +423,11 @@ class Textbox:
     General textbox definition
     """
     def __init__(self, settings, text):
+        self.name = settings['name']
         self.anchor = settings['anchor']
         self.x = settings['x']
         self.y = settings['y']
+        self.at = settings['at']
         self.inner_xsep = settings['inner_xsep']
         self.inner_ysep = settings['inner_ysep']
         self.font_size = settings['font_size']
@@ -440,12 +442,14 @@ class Textbox:
             self.text = text.lower()
         else:
             self.text = text
+        if self.at == '':
+            self.at = '{}, {}'.format(self.x, self.y)
 
     def create(self):
         """
         Generate LaTeX code for textbox
         """
-        return '\\node [anchor={0}, inner xsep={1}pt, inner ysep={2}, font=\\{3}, yshift={4}cm, text width={5}cm, align={6}, color={7}] at ({8}, {9}) {{{10}}};'.format(self.anchor, self.inner_xsep, self.inner_ysep, self.font_size, self.yshift, self.text_width, self.align, self.color, self.x, self.y, self.text)
+        return '\\node ({0}) [anchor={1}, inner xsep={2}pt, inner ysep={3}, font=\\{4}, yshift={5}cm, text width={6}cm, align={7}, color={8}] at ({9}) {{{10}}};'.format(self.name, self.anchor, self.inner_xsep, self.inner_ysep, self.font_size, self.yshift, self.text_width, self.align, self.color, self.at, self.text)
 
 
 class Table:
@@ -457,6 +461,7 @@ class Table:
         self.anchor = settings['anchor']
         self.x = settings['x']
         self.y = settings['y']
+        self.at = settings['at']
         self.font_size = settings['font_size']
         self.column_styles = settings['column_styles']
         self.items = items
@@ -465,9 +470,13 @@ class Table:
         """
         Assemble table header using table properties and column styles
         """
+        if self.at != '':
+            at_str = self.at
+        else:
+            at_str = '{}, {}'.format(self.x, self.y)
         l = [
                 '% {}'.format(self.name.upper()),
-                '\\matrix ({}) at ({}, {}) ['.format(self.name, self.x, self.y),
+                '\\matrix ({}) at ({}) ['.format(self.name, at_str),
                 '\t' + 'anchor={},'.format(self.anchor),
                 '\t' + 'font=\\{},'.format(self.font_size),
                 '\t' + 'matrix of nodes,',
@@ -572,16 +581,16 @@ class SkillCircles(object):
         l.append('circfull/.style={{draw={}, fill={}}},'.format(self.linecolor, self.fillcolor))
         l.append('circopen/.style={{draw={}, fill={}}},'.format(self.linecolor, self.opencolor))
         l.append('pics/skillmax/.style={code={')
-        l.append('\t\\foreach \\x in {{1, ..., {}}}{{\\filldraw[circfull] ({}*\\x, 0 circle [radius={}cm];}};'.format(self.total, self.distance, self.radius))
+        l.append('\t\\foreach \\x in {{1, ..., {}}}{{\\filldraw[circfull] ({}*\\x, 0) circle [radius={}cm];}};'.format(self.total, self.distance, self.radius))
         l.append('\t}')
         l.append('},')
         l.append('pics/skillmin/.style={code={')
-        l.append('\t\\foreach \\x in {{1, ..., {}}}{{\\filldraw[circopen] ({}*\\x, 0 circle [radius={}cm];}};'.format(self.total, self.distance, self.radius))
+        l.append('\t\\foreach \\x in {{1, ..., {}}}{{\\filldraw[circopen] ({}*\\x, 0) circle [radius={}cm];}};'.format(self.total, self.distance, self.radius))
         l.append('\t}')
         l.append('},')
-        l.append('pics/skill/.style 2 args={#1, #2}{code={')
-        l.append('\t\\foreach \\x in {{1, ..., #1}}{{\\filldraw[circfull] ({}*\\x, 0 circle [radius={}cm];}};'.format(self.distance, self.radius))
-        l.append('\t\\foreach \\x in {{#2, ..., {}}}{{\\filldraw[circopen] ({}*\\x, 0 circle [radius={}cm];}};'.format(self.total, self.distance, self.radius))
+        l.append('pics/skill/.style n args={2}{code={')
+        l.append('\t\\foreach \\x in {{1, ..., #1}}{{\\filldraw[circfull] ({}*\\x, 0) circle [radius={}cm];}};'.format(self.distance, self.radius))
+        l.append('\t\\foreach \\x in {{#2, ..., {}}}{{\\filldraw[circopen] ({}*\\x, 0) circle [radius={}cm];}};'.format(self.total, self.distance, self.radius))
         l.append('\t}')
         l.append('},')
         return l
@@ -610,7 +619,6 @@ class List:
         """
         Generate LaTeX code for row-type or column-type list.
         """
-        string = ''
         if self.orientation == 'row':
             sep = self.separator
         elif self.orientation == 'column':
@@ -619,6 +627,4 @@ class List:
         else:
             print('[error] Unknown list orientation. Choose between \"row\" and  \"column\".')
         # Join items with separators in between
-        string = sep.join(self.items)
-        return string
-
+        return sep.join(self.items)

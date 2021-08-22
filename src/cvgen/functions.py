@@ -5,6 +5,7 @@ import os
 import cvdata as cv
 import geometry as geo
 import defaults
+import pandas as pd
 from PyPDF2 import PdfFileMerger
 from operator import itemgetter
 
@@ -20,12 +21,11 @@ def read_text(textfile):
 
 def format_text(rawtext):
     """
-    Convert rawtext lines to list elements and
-    linebreaks to LaTeX linebreaks.
+    Convert rawtext lines to list elements and linebreaks to LaTeX linebreaks.
     """
     text = rawtext.split('\n')
     # Remove comment lines
-    text = [line for line in text if not '#' in line[:1]]
+    text = [line for line in text if '#' not in line[:1]]
     # Add LaTeX linebreak \\ before empty line
     for count, line in enumerate(text):
         if line == '':
@@ -181,22 +181,46 @@ def parse_layers(layers_dict):
     return latex
 
 
-def make_skill_circles(level, total):
+def make_skill_circles(level, maxlevel):
     """
     Generate skill-circle row.
     """
-    if level == total:
-        return '\\tikz{{\\pic {{skillmax}};}}'
+    if level == maxlevel:
+        return '\\tikz{\\pic {skillmax};}'
     elif level == 0:
-        return '\\tikz{{\\pic {{skillmin}};}}'
+        return '\\tikz{\\pic {skillmin};}'
     else:
-        return '\\tikz{{\\pic {{skill{}{}}};}}'.format(level, level+1)
+        return '\\tikz{{\\pic {{skill={{{}}}{{{}}}}};}}'.format(level, level+1)
 
 
-#def cm_add(number):
-#    """
-#    Add unit cm if number is without unit.
-#    """
-#    if str(number).replace('-', '', 1).replace('.', '', 1).isdigit():
-#        return str(number) + 'cm'
+def make_level_numeric(level, maxlevel):
+    """
+    Generate numeric skill level string.
+    """
+    return '{}/{}'.format(level, maxlevel)
 
+
+def make_section_header_left(dataframe):
+    """
+    Keep group name in first row only and replace duplicates with empty string.
+    """
+    first_row = dataframe.drop_duplicates(subset=['group'], keep='first')
+    body = dataframe.drop(index=dataframe.index[0], axis=0)
+    body['group'] = ''
+    return pd.concat([first_row, body])
+
+
+def make_section_header_top(dataframe):
+    """Make separate row for group name and return new dataframe."""
+    first_row = dataframe.iloc[0]
+    return pd.concat([first_row, dataframe])
+
+
+def make_table(dataframe, section_header_style, item_style, item_separator):
+    """Rearrange dataframe with respect to selected section style."""
+    if section_header_style == 'left' and item_style == 'multirow':
+        return pd.concat([make_section_header_left(dataframe)])
+    elif section_header_style == 'left' and item_style == 'onerow':
+        return dataframe.groupby(['group'], as_index=True).agg({'name': item_separator.join, 'level_numeric': item_separator.join, 'circles': item_separator.join})
+    elif section_header_style == 'top' and item_style == 'multirow':
+        return pd.concat([make_section_header_top(dataframe)])

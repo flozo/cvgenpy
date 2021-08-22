@@ -603,7 +603,7 @@ def generic_preamble():
             'fontenc': 'T1',
             'babel': 'german',
             'hyperxmp': '',
-            'FiraSans' : 'sfdefault, scaled=1.0098',
+            'FiraSans': 'sfdefault, scaled=1.0098',
             'newtxsf': '',
             'fontawesome5': '',
             'csquotes': 'german=quotes',
@@ -773,4 +773,3 @@ def generic_layers():
                 },
             }
     return layers_dict
-
